@@ -1,0 +1,18 @@
+# Created by .ignore support plugin (hsz.mobi)
+### JetBrains template
+
+## File-based project format:
+*.ipr
+*.iws
+
+# IntelliJ
+out/
+
+.idea/workspace.xml
+.idea/libraries
+!.idea/artifacts/
+
+
+
+
+
