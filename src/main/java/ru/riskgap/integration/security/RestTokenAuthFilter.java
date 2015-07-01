@@ -2,6 +2,7 @@ package ru.riskgap.integration.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -18,9 +19,11 @@ import java.text.MessageFormat;
 
 public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter {
 
+    @Autowired
+    private TokenStore tokenStore;
+
     private static final Logger logger = LoggerFactory.getLogger(RestTokenAuthFilter.class);
     public static final String HEADER_SERVER_TOKEN = "X-ServerToken";
-    public static final String TEST_TOKEN = "AaBbCcDd";
 
 
     public RestTokenAuthFilter(String defaultFilterProcessesUrl) {
@@ -45,11 +48,9 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     }
 
     private AbstractAuthenticationToken authByToken(String token) {
-        if (token == null) {
+        if (token == null || !tokenStore.isValidToken(token)) {
             return null;
         }
-        if (!token.equals(TEST_TOKEN))
-            return null;
-        return new RestToken("USER", TEST_TOKEN);
+        return new RestToken("USER", token);
     }
 }
