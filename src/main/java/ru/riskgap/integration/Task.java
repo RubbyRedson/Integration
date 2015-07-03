@@ -71,6 +71,11 @@ public class Task {
     public static final String RISK_REF = "risk-reference";
     private String riskRef; //todo format?
 
+    /**
+     *
+     */
+    public static final String TARGET_SYSTEM = "target-system";
+
 
     public Task() {
         //no op todo Builder pattern?
@@ -164,5 +169,45 @@ public class Task {
 
     public void setRiskRef(String riskRef) {
         this.riskRef = riskRef;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        if (assigneeEmail != null ? !assigneeEmail.equals(task.assigneeEmail) : task.assigneeEmail != null)
+            return false;
+        if (assigneeId != null ? !assigneeId.equals(task.assigneeId) : task.assigneeId != null) return false;
+        if (assigneeUsername != null ? !assigneeUsername.equals(task.assigneeUsername) : task.assigneeUsername != null)
+            return false;
+        if (description != null ? !description.equals(task.description) : task.description != null) return false;
+        if (due != null ? !due.equals(task.due) : task.due != null) return false;
+        if (name != null ? !name.equals(task.name) : task.name != null) return false;
+        if (riskRef != null ? !riskRef.equals(task.riskRef) : task.riskRef != null) return false;
+        if (status != null ? !status.equals(task.status) : task.status != null) return false;
+        if (userEmail != null ? !userEmail.equals(task.userEmail) : task.userEmail != null) return false;
+        if (userId != null ? !userId.equals(task.userId) : task.userId != null) return false;
+        if (username != null ? !username.equals(task.username) : task.username != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
+        result = 31 * result + (assigneeId != null ? assigneeId.hashCode() : 0);
+        result = 31 * result + (assigneeUsername != null ? assigneeUsername.hashCode() : 0);
+        result = 31 * result + (assigneeEmail != null ? assigneeEmail.hashCode() : 0);
+        result = 31 * result + (due != null ? due.hashCode() : 0);
+        result = 31 * result + (riskRef != null ? riskRef.hashCode() : 0);
+        return result;
     }
 }
