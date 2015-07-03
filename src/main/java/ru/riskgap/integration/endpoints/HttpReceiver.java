@@ -27,7 +27,7 @@ public class HttpReceiver {
         } catch (IOException e) {
             return Response.status(500).entity(e).build();
         }
-        IntegrationHandler targetSystemHandler = null;
+        IntegrationHandler targetSystemHandler;
         try {
             targetSystemHandler = getHandler(task);
         } catch (AbstractException e) {
@@ -53,13 +53,13 @@ public class HttpReceiver {
         } catch (IOException e) {
             return Response.status(500).entity(e).build();
         }
-        IntegrationHandler targetSystemHandler = null;
+        IntegrationHandler targetSystemHandler;
         try {
             targetSystemHandler = getHandler(task);
         } catch (AbstractException e) {
             return Response.status(400).entity(e).build();
         }
-        Task resultTask = targetSystemHandler.getTaskInformation(task);
+        Task resultTask = targetSystemHandler.createOrUpdateTask(task);
         return Response.status(200).entity(resultTask.toJson()).build();
     }
 
