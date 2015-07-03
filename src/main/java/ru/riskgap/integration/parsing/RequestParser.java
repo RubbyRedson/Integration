@@ -1,6 +1,8 @@
 package ru.riskgap.integration.parsing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.riskgap.integration.Task;
 
@@ -16,16 +18,33 @@ import java.util.Map;
 public class RequestParser {
     ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
+
+    public RequestParser() {
+        //do nothing
+    }
+
     public Task parse(String jsonBody) throws IOException {
+
+        Map<String,String> jsonMap = objectMapper.readValue(jsonBody, HashMap.class);
+        if (logger.isInfoEnabled())
+            logger.info("Received json body map is " + jsonMap);
 
         Task result = new Task();
 
-        //using DOM as string size is not large
-        Map<String,String> myMap = new HashMap<String, String>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        myMap = objectMapper.readValue(jsonBody, HashMap.class);
-        System.out.println("Map is: " + myMap);
+        result.setName(jsonMap.get(Task.TASK_NAME));
+        result.setStatus(jsonMap.get(Task.TASK_STATUS));
+        result.setDescription(jsonMap.get(Task.TASK_DESCRIPTION));
+        result.setUserId(jsonMap.get(Task.USER_ID));
+        result.setUsername(jsonMap.get(Task.USERNAME));
+        result.setUserEmail(jsonMap.get(Task.USER_EMAIL));
+        result.setAssigneeId(jsonMap.get(Task.ASSIGNEE_ID));
+        result.setAssigneeUsername(jsonMap.get(Task.ASSIGNEE_USERNAME));
+        result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
+        result.setDue(jsonMap.get(Task.TASK_DUE));
+        result.setRiskRef(jsonMap.get(Task.RISK_REF));
+        result.setTargetSystem(jsonMap.get(Task.TARGET_SYSTEM));
 
-        return null;
+        return result;
     }
 }

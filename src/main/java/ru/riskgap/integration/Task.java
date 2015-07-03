@@ -42,13 +42,13 @@ public class Task {
     private String userEmail;
 
     /**
-     * Имя пользователя, создавшего задачу
+     * Идентификатор пользователя, назначенного на задачу
      */
     public static final String ASSIGNEE_ID = "assignee-id";
     private String assigneeId;
 
     /**
-     * Идентификатор пользователя, назначенного на задачу (если известен)
+     * Имя пользователя, назначенного на задачу (если известен)
      */
     public static final String ASSIGNEE_USERNAME = "assignee-username";
     private String assigneeUsername;
@@ -72,9 +72,10 @@ public class Task {
     private String riskRef; //todo format?
 
     /**
-     *
+     * Система, в которой находится задание
      */
     public static final String TARGET_SYSTEM = "target-system";
+    public String targetSystem; //todo enum?
 
 
     public Task() {
@@ -171,6 +172,14 @@ public class Task {
         this.riskRef = riskRef;
     }
 
+    public String getTargetSystem() {
+        return targetSystem;
+    }
+
+    public void setTargetSystem(String targetSystem) {
+        this.targetSystem = targetSystem;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -188,6 +197,7 @@ public class Task {
         if (name != null ? !name.equals(task.name) : task.name != null) return false;
         if (riskRef != null ? !riskRef.equals(task.riskRef) : task.riskRef != null) return false;
         if (status != null ? !status.equals(task.status) : task.status != null) return false;
+        if (targetSystem != null ? !targetSystem.equals(task.targetSystem) : task.targetSystem != null) return false;
         if (userEmail != null ? !userEmail.equals(task.userEmail) : task.userEmail != null) return false;
         if (userId != null ? !userId.equals(task.userId) : task.userId != null) return false;
         if (username != null ? !username.equals(task.username) : task.username != null) return false;
@@ -208,6 +218,7 @@ public class Task {
         result = 31 * result + (assigneeEmail != null ? assigneeEmail.hashCode() : 0);
         result = 31 * result + (due != null ? due.hashCode() : 0);
         result = 31 * result + (riskRef != null ? riskRef.hashCode() : 0);
+        result = 31 * result + (targetSystem != null ? targetSystem.hashCode() : 0);
         return result;
     }
 }
