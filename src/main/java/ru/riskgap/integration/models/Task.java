@@ -1,4 +1,4 @@
-package ru.riskgap.integration;
+package ru.riskgap.integration.models;
 
 /**
  * Created by Nikita on 16.06.2015.
@@ -75,7 +75,7 @@ public class Task {
      * Система, в которой находится задание
      */
     public static final String TARGET_SYSTEM = "target-system";
-    public String targetSystem; //todo enum?
+    private String targetSystem; //todo enum?
 
 
     public Task() {

@@ -1,4 +1,4 @@
-package ru.riskgap.integration;
+package ru.riskgap.integration.models;
 
 /**
  * Created by Nikita on 16.06.2015.

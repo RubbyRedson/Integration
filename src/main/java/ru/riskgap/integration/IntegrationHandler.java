@@ -1,6 +1,8 @@
 package ru.riskgap.integration;
 
 
+import ru.riskgap.integration.models.Task;
+
 /**
  * Interface for three classes (TFS, Trello, Ms Project) that update or create Task On Server or get info from Server
  */

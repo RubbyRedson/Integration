@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.riskgap.integration.Task;
+import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,10 +19,6 @@ public class RequestParser {
     ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
-
-    public RequestParser() {
-        //do nothing
-    }
 
     public Task parse(String jsonBody) throws IOException {
 
