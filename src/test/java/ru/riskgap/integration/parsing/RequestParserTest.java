@@ -1,6 +1,7 @@
 package ru.riskgap.integration.parsing;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"12-02-2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"tfs\"\n" +
+                "  \"target-system\": \"TFS\"\n" +
                 "}";
 
         Task expected = new Task();
@@ -50,7 +51,7 @@ public class RequestParserTest {
         expected.setAssigneeEmail("testassignee@riskgap.ru");
         expected.setDue("12-02-2015");
         expected.setRiskRef("test risk reference");
-        expected.setTargetSystem("tfs");
+        expected.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
             test(json, expected);
@@ -73,7 +74,7 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"12-02-2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"tfs\"\n" +
+                "  \"target-system\": \"MS_PROJECT\"\n" +
                 "}";
 
         Task expected1 = new Task();
@@ -88,7 +89,7 @@ public class RequestParserTest {
         expected1.setAssigneeEmail("testassignee@riskgap.ru");
         expected1.setDue("12-02-2015");
         expected1.setRiskRef("test risk reference");
-        expected1.setTargetSystem("tfs");
+        expected1.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
         String json2 = "{\n" +
                 "  \"name\": \"Test Task Two\",\n" +
@@ -102,7 +103,7 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee2@riskgap.ru\",\n" +
                 "  \"due\": \"14-02-2015\",\n" +
                 "  \"risk-reference\": \"test risk reference 2\",\n" +
-                "  \"target-system\": \"msp\"\n" +
+                "  \"target-system\": \"TFS\"\n" +
                 "}";
 
         Task expected2 = new Task();
@@ -117,7 +118,7 @@ public class RequestParserTest {
         expected2.setAssigneeEmail("testassignee2@riskgap.ru");
         expected2.setDue("14-02-2015");
         expected2.setRiskRef("test risk reference 2");
-        expected2.setTargetSystem("msp");
+        expected2.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
             test(json1, expected1);
