@@ -239,4 +239,21 @@ public class Task {
                 ", targetSystem=" + targetSystem +
                 '}';
     }
+
+    public String toJson() {
+        return "{" +
+                "  \"name\": \"" + name + "\",\n" +
+                "  \"status\": \"" + status + "\",\n" +
+                "  \"description\": \"" + description + "\",\n" +
+                "  \"user-id\": \"" + userId + "\",\n" +
+                "  \"username\": \"" + username + "\",\n" +
+                "  \"user-email\": \"" + userEmail + "\",\n" +
+                "  \"assignee-id\": \"" + assigneeId + "\",\n" +
+                "  \"assignee-username\": \"" + assigneeUsername + "\",\n" +
+                "  \"assignee-email\": \"" + assigneeEmail + "\",\n" +
+                "  \"due\": \"" + due + "\",\n" +
+                "  \"risk-reference\": \"" + riskRef + "\",\n" +
+                "  \"target-system\": \"" + targetSystem + "\"\n" +
+                "}";
+    }
 }

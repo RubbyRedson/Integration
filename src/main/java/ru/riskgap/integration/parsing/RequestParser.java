@@ -44,8 +44,4 @@ public class RequestParser {
 
         return result;
     }
-
-    public String taskToJSON (Task task) {
-        return null;
-    }
 }

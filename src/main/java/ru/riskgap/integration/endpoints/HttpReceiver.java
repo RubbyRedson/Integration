@@ -34,7 +34,7 @@ public class HttpReceiver {
             return Response.status(400).entity(e).build();
         }
         Task resultTask = targetSystemHandler.getTaskInformation(task);
-        return Response.status(200).entity(requestParser.taskToJSON(resultTask)).build();
+        return Response.status(200).entity(resultTask.toJson()).build();
        // return new SmokeEntity(10, "Get Smoke Name", new Date());
         //TODO implement sync request handling
     }
@@ -60,7 +60,7 @@ public class HttpReceiver {
             return Response.status(400).entity(e).build();
         }
         Task resultTask = targetSystemHandler.getTaskInformation(task);
-        return Response.status(200).entity(requestParser.taskToJSON(resultTask)).build();
+        return Response.status(200).entity(resultTask.toJson()).build();
     }
 
     private Task getTask (String body) throws IOException{
