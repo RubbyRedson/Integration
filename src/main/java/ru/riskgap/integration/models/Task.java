@@ -1,5 +1,7 @@
 package ru.riskgap.integration.models;
 
+import java.lang.annotation.Target;
+
 /**
  * Created by Nikita on 16.06.2015.
  */
@@ -75,7 +77,7 @@ public class Task {
      * Система, в которой находится задание
      */
     public static final String TARGET_SYSTEM = "target-system";
-    private String targetSystem; //todo enum?
+    private TargetSystemEnum targetSystem; //todo enum?
 
 
     public Task() {
@@ -172,11 +174,11 @@ public class Task {
         this.riskRef = riskRef;
     }
 
-    public String getTargetSystem() {
+    public TargetSystemEnum getTargetSystem() {
         return targetSystem;
     }
 
-    public void setTargetSystem(String targetSystem) {
+    public void setTargetSystem(TargetSystemEnum targetSystem) {
         this.targetSystem = targetSystem;
     }
 
