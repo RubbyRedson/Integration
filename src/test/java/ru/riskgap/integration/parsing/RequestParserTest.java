@@ -19,7 +19,7 @@ public class RequestParserTest {
 
     private void test(String input, Task expected) throws IOException {
         Task actual = requestParser.parse(input);
-        assertEquals("", expected, actual);
+        assertEquals("JSON parsing test failed", expected, actual);
     }
 
     @Test
