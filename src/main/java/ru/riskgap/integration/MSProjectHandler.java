@@ -1,5 +1,7 @@
 package ru.riskgap.integration;
 
+import ru.riskgap.integration.models.Task;
+
 public class MSProjectHandler implements IntegrationHandler {
 
     @Override
