@@ -241,7 +241,7 @@ public class Task {
     }
 
     public String toJson() {
-        return "{" +
+        return "{\n" +
                 "  \"name\": \"" + name + "\",\n" +
                 "  \"status\": \"" + status + "\",\n" +
                 "  \"description\": \"" + description + "\",\n" +

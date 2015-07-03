@@ -7,6 +7,7 @@ import ru.riskgap.integration.models.Task;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test class for parser
@@ -158,4 +159,37 @@ public class RequestParserTest {
         }
     }
 
+    @Test
+    public void testEmptyRequest() {
+        String json = "{\n" +
+                "}";
+
+        Task expected = new Task();
+
+        try {
+            test(json, expected);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testMalformedJson() throws IOException {
+        String json = "I don't look like a JSON\n" +
+                "Do I?" +
+                "See ya!";
+
+        IOException expected = new IOException("Unrecognized token 'I': was expecting 'null', 'true', 'false' or NaN\n" +
+                " at [Source: I don't look like a JSON\n" +
+                "Do I?See ya!; line: 1, column: 2]");
+        Exception actual = null;
+
+        try {
+            requestParser.parse(json);
+        } catch (IOException e) {
+            actual = e;
+            assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
+        }
+        assertNotNull("Expected IOException but none was thrown", actual);
+    }
 }

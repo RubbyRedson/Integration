@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Component
 public class RequestParser {
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
@@ -40,7 +40,10 @@ public class RequestParser {
         result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
         result.setDue(jsonMap.get(Task.TASK_DUE));
         result.setRiskRef(jsonMap.get(Task.RISK_REF));
-        result.setTargetSystem(TargetSystemEnum.valueOf(jsonMap.get(Task.TARGET_SYSTEM)));
+        String targetSystem = jsonMap.get(Task.TARGET_SYSTEM);
+        if (targetSystem != null) {
+            result.setTargetSystem(TargetSystemEnum.valueOf(targetSystem));
+        }
 
         return result;
     }
