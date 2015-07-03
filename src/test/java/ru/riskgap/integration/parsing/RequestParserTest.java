@@ -128,4 +128,34 @@ public class RequestParserTest {
         }
     }
 
+    @Test
+    public void testPartialTaskRequest() {
+        String json = "{\n" +
+                "  \"name\": \"Test Task One\",\n" +
+                "  \"status\": \"In Progress\",\n" +
+                "  \"assignee-id\": \"34\",\n" +
+                "  \"assignee-username\": \"Test assignee\",\n" +
+                "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
+                "  \"due\": \"12-02-2015\",\n" +
+                "  \"risk-reference\": \"test risk reference\",\n" +
+                "  \"target-system\": \"TFS\"\n" +
+                "}";
+
+        Task expected = new Task();
+        expected.setName("Test Task One");
+        expected.setStatus("In Progress");
+        expected.setAssigneeId("34");
+        expected.setAssigneeUsername("Test assignee");
+        expected.setAssigneeEmail("testassignee@riskgap.ru");
+        expected.setDue("12-02-2015");
+        expected.setRiskRef("test risk reference");
+        expected.setTargetSystem(TargetSystemEnum.TFS);
+
+        try {
+            test(json, expected);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
