@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan("ru.riskgap.integration.endpoints")
+@ComponentScan({"ru.riskgap.integration.endpoints","ru.riskgap.integration.parsing"})
 public class RestServletConfig {
 
 }
