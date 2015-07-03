@@ -1,3 +1,5 @@
+package ru.riskgap.integration;
+
 import org.springframework.context.annotation.Configuration;
 
 /**

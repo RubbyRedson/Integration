@@ -1,7 +1,5 @@
 package ru.riskgap.integration.models;
 
-import java.lang.annotation.Target;
-
 /**
  * Created by Nikita on 16.06.2015.
  */
@@ -77,7 +75,7 @@ public class Task {
      * Система, в которой находится задание
      */
     public static final String TARGET_SYSTEM = "target-system";
-    private TargetSystemEnum targetSystem; //todo enum?
+    private TargetSystemEnum targetSystem;
 
 
     public Task() {
@@ -222,5 +220,23 @@ public class Task {
         result = 31 * result + (riskRef != null ? riskRef.hashCode() : 0);
         result = 31 * result + (targetSystem != null ? targetSystem.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", assigneeId='" + assigneeId + '\'' +
+                ", assigneeUsername='" + assigneeUsername + '\'' +
+                ", assigneeEmail='" + assigneeEmail + '\'' +
+                ", due='" + due + '\'' +
+                ", riskRef='" + riskRef + '\'' +
+                ", targetSystem=" + targetSystem +
+                '}';
     }
 }
