@@ -10,7 +10,11 @@
     
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml, /WEB-INF/security.xml, /WEB-INF/rest-servlet.xml</param-value>
+        <param-value>
+            /WEB-INF/applicationContext.xml
+            /WEB-INF/security.xml
+            /WEB-INF/rest-servlet.xml
+        </param-value>
     </context-param>
 
     <filter>

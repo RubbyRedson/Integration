@@ -25,5 +25,8 @@
         <module name="RiskGapIntegration" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="RiskGapIntegration" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
