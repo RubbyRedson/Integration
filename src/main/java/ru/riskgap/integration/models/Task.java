@@ -1,5 +1,9 @@
 package ru.riskgap.integration.models;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Nikita on 16.06.2015.
  */
@@ -63,7 +67,8 @@ public class Task {
      * Дата исполнения задачи
      */
     public static final String TASK_DUE = "due";
-    private String due; //todo use java.util.Date?
+    public final static DateFormat DATE_FORMATTER = new SimpleDateFormat("dd.MM.yyyy");
+    private Date due;
 
     /**
      * Ссылка на риск
@@ -156,11 +161,11 @@ public class Task {
         this.assigneeEmail = assigneeEmail;
     }
 
-    public String getDue() {
+    public Date getDue() {
         return due;
     }
 
-    public void setDue(String due) {
+    public void setDue(Date due) {
         this.due = due;
     }
 
@@ -234,7 +239,7 @@ public class Task {
                 ", assigneeId='" + assigneeId + '\'' +
                 ", assigneeUsername='" + assigneeUsername + '\'' +
                 ", assigneeEmail='" + assigneeEmail + '\'' +
-                ", due='" + due + '\'' +
+                ", due='" + DATE_FORMATTER.format(due) + '\'' +
                 ", riskRef='" + riskRef + '\'' +
                 ", targetSystem=" + targetSystem +
                 '}';
@@ -251,7 +256,7 @@ public class Task {
                 "  \"assignee-id\": \"" + assigneeId + "\",\n" +
                 "  \"assignee-username\": \"" + assigneeUsername + "\",\n" +
                 "  \"assignee-email\": \"" + assigneeEmail + "\",\n" +
-                "  \"due\": \"" + due + "\",\n" +
+                "  \"due\": \"" + DATE_FORMATTER.format(due) + "\",\n" +
                 "  \"risk-reference\": \"" + riskRef + "\",\n" +
                 "  \"target-system\": \"" + targetSystem + "\"\n" +
                 "}";

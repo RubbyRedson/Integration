@@ -10,6 +10,7 @@ import ru.riskgap.integration.parsing.RequestParser;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.text.ParseException;
 
 
 @RestController
@@ -24,7 +25,7 @@ public class HttpReceiver {
         Task task = null;
         try {
             task = getTask(body);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             return Response.status(500).entity(e).build();
         }
         IntegrationHandler targetSystemHandler;
@@ -50,7 +51,7 @@ public class HttpReceiver {
         Task task = null;
         try {
             task = getTask(body);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             return Response.status(500).entity(e).build();
         }
         IntegrationHandler targetSystemHandler;
@@ -63,7 +64,7 @@ public class HttpReceiver {
         return Response.status(200).entity(resultTask.toJson()).build();
     }
 
-    private Task getTask (String body) throws IOException{
+    private Task getTask (String body) throws IOException, ParseException {
         Task task = requestParser.parse(body);
         return task;
     }

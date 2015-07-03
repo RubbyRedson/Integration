@@ -3,6 +3,8 @@ package ru.riskgap.integration.models;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.ParseException;
+
 /**
  * Created by Nikita on 03.07.2015.
  */
@@ -20,7 +22,11 @@ public class TaskEqualsTest {
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
-		first.setDue("12-02-2015");
+		try {
+			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		first.setRiskRef("test risk reference");
 		first.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
@@ -34,7 +40,11 @@ public class TaskEqualsTest {
 		second.setAssigneeId("34");
 		second.setAssigneeUsername("Test assignee");
 		second.setAssigneeEmail("testassignee@riskgap.ru");
-		second.setDue("12-02-2015");
+		try {
+			second.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		second.setRiskRef("test risk reference");
 		second.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
@@ -50,7 +60,11 @@ public class TaskEqualsTest {
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
-		first.setDue("12-02-2015");
+		try {
+			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		first.setRiskRef("test risk reference");
 		first.setTargetSystem(TargetSystemEnum.TFS);
 
@@ -60,7 +74,11 @@ public class TaskEqualsTest {
 		second.setAssigneeId("34");
 		second.setAssigneeUsername("Test assignee");
 		second.setAssigneeEmail("testassignee@riskgap.ru");
-		second.setDue("12-02-2015");
+		try {
+			second.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		second.setRiskRef("test risk reference");
 		second.setTargetSystem(TargetSystemEnum.TFS);
 
@@ -81,7 +99,11 @@ public class TaskEqualsTest {
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
-		first.setDue("12-02-2015");
+		try {
+			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		first.setRiskRef("test risk reference");
 		first.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
@@ -95,7 +117,11 @@ public class TaskEqualsTest {
 		second.setAssigneeId("42");
 		second.setAssigneeUsername("Test assignee 2");
 		second.setAssigneeEmail("testassignee2@riskgap.ru");
-		second.setDue("14-02-2015");
+		try {
+			second.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		second.setRiskRef("test risk reference 2");
 		second.setTargetSystem(TargetSystemEnum.TFS);
 
@@ -111,7 +137,11 @@ public class TaskEqualsTest {
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
-		first.setDue("12-02-2015");
+		try {
+			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		first.setRiskRef("test risk reference");
 		first.setTargetSystem(TargetSystemEnum.TFS);
 
@@ -125,7 +155,11 @@ public class TaskEqualsTest {
 		second.setAssigneeId("42");
 		second.setAssigneeUsername("Test assignee 2");
 		second.setAssigneeEmail("testassignee2@riskgap.ru");
-		second.setDue("14-02-2015");
+		try {
+			second.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		second.setRiskRef("test risk reference 2");
 		second.setTargetSystem(TargetSystemEnum.TFS);
 

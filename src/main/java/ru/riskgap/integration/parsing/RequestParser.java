@@ -8,6 +8,7 @@ import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class RequestParser {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
-    public Task parse(String jsonBody) throws IOException {
+    public Task parse(String jsonBody) throws IOException, ParseException {
 
         Map<String,String> jsonMap = objectMapper.readValue(jsonBody, HashMap.class);
         if (logger.isInfoEnabled())
@@ -38,7 +39,10 @@ public class RequestParser {
         result.setAssigneeId(jsonMap.get(Task.ASSIGNEE_ID));
         result.setAssigneeUsername(jsonMap.get(Task.ASSIGNEE_USERNAME));
         result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
-        result.setDue(jsonMap.get(Task.TASK_DUE));
+        String date = jsonMap.get(Task.TASK_DUE);
+        if (date != null) {
+            result.setDue(Task.DATE_FORMATTER.parse(date));
+        }
         result.setRiskRef(jsonMap.get(Task.RISK_REF));
         String targetSystem = jsonMap.get(Task.TARGET_SYSTEM);
         if (targetSystem != null) {

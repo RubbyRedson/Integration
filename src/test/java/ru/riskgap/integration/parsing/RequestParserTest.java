@@ -5,6 +5,7 @@ import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +19,7 @@ public class RequestParserTest {
     //unit test, no spring autowiring
     RequestParser requestParser = new RequestParser();
 
-    private void test(String input, Task expected) throws IOException {
+    private void test(String input, Task expected) throws IOException, ParseException {
         Task actual = requestParser.parse(input);
         assertEquals("JSON parsing test failed", expected, actual);
     }
@@ -35,7 +36,7 @@ public class RequestParserTest {
                 "  \"assignee-id\": \"34\",\n" +
                 "  \"assignee-username\": \"Test assignee\",\n" +
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
-                "  \"due\": \"12-02-2015\",\n" +
+                "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
                 "  \"target-system\": \"TFS\"\n" +
                 "}";
@@ -50,13 +51,17 @@ public class RequestParserTest {
         expected.setAssigneeId("34");
         expected.setAssigneeUsername("Test assignee");
         expected.setAssigneeEmail("testassignee@riskgap.ru");
-        expected.setDue("12-02-2015");
+        try {
+            expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         expected.setRiskRef("test risk reference");
         expected.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
             test(json, expected);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -73,7 +78,7 @@ public class RequestParserTest {
                 "  \"assignee-id\": \"34\",\n" +
                 "  \"assignee-username\": \"Test assignee\",\n" +
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
-                "  \"due\": \"12-02-2015\",\n" +
+                "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
                 "  \"target-system\": \"MS_PROJECT\"\n" +
                 "}";
@@ -88,7 +93,11 @@ public class RequestParserTest {
         expected1.setAssigneeId("34");
         expected1.setAssigneeUsername("Test assignee");
         expected1.setAssigneeEmail("testassignee@riskgap.ru");
-        expected1.setDue("12-02-2015");
+        try {
+            expected1.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         expected1.setRiskRef("test risk reference");
         expected1.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
@@ -102,7 +111,7 @@ public class RequestParserTest {
                 "  \"assignee-id\": \"42\",\n" +
                 "  \"assignee-username\": \"Test assignee 2\",\n" +
                 "  \"assignee-email\": \"testassignee2@riskgap.ru\",\n" +
-                "  \"due\": \"14-02-2015\",\n" +
+                "  \"due\": \"14.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference 2\",\n" +
                 "  \"target-system\": \"TFS\"\n" +
                 "}";
@@ -117,14 +126,18 @@ public class RequestParserTest {
         expected2.setAssigneeId("42");
         expected2.setAssigneeUsername("Test assignee 2");
         expected2.setAssigneeEmail("testassignee2@riskgap.ru");
-        expected2.setDue("14-02-2015");
+        try {
+            expected2.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         expected2.setRiskRef("test risk reference 2");
         expected2.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
             test(json1, expected1);
             test(json2, expected2);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -137,7 +150,7 @@ public class RequestParserTest {
                 "  \"assignee-id\": \"34\",\n" +
                 "  \"assignee-username\": \"Test assignee\",\n" +
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
-                "  \"due\": \"12-02-2015\",\n" +
+                "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
                 "  \"target-system\": \"TFS\"\n" +
                 "}";
@@ -148,13 +161,17 @@ public class RequestParserTest {
         expected.setAssigneeId("34");
         expected.setAssigneeUsername("Test assignee");
         expected.setAssigneeEmail("testassignee@riskgap.ru");
-        expected.setDue("12-02-2015");
+        try {
+            expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         expected.setRiskRef("test risk reference");
         expected.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
             test(json, expected);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -168,7 +185,7 @@ public class RequestParserTest {
 
         try {
             test(json, expected);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -186,10 +203,35 @@ public class RequestParserTest {
 
         try {
             requestParser.parse(json);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
         }
         assertNotNull("Expected IOException but none was thrown", actual);
+    }
+
+    @Test
+    public void testMalformedDate() throws IOException, ParseException {
+        String json = "{\n" +
+                "  \"name\": \"Test Task One\",\n" +
+                "  \"status\": \"In Progress\",\n" +
+                "  \"assignee-id\": \"34\",\n" +
+                "  \"assignee-username\": \"Test assignee\",\n" +
+                "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
+                "  \"due\": \"I am a wrong Date and I am not ashamed\",\n" +
+                "  \"risk-reference\": \"test risk reference\",\n" +
+                "  \"target-system\": \"TFS\"\n" +
+                "}";
+
+        ParseException expected = new ParseException("Unparseable date: \"I am a wrong Date and I am not ashamed\"", 0);
+        Exception actual = null;
+
+        try {
+            requestParser.parse(json);
+        } catch (IOException | ParseException e) {
+            actual = e;
+            assertEquals("Expected ParseException with message, but received", expected.getMessage(), actual.getMessage());
+        }
+        assertNotNull("Expected ParseException but none was thrown", actual);
     }
 }

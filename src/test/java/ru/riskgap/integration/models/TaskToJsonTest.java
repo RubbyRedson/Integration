@@ -3,6 +3,8 @@ package ru.riskgap.integration.models;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.ParseException;
+
 /**
  * Created by Nikita on 03.07.2015.
  */
@@ -20,7 +22,7 @@ public class TaskToJsonTest {
 				"  \"assignee-id\": \"34\",\n" +
 				"  \"assignee-username\": \"Test assignee\",\n" +
 				"  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
-				"  \"due\": \"12-02-2015\",\n" +
+				"  \"due\": \"29.12.2015\",\n" +
 				"  \"risk-reference\": \"test risk reference\",\n" +
 				"  \"target-system\": \"MS_PROJECT\"\n" +
 				"}";
@@ -35,7 +37,11 @@ public class TaskToJsonTest {
 		expected.setAssigneeId("34");
 		expected.setAssigneeUsername("Test assignee");
 		expected.setAssigneeEmail("testassignee@riskgap.ru");
-		expected.setDue("12-02-2015");
+		try {
+			expected.setDue(Task.DATE_FORMATTER.parse("29.12.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		expected.setRiskRef("test risk reference");
 		expected.setTargetSystem(TargetSystemEnum.MS_PROJECT);
 
@@ -54,7 +60,7 @@ public class TaskToJsonTest {
 				"  \"assignee-id\": \"34\",\n" +
 				"  \"assignee-username\": \"Test assignee\",\n" +
 				"  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
-				"  \"due\": \"12-02-2015\",\n" +
+				"  \"due\": \"10.10.2015\",\n" +
 				"  \"risk-reference\": \"test risk reference\",\n" +
 				"  \"target-system\": \"TFS\"\n" +
 				"}";
@@ -65,7 +71,11 @@ public class TaskToJsonTest {
 		expected.setAssigneeId("34");
 		expected.setAssigneeUsername("Test assignee");
 		expected.setAssigneeEmail("testassignee@riskgap.ru");
-		expected.setDue("12-02-2015");
+		try {
+			expected.setDue(Task.DATE_FORMATTER.parse("10.10.2015"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		expected.setRiskRef("test risk reference");
 		expected.setTargetSystem(TargetSystemEnum.TFS);
 
