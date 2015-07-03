@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
@@ -39,8 +40,12 @@ public class RequestParser {
         result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
         result.setDue(jsonMap.get(Task.TASK_DUE));
         result.setRiskRef(jsonMap.get(Task.RISK_REF));
-        result.setTargetSystem(jsonMap.get(Task.TARGET_SYSTEM));
+        result.setTargetSystem(TargetSystemEnum.valueOf(jsonMap.get(Task.TARGET_SYSTEM)));
 
         return result;
+    }
+
+    public String taskToJSON (Task task) {
+        return null;
     }
 }
