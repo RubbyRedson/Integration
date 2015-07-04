@@ -30,6 +30,12 @@ public class TfsRequestBuilder {
 	private static final String CLOSE_ELEMENT = "\t}\n";
 
 	public static String buildGetUrl(String url, String id, String... fields) {
+		if (url == null || url.isEmpty())
+			throw new IllegalArgumentException("URL must not be empty");
+
+		if (id == null || id.isEmpty())
+			throw new IllegalArgumentException("Id of the task must not be empty");
+
 		StringBuilder prepFields = new StringBuilder();
 		for (String field : fields) {
 			//todo add some basic validation?
@@ -38,6 +44,23 @@ public class TfsRequestBuilder {
 		}
 		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
 		return MessageFormat.format(GET_URL, url, id, prepFields.toString());
+	}
+
+	public static String buildUpdateUrl(String url, String id) {
+		if (url == null || url.isEmpty())
+			throw new IllegalArgumentException("URL must not be empty");
+
+		if (id == null || id.isEmpty())
+			throw new IllegalArgumentException("Id of the task must not be empty");
+
+		return MessageFormat.format(UPDATE_URL, url, id);
+	}
+
+	public static String buildCreateUrl(String url) {
+		if (url == null || url.isEmpty())
+			throw new IllegalArgumentException("URL must not be empty");
+
+		return MessageFormat.format(CREATE_URL, url);
 	}
 
 	public static String buildUpdateRequestBody(FieldValuePair... fields) {
