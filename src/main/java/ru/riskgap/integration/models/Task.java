@@ -82,6 +82,13 @@ public class Task {
     public static final String TARGET_SYSTEM = "target-system";
     private TargetSystemEnum targetSystem;
 
+    /*
+    todo TFS
+    * need full url to collection or url to tfs + collection name
+    * need project name (?)
+    * need task id or not guaranties of finding it
+     */
+
 
     public Task() {
         //no op todo Builder pattern?

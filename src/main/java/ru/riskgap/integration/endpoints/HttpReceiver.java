@@ -6,6 +6,7 @@ import ru.riskgap.integration.*;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
+import ru.riskgap.integration.models.tfs.TFSHandler;
 import ru.riskgap.integration.parsing.RequestParser;
 
 import javax.ws.rs.core.Response;

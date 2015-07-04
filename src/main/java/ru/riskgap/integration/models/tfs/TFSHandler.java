@@ -1,5 +1,6 @@
-package ru.riskgap.integration;
+package ru.riskgap.integration.models.tfs;
 
+import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Task;
 
 public class TFSHandler implements IntegrationHandler {
