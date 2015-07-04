@@ -1,13 +1,23 @@
 package ru.riskgap.integration.models.tfs;
 
 /**
+ * A simple wrapper class for a field of a TFS task that should be created or updated
  * Created by Nikita on 04.07.2015.
  */
 public class FieldValuePair {
+	/**
+	 * A value in TFS with the correct name of a Task field
+	 */
 	private final String field;
 
+	/**
+	 * A String value that represents the intended value of the field in TFS
+	 */
 	private final String value;
 
+	/**
+	 * A variable that indicates if the task already has this field in TFS
+	 */
 	private final boolean newField;
 
 	public FieldValuePair(String field, String value, boolean newField) {

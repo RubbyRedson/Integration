@@ -3,6 +3,7 @@ package ru.riskgap.integration.models.tfs;
 import java.text.MessageFormat;
 
 /**
+ * A class that has all the necessary methods to build requests to TFS
  * Created by Nikita on 04.07.2015.
  */
 public class TfsRequestBuilder {
@@ -10,7 +11,7 @@ public class TfsRequestBuilder {
 	public static final String UPDATE_URL = "{0}/_apis/wit/workitems/{1}?api-version=1.0"; // 2 is WI Ids
 	public static final String CREATE_URL = "{0}/_apis/wit/workitems/$Task?api-version=1.0"; // Task type by default
 
-	private static final String FIELDS = "System.Title,System.State,System.Description,System.AssignedTo";
+	private static final String DEFAULT_FIELDS = "System.Title,System.State,System.Description,System.AssignedTo";
 
 	public static final String TASK_NAME = "System.Title"; // Name of the task
 	public static final String TASK_STATE = "System.State"; // State of the task
@@ -29,6 +30,12 @@ public class TfsRequestBuilder {
 	private static final String BEGIN_ELEMENT = "\t{\n";
 	private static final String CLOSE_ELEMENT = "\t}\n";
 
+	/**
+	 * @param url - full url of TFS project including the collection
+	 * @param id - task id in TFS
+	 * @param fields - the fields of the task that should be read from TFS
+	 * @return url to send a GET request to, to receive information about a task
+	 */
 	public static String buildGetUrl(String url, String id, String... fields) {
 		if (url == null || url.isEmpty())
 			throw new IllegalArgumentException("URL must not be empty");
@@ -46,6 +53,11 @@ public class TfsRequestBuilder {
 		return MessageFormat.format(GET_URL, url, id, prepFields.toString());
 	}
 
+	/**
+	 * @param url - full url of TFS project including the collection
+	 * @param id - task id in TFS
+	 * @return url to send requests to TFS for updating existing tasks
+	 */
 	public static String buildUpdateUrl(String url, String id) {
 		if (url == null || url.isEmpty())
 			throw new IllegalArgumentException("URL must not be empty");
@@ -56,6 +68,10 @@ public class TfsRequestBuilder {
 		return MessageFormat.format(UPDATE_URL, url, id);
 	}
 
+	/**
+	 * @param url - full url of TFS project including the collection
+	 * @return url to send requests to TFS for creating new tasks
+	 */
 	public static String buildCreateUrl(String url) {
 		if (url == null || url.isEmpty())
 			throw new IllegalArgumentException("URL must not be empty");
@@ -63,6 +79,10 @@ public class TfsRequestBuilder {
 		return MessageFormat.format(CREATE_URL, url);
 	}
 
+	/**
+	 * @param fields - the fields  of the task that should be updated in TFS, wrapped in FieldValuePair
+	 * @return JSON body of a request to modify the fields of a task
+	 */
 	public static String buildUpdateRequestBody(FieldValuePair... fields) {
 		StringBuilder prepFields = new StringBuilder();
 		prepFields.append(BEGIN_BODY);
@@ -81,6 +101,10 @@ public class TfsRequestBuilder {
 		return prepFields.toString();
 	}
 
+	/**
+	 * @param fields - the fields  of the task that should be created in TFS, wrapped in FieldValuePair
+	 * @return JSON body of a request to create a task with some fields
+	 */
 	public static String buildCreateRequestBody(FieldValuePair... fields) {
 		StringBuilder prepFields = new StringBuilder();
 		prepFields.append(BEGIN_BODY);
