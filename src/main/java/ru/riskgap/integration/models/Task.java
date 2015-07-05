@@ -2,8 +2,6 @@ package ru.riskgap.integration.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -12,8 +10,6 @@ import java.util.Date;
  * Edited by andrey on 05.07.2015
  */
 public class Task {
-
-    private final static Logger log = LoggerFactory.getLogger(Task.class);
 
     /**
      * Идентификатор контейнера, в котором находится задача
@@ -250,36 +246,20 @@ public class Task {
 
 
         if (containerId != null ? !containerId.equals(task.containerId) : task.containerId != null) return false;
-        log.info("containerId passed");
         if (taskId != null ? !taskId.equals(task.taskId) : task.taskId != null) return false;
-        log.info("taskId passed");
         if (name != null ? !name.equals(task.name) : task.name != null) return false;
-        log.info("name passed");
         if (status != null ? !status.equals(task.status) : task.status != null) return false;
-        log.info("status passed");
         if (description != null ? !description.equals(task.description) : task.description != null) return false;
-        log.info("description passed");
         if (userId != null ? !userId.equals(task.userId) : task.userId != null) return false;
-        log.info("userId passed");
         if (username != null ? !username.equals(task.username) : task.username != null) return false;
-        log.info("username passed");
         if (userEmail != null ? !userEmail.equals(task.userEmail) : task.userEmail != null) return false;
-        log.info("userEmail passed");
         if (assigneeId != null ? !assigneeId.equals(task.assigneeId) : task.assigneeId != null) return false;
-        log.info("assigneeId passed");
         if (assigneeUsername != null ? !assigneeUsername.equals(task.assigneeUsername) : task.assigneeUsername != null)
             return false;
-        log.info("assigneeUsername passed");
         if (assigneeEmail != null ? !assigneeEmail.equals(task.assigneeEmail) : task.assigneeEmail != null)
             return false;
-        log.info("assigneeEmail passed");
-        log.info("First date:"+due);
-        log.info("Second date:"+task.due);
         if (due != null ? !due.equals(task.due) : task.due != null) return false;
-
-        log.info("due passed");
         if (riskRef != null ? !riskRef.equals(task.riskRef) : task.riskRef != null) return false;
-        log.info("riskRef passed");
         return targetSystem == task.targetSystem;
 
     }
