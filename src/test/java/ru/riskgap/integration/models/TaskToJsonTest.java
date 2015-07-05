@@ -38,7 +38,7 @@ public class TaskToJsonTest {
 		expected.setAssigneeUsername("Test assignee");
 		expected.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			expected.setDue(Task.DATE_FORMATTER.parse("29.12.2015"));
+			expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("29.12.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -72,7 +72,7 @@ public class TaskToJsonTest {
 		expected.setAssigneeUsername("Test assignee");
 		expected.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			expected.setDue(Task.DATE_FORMATTER.parse("10.10.2015"));
+			expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("10.10.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

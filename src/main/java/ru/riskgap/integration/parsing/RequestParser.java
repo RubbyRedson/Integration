@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.models.tfs.TfsRequestBuilder;
@@ -20,9 +21,30 @@ import java.util.Map;
  */
 @Component
 public class RequestParser {
-    private final static ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
+
+
+
+    public RequestParser() {
+        this(new ObjectMapper());
+    }
+
+    public RequestParser(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public Task parse(String jsonBody) {
+        Task task = null;
+        try {
+            task = objectMapper.readValue(jsonBody, Task.class);
+        } catch (IOException e) {
+            logger.error("Error while parsing JSON representation of a Task", e);
+        }
+        return task;
+    }
+
 
     /**
      * @param jsonBody of a request from initiating server. The task created holds info for creating/updating task
@@ -30,6 +52,7 @@ public class RequestParser {
      * @throws IOException when input json is malformed
      * @throws ParseException when Date in json is of incorrect format. The proper one is dd.MM.yyyy
      */
+    @Deprecated
     public Task parseInputJson(String jsonBody) throws IOException, ParseException {
 
         Map<String,String> jsonMap = objectMapper.readValue(jsonBody, HashMap.class);
@@ -49,7 +72,7 @@ public class RequestParser {
         result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
         String date = jsonMap.get(Task.TASK_DUE);
         if (date != null) {
-            result.setDue(Task.DATE_FORMATTER.parse(date));
+            result.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse(date));
         }
         result.setRiskRef(jsonMap.get(Task.RISK_REF));
         String targetSystem = jsonMap.get(Task.TARGET_SYSTEM);

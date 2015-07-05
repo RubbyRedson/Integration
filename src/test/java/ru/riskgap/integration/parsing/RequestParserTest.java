@@ -1,6 +1,7 @@
 package ru.riskgap.integration.parsing;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
@@ -20,13 +21,17 @@ public class RequestParserTest {
     RequestParser requestParser = new RequestParser();
 
     private void testInputJson(String input, Task expected) throws IOException, ParseException {
-        Task actual = requestParser.parseInputJson(input);
-        assertEquals("JSON parsing test failed", expected, actual);
+        Task actual = requestParser.parse(input);
+        assertEquals("JSON parsing test", expected, actual);
     }
 
     @Test
     public void testInputOneRequest() {
+
+
         String json = "{\n" +
+                "  \"container-id\": \"Project X\",\n" +
+                "  \"task-id\": \"12\",\n" +
                 "  \"name\": \"Test Task One\",\n" +
                 "  \"status\": \"In Progress\",\n" +
                 "  \"description\": \"Test Task Description\",\n" +
@@ -42,6 +47,8 @@ public class RequestParserTest {
                 "}";
 
         Task expected = new Task();
+        expected.setContainerId("Project X");
+        expected.setTaskId("12");
         expected.setName("Test Task One");
         expected.setStatus("In Progress");
         expected.setDescription("Test Task Description");
@@ -52,7 +59,7 @@ public class RequestParserTest {
         expected.setAssigneeUsername("Test assignee");
         expected.setAssigneeEmail("testassignee@riskgap.ru");
         try {
-            expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+            expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -94,7 +101,7 @@ public class RequestParserTest {
         expected1.setAssigneeUsername("Test assignee");
         expected1.setAssigneeEmail("testassignee@riskgap.ru");
         try {
-            expected1.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+            expected1.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -127,7 +134,7 @@ public class RequestParserTest {
         expected2.setAssigneeUsername("Test assignee 2");
         expected2.setAssigneeEmail("testassignee2@riskgap.ru");
         try {
-            expected2.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+            expected2.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -162,7 +169,7 @@ public class RequestParserTest {
         expected.setAssigneeUsername("Test assignee");
         expected.setAssigneeEmail("testassignee@riskgap.ru");
         try {
-            expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+            expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
         } catch (ParseException e) {
             e.printStackTrace();
         }

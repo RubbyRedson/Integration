@@ -23,7 +23,7 @@ public class TaskEqualsTest {
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			first.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -41,7 +41,7 @@ public class TaskEqualsTest {
 		second.setAssigneeUsername("Test assignee");
 		second.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			second.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			second.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -61,7 +61,7 @@ public class TaskEqualsTest {
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			first.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,7 @@ public class TaskEqualsTest {
 		second.setAssigneeUsername("Test assignee");
 		second.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			second.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			second.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +100,7 @@ public class TaskEqualsTest {
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			first.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -118,7 +118,7 @@ public class TaskEqualsTest {
 		second.setAssigneeUsername("Test assignee 2");
 		second.setAssigneeEmail("testassignee2@riskgap.ru");
 		try {
-			second.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+			second.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -138,7 +138,7 @@ public class TaskEqualsTest {
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
 		try {
-			first.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+			first.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -156,7 +156,7 @@ public class TaskEqualsTest {
 		second.setAssigneeUsername("Test assignee 2");
 		second.setAssigneeEmail("testassignee2@riskgap.ru");
 		try {
-			second.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+			second.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
