@@ -66,7 +66,7 @@ public class HttpReceiver {
     }
 
     private Task getTask (String body) throws IOException, ParseException {
-        Task task = requestParser.parse(body);
+        Task task = requestParser.parseInputJson(body);
         return task;
     }
 

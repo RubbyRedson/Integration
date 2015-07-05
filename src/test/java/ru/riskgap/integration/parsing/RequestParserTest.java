@@ -19,13 +19,13 @@ public class RequestParserTest {
     //unit test, no spring autowiring
     RequestParser requestParser = new RequestParser();
 
-    private void test(String input, Task expected) throws IOException, ParseException {
-        Task actual = requestParser.parse(input);
+    private void testInputJson(String input, Task expected) throws IOException, ParseException {
+        Task actual = requestParser.parseInputJson(input);
         assertEquals("JSON parsing test failed", expected, actual);
     }
 
     @Test
-    public void testOneRequest() {
+    public void testInputOneRequest() {
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
                 "  \"status\": \"In Progress\",\n" +
@@ -60,14 +60,14 @@ public class RequestParserTest {
         expected.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
-            test(json, expected);
+            testInputJson(json, expected);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testSeveralRequestsSequentially() {
+    public void testInputSeveralRequestsSequentially() {
         String json1 = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
                 "  \"status\": \"In Progress\",\n" +
@@ -135,15 +135,15 @@ public class RequestParserTest {
         expected2.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
-            test(json1, expected1);
-            test(json2, expected2);
+            testInputJson(json1, expected1);
+            testInputJson(json2, expected2);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testPartialTaskRequest() {
+    public void testInputPartialTaskRequest() {
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
                 "  \"status\": \"In Progress\",\n" +
@@ -170,28 +170,28 @@ public class RequestParserTest {
         expected.setTargetSystem(TargetSystemEnum.TFS);
 
         try {
-            test(json, expected);
+            testInputJson(json, expected);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testEmptyRequest() {
+    public void testInputEmptyRequest() {
         String json = "{\n" +
                 "}";
 
         Task expected = new Task();
 
         try {
-            test(json, expected);
+            testInputJson(json, expected);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testMalformedJson() throws IOException {
+    public void testInputMalformedJson() throws IOException {
         String json = "I don't look like a JSON\n" +
                 "Do I?" +
                 "See ya!";
@@ -202,7 +202,7 @@ public class RequestParserTest {
         Exception actual = null;
 
         try {
-            requestParser.parse(json);
+            requestParser.parseInputJson(json);
         } catch (IOException | ParseException e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
@@ -211,7 +211,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void testMalformedDate() throws IOException, ParseException {
+    public void testInputMalformedDate() throws IOException, ParseException {
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
                 "  \"status\": \"In Progress\",\n" +
@@ -227,7 +227,7 @@ public class RequestParserTest {
         Exception actual = null;
 
         try {
-            requestParser.parse(json);
+            requestParser.parseInputJson(json);
         } catch (IOException | ParseException e) {
             actual = e;
             assertEquals("Expected ParseException with message, but received", expected.getMessage(), actual.getMessage());

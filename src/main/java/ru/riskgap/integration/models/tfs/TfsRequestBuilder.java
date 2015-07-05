@@ -1,5 +1,8 @@
 package ru.riskgap.integration.models.tfs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.MessageFormat;
 
 /**
@@ -7,16 +10,21 @@ import java.text.MessageFormat;
  * Created by Nikita on 04.07.2015.
  */
 public class TfsRequestBuilder {
+	private final static Logger logger = LoggerFactory.getLogger(TfsRequestBuilder.class);
+
 	public static final String GET_URL = "{0}/_apis/wit/WorkItems?ids={1}&fields={2}&api-version=1.0";
 	public static final String UPDATE_URL = "{0}/_apis/wit/workitems/{1}?api-version=1.0"; // 2 is WI Ids
 	public static final String CREATE_URL = "{0}/_apis/wit/workitems/$Task?api-version=1.0"; // Task type by default
 
-	private static final String DEFAULT_FIELDS = "System.Title,System.State,System.Description,System.AssignedTo";
+	private static final String DEFAULT_FIELDS = "System.Title,System.State,System.Description,System.ChangedBy,System.AssignedTo";
 
 	public static final String TASK_NAME = "System.Title"; // Name of the task
 	public static final String TASK_STATE = "System.State"; // State of the task
 	public static final String TASK_DESCR = "System.Description"; // Description of the task
+	public static final String CREATED_BY = "System.CreatedBy"; // user who created the task
+	public static final String CHANGED_BY = "System.ChangedBy"; // user who changed the task
 	public static final String TASK_ASSIGNEE = "System.AssignedTo"; // Assignee of the task
+	public static final String TASK_TYPE = "System.WorkItemType"; // Task or Bug
 
 	private static final String OP_ADD = "\t\t\"op\" : \"add\",\n"; // operation to add new field to task
 	private static final String OP_REPLACE = "\t\t\"op\" : \"replace\",\n"; // operation to replace task field value
@@ -43,14 +51,22 @@ public class TfsRequestBuilder {
 		if (id == null || id.isEmpty())
 			throw new IllegalArgumentException("Id of the task must not be empty");
 
-		StringBuilder prepFields = new StringBuilder();
-		for (String field : fields) {
-			//todo add some basic validation?
-			prepFields.append(field);
-			prepFields.append(',');
+		String preparedFields = null;
+
+		if (fields.length > 0) {
+			StringBuilder prepFields = new StringBuilder();
+			for (String field : fields) {
+				//todo add some basic validation?
+				prepFields.append(field);
+				prepFields.append(',');
+			}
+			prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
+			preparedFields = prepFields.toString();
+		} else  {
+			preparedFields = DEFAULT_FIELDS;
 		}
-		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
-		return MessageFormat.format(GET_URL, url, id, prepFields.toString());
+
+		return MessageFormat.format(GET_URL, url, id, preparedFields);
 	}
 
 	/**

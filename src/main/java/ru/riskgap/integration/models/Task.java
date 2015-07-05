@@ -246,7 +246,7 @@ public class Task {
                 ", assigneeId='" + assigneeId + '\'' +
                 ", assigneeUsername='" + assigneeUsername + '\'' +
                 ", assigneeEmail='" + assigneeEmail + '\'' +
-                ", due='" + DATE_FORMATTER.format(due) + '\'' +
+                ", due='" + (due == null ? null : DATE_FORMATTER.format(due)) + '\'' +
                 ", riskRef='" + riskRef + '\'' +
                 ", targetSystem=" + targetSystem +
                 '}';
@@ -263,7 +263,7 @@ public class Task {
                 "  \"assignee-id\": \"" + assigneeId + "\",\n" +
                 "  \"assignee-username\": \"" + assigneeUsername + "\",\n" +
                 "  \"assignee-email\": \"" + assigneeEmail + "\",\n" +
-                "  \"due\": \"" + DATE_FORMATTER.format(due) + "\",\n" +
+                "  \"due\": \"" + (due == null ? null : DATE_FORMATTER.format(due)) + "\",\n" +
                 "  \"risk-reference\": \"" + riskRef + "\",\n" +
                 "  \"target-system\": \"" + targetSystem + "\"\n" +
                 "}";

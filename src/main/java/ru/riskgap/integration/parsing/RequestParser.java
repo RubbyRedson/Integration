@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
+import ru.riskgap.integration.models.tfs.TfsRequestBuilder;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +24,13 @@ public class RequestParser {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
 
-    public Task parse(String jsonBody) throws IOException, ParseException {
+    /**
+     * @param jsonBody of a request from initiating server. The task created holds info for creating/updating task
+     * @return Task instance with all of the information from jsonBody
+     * @throws IOException when input json is malformed
+     * @throws ParseException when Date in json is of incorrect format. The proper one is dd.MM.yyyy
+     */
+    public Task parseInputJson(String jsonBody) throws IOException, ParseException {
 
         Map<String,String> jsonMap = objectMapper.readValue(jsonBody, HashMap.class);
         if (logger.isInfoEnabled())
@@ -50,5 +58,68 @@ public class RequestParser {
         }
 
         return result;
+    }
+
+    /**
+     * @param jsonBody of a TFS response when GET is executed. It converts all of it into a Task instance.
+     * @return Task instance with all of the information from jsonBody
+     * @throws IOException when input json is malformed
+     */
+    public Task parseTfsGetResponseJson(String jsonBody) throws IOException {
+
+        Map<String, Object> jsonOuterMap = objectMapper.readValue(jsonBody, HashMap.class);
+        if (logger.isInfoEnabled())
+            logger.info("Received json outer body map is " + jsonOuterMap);
+
+        Task result = new Task();
+
+        if (jsonOuterMap == null)
+            return result;
+
+        ArrayList<Map> jsonValueList = (ArrayList) jsonOuterMap.get("value");
+        if (logger.isInfoEnabled())
+            logger.info("Received json value list is " + jsonValueList);
+
+        if (jsonValueList == null || jsonValueList.size() == 0)
+            return result;
+
+        Map<String, String> jsonMap = (Map<String, String>) jsonValueList.get(0).get("fields");
+        if (logger.isInfoEnabled())
+            logger.info("Received json fields map is " + jsonMap);
+
+        if (jsonMap == null)
+            return result;
+
+        result.setName(jsonMap.get(TfsRequestBuilder.TASK_NAME));
+        result.setStatus(jsonMap.get(TfsRequestBuilder.TASK_STATE));
+        result.setDescription(jsonMap.get(TfsRequestBuilder.TASK_DESCR));
+        String user = jsonMap.get(TfsRequestBuilder.CHANGED_BY);
+
+        if (user != null && !user.isEmpty()) {
+            String username = user.substring(0, user.lastIndexOf('<') - 1);
+            String mail = user.substring(username.length());
+            result.setUsername(username);
+            result.setUserEmail(mail.substring(2, mail.length() - 1)); //remove < and >
+        }
+
+        String assignee = jsonMap.get(TfsRequestBuilder.TASK_ASSIGNEE);
+        if (assignee != null && !assignee.isEmpty()) {
+            String assigneeName = assignee.substring(0, assignee.lastIndexOf('<') - 1);
+            String assigneeMail = assignee.substring(assigneeName.length());
+            result.setAssigneeUsername(assigneeName);
+            result.setAssigneeEmail(assigneeMail.substring(2, assigneeMail.length() - 1)); //remove < and >
+        }
+
+//        String date = jsonMap.get(Task.TASK_DUE);
+//        if (date != null) {
+//            result.setDue(Task.DATE_FORMATTER.parse(date));
+//        }
+
+//        result.setRiskRef(jsonMap.get(Task.RISK_REF));
+
+        result.setTargetSystem(TargetSystemEnum.TFS);
+
+        return result;
+
     }
 }
