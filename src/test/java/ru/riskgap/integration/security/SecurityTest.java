@@ -1,4 +1,4 @@
-package security;
+package ru.riskgap.integration.security;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(
         classes = {ApplicationContextConfig.class, RestServletConfig.class, TestSecurityConfig.class})
 @WebAppConfiguration
-public class SecurityTests {
+public class SecurityTest {
     @Autowired
     WebApplicationContext webAppContext;
 
-    private static Logger log = LoggerFactory.getLogger(SecurityTests.class);
+    private static Logger log = LoggerFactory.getLogger(SecurityTest.class);
 
     private MockMvc mockMvc;
 

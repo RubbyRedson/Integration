@@ -1,4 +1,4 @@
-package security;
+package ru.riskgap.integration.security;
 
 import org.mockito.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.riskgap.integration.security.NoOpAuthManager;
-import ru.riskgap.integration.security.RestAuthEntryPoint;
-import ru.riskgap.integration.security.RestTokenAuthFilter;
-import ru.riskgap.integration.security.TokenStore;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
