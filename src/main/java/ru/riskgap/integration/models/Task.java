@@ -111,6 +111,18 @@ public class Task {
     @JsonProperty("target-system")
     private TargetSystemEnum targetSystem;
 
+    /**
+     * Ключ для идентификации приложения, через которое осуществляется доступ к API интегрируемой системы
+     */
+    @JsonProperty("application-key")
+    private String applicationKey; //TODO: add tests
+
+    @JsonProperty("user-token")
+    private String userToken; //TODO: add tests
+
+
+
+
     /*
     todo TFS
     * need full url to collection or url to tfs + collection name
@@ -235,6 +247,22 @@ public class Task {
 
     public void setContainerId(String containerId) {
         this.containerId = containerId;
+    }
+
+    public String getApplicationKey() {
+        return applicationKey;
+    }
+
+    public void setApplicationKey(String applicationKey) {
+        this.applicationKey = applicationKey;
+    }
+
+    public String getUserToken() {
+        return userToken;
+    }
+
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
     }
 
     @Override
