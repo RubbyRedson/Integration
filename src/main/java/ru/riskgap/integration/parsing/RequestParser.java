@@ -84,7 +84,7 @@ public class RequestParser {
     }
 
     /**
-     * @param jsonBody of a TFS response when GET is executed. It converts all of it into a Task instance.
+     * @param jsonBody of a TFS response when GET for Work item fields is executed. It converts all of it into a Task instance.
      * @return Task instance with all of the information from jsonBody
      * @throws IOException when input json is malformed
      */
@@ -146,6 +146,12 @@ public class RequestParser {
 
     }
 
+
+    /**
+     * @param jsonBody of a TFS response when GET for Work Item history is executed. It converts all of it into a Task instance.
+     * @return Task instance with all of the information from jsonBody
+     * @throws IOException when input json is malformed
+     */
     public Task parseTfsGetWorkItemHistoryResponseJson(String jsonBody) throws IOException {
          return null;
     }
