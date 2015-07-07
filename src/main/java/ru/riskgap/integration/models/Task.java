@@ -102,7 +102,7 @@ public class Task {
      */
     public static final String RISK_REF = "risk-reference";
     @JsonProperty("risk-reference")
-    private String riskRef; //todo format?
+    private String riskRef; //todo It is a URL to RiskGap risk, maybe some validation
 
     /**
      * Система, в которой находится задание

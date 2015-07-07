@@ -3,6 +3,7 @@ package ru.riskgap.integration.models.tfs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
 import java.text.MessageFormat;
 
 /**
@@ -12,7 +13,8 @@ import java.text.MessageFormat;
 public class TfsRequestBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(TfsRequestBuilder.class);
 
-	public static final String GET_URL = "{0}/_apis/wit/WorkItems?ids={1}&fields={2}&api-version=1.0";
+	public static final String GET_TASK_FIELDS_URL = "{0}/_apis/wit/WorkItems?ids={1}&fields={2}&api-version=1.0";
+	public static final String GET_HISTORY_URL = "{0}/_apis/wit/workitems/{1}/history?api-version=1.0";
 	public static final String UPDATE_URL = "{0}/_apis/wit/workitems/{1}?api-version=1.0"; // 2 is WI Ids
 	public static final String CREATE_URL = "{0}/_apis/wit/workitems/$Task?api-version=1.0"; // Task type by default
 
@@ -44,7 +46,7 @@ public class TfsRequestBuilder {
 	 * @param fields - the fields of the task that should be read from TFS
 	 * @return url to send a GET request to, to receive information about a task
 	 */
-	public static String buildGetUrl(String url, String id, String... fields) {
+	public static String buildGetUrlForTaskFields(String url, String id, String... fields) {
 		if (url == null || url.isEmpty())
 			throw new IllegalArgumentException("URL must not be empty");
 
@@ -66,7 +68,22 @@ public class TfsRequestBuilder {
 			preparedFields = DEFAULT_FIELDS;
 		}
 
-		return MessageFormat.format(GET_URL, url, id, preparedFields);
+		return MessageFormat.format(GET_TASK_FIELDS_URL, url, new BigInteger(id), preparedFields); // validate that id is just a number
+	}
+
+	/**
+	 * @param url - full url of TFS project including the collection
+	 * @param id - task id in TFS
+	 * @return url to send requests to TFS for getting all of the comments
+	 */
+	public static String buildGetUrlForWorkItemHistory(String url, String id) {
+		if (url == null || url.isEmpty())
+			throw new IllegalArgumentException("URL must not be empty");
+
+		if (id == null || id.isEmpty())
+			throw new IllegalArgumentException("Id of the task must not be empty");
+
+		return MessageFormat.format(GET_HISTORY_URL, url, new BigInteger(id)); // validate that id is just a number
 	}
 
 	/**
@@ -81,7 +98,7 @@ public class TfsRequestBuilder {
 		if (id == null || id.isEmpty())
 			throw new IllegalArgumentException("Id of the task must not be empty");
 
-		return MessageFormat.format(UPDATE_URL, url, id);
+		return MessageFormat.format(UPDATE_URL, url, new BigInteger(id)); // id to number to check it
 	}
 
 	/**

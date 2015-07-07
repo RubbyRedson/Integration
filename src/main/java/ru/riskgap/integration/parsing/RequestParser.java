@@ -88,7 +88,7 @@ public class RequestParser {
      * @return Task instance with all of the information from jsonBody
      * @throws IOException when input json is malformed
      */
-    public Task parseTfsGetResponseJson(String jsonBody) throws IOException {
+    public Task parseTfsGetWorkItemFieldsResponseJson(String jsonBody) throws IOException {
 
         Map<String, Object> jsonOuterMap = objectMapper.readValue(jsonBody, HashMap.class);
         if (logger.isInfoEnabled())
@@ -144,5 +144,9 @@ public class RequestParser {
 
         return result;
 
+    }
+
+    public Task parseTfsGetWorkItemHistoryResponseJson(String jsonBody) throws IOException {
+         return null;
     }
 }

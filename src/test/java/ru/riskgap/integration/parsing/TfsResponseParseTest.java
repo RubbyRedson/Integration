@@ -18,7 +18,7 @@ public class TfsResponseParseTest {
 
 
 	private void test(String input, Task expected) throws IOException {
-		Task actual = requestParser.parseTfsGetResponseJson(input);
+		Task actual = requestParser.parseTfsGetWorkItemFieldsResponseJson(input);
 		assertEquals("TFS JSON parsing test failed", expected, actual);
 	}
 
@@ -199,7 +199,7 @@ public class TfsResponseParseTest {
 		Exception actual = null;
 
 		try {
-			requestParser.parseTfsGetResponseJson(json);
+			requestParser.parseTfsGetWorkItemFieldsResponseJson(json);
 		} catch (IOException e) {
 			actual = e;
 			assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
