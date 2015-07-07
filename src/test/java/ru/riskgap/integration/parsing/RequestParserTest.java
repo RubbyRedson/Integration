@@ -1,15 +1,17 @@
 package ru.riskgap.integration.parsing;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Test class for parser
@@ -240,5 +242,52 @@ public class RequestParserTest {
             assertEquals("Expected ParseException with message, but received", expected.getMessage(), actual.getMessage());
         }
         assertNotNull("Expected ParseException but none was thrown", actual);
+    }
+
+    @Test
+    public void testParseCommentsResponse() throws ParseException {
+        String response = "{\n" +
+                "\t\"count\": 3,\n" +
+                "\t\"value\":\r [\n" +
+                "\t\t\t\t{\n" +
+                "\t\t\t\t\"rev\": 2,\n" +
+                "\t\t\t\t\"value\": \"Adding the necessary spec\",\n" +
+                "\t\t\t\t\"revisedBy\":          {\n" +
+                "\t\t\t\t\t\"id\": \"e05ad0af-18c6-46eb-ac02-bab333d46f5c\",\n" +
+                "\t\t\t\t\t\"name\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
+                "\t\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU Test Collection/_apis/Identities/e05ad0af-18c6-46eb-ac02-bab333d46f5c\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"revisedDate\": \"2015-07-07T09:08:49.31Z\",\n" +
+                "\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU%20Test%20Collection/_apis/wit/workItems/2/history/2\"\n" +
+                "\t\t},\n" +
+                "\t\t\t\t{\n" +
+                "\t\t\t\t\"rev\": 2,\n" +
+                "\t\t\t\t\"value\": \"Adding the necessary spec\",\n" +
+                "\t\t\t\t\"revisedBy\":          {\n" +
+                "\t\t\t\t\t\"id\": \"e05ad0af-18c6-46eb-ac02-bab333d46f5c\",\n" +
+                "\t\t\t\t\t\"name\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
+                "\t\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU Test Collection/_apis/Identities/e05ad0af-18c6-46eb-ac02-bab333d46f5c\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"revisedDate\": \"2015-07-07T09:08:49.31Z\",\n" +
+                "\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU%20Test%20Collection/_apis/wit/workItems/2/history/2\"\n" +
+                "\t\t}\n" +
+                "\t]\n" +
+                "}";
+        List<Comment> actual = new ArrayList<>();
+        try {
+           actual = requestParser.parseTfsGetWorkItemHistoryResponseJson(response);
+        } catch (IOException e) {
+            assertNull("Test failed, expected no exception", e);
+        }
+
+        Comment comment1 = new Comment();
+        comment1.setUsername("rg");
+        comment1.setEmail("RISKGAPWIN\\rg");
+        comment1.setText("Adding the necessary spec");
+        comment1.setDate(Comment.TFS_DATE_FORMATTER.parse("2015-07-07T09:08:49.31Z"));
+
+        assertTrue("The length of resulting list should be 2", actual.size() == 2);
+        assertEquals("Comment is not correct", comment1, actual.get(0));
+        assertEquals("Comment is not correct", comment1, actual.get(1));
     }
 }
