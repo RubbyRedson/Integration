@@ -328,7 +328,7 @@ public class Task {
                 ", assigneeId='" + assigneeId + '\'' +
                 ", assigneeUsername='" + assigneeUsername + '\'' +
                 ", assigneeEmail='" + assigneeEmail + '\'' +
-                ", due='" + (due == null ? null : CustomJsonDateDeserializer.DATE_FORMATTER.format(due)) + '\'' +
+                ", due='" + (due == null ? null : due) + '\'' +
                 ", riskRef='" + riskRef + '\'' +
                 ", targetSystem=" + targetSystem +
                 '}';
