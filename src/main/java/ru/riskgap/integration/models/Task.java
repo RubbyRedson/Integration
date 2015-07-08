@@ -1,6 +1,8 @@
 package ru.riskgap.integration.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Date;
@@ -37,7 +39,7 @@ public class Task {
      */
     public static final String TASK_STATUS = "status";
     @JsonProperty("status")
-    private String status; //todo use enum?
+    private Status status;
 
     /**
      * Описание задачи
@@ -145,11 +147,11 @@ public class Task {
         this.name = name;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -336,7 +338,7 @@ public class Task {
     public String toJson() {
         return "{\n" +
                 "  \"name\": \"" + name + "\",\n" +
-                "  \"status\": \"" + status + "\",\n" +
+                "  \"status\": \"" + status.toString().toLowerCase() + "\",\n" +
                 "  \"description\": \"" + description + "\",\n" +
                 "  \"user-id\": \"" + userId + "\",\n" +
                 "  \"username\": \"" + username + "\",\n" +
@@ -348,6 +350,30 @@ public class Task {
                 "  \"risk-reference\": \"" + riskRef + "\",\n" +
                 "  \"target-system\": \"" + targetSystem + "\"\n" +
                 "}";
+    }
+
+    /**
+     * Статус задачи
+     */
+    public enum Status {
+        OPEN("open"),
+        CLOSED("close");
+
+        private String status;
+
+        Status(String status) {
+            this.status = status;
+        }
+
+        @JsonCreator
+        public static Status fromString(String status) {
+            return status == null? null:Status.valueOf(status.toUpperCase());
+        }
+
+        @JsonValue
+        public String getStatus() {
+            return status;
+        }
     }
 
 

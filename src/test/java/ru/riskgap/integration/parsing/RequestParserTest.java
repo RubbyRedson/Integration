@@ -7,6 +7,8 @@ import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,12 @@ public class RequestParserTest {
 
     @Test
     public void testInputOneRequest() {
-
-
+        Exception ex = null;
         String json = "{\n" +
                 "  \"container-id\": \"Project X\",\n" +
                 "  \"task-id\": \"12\",\n" +
                 "  \"name\": \"Test Task One\",\n" +
-                "  \"status\": \"In Progress\",\n" +
+                "  \"status\": \"open\",\n" +
                 "  \"description\": \"Test Task Description\",\n" +
                 "  \"user-id\": \"42\",\n" +
                 "  \"username\": \"Test user\",\n" +
@@ -52,7 +53,7 @@ public class RequestParserTest {
         expected.setContainerId("Project X");
         expected.setTaskId("12");
         expected.setName("Test Task One");
-        expected.setStatus("In Progress");
+        expected.setStatus(Task.Status.OPEN);
         expected.setDescription("Test Task Description");
         expected.setUserId("42");
         expected.setUsername("Test user");
@@ -70,16 +71,19 @@ public class RequestParserTest {
 
         try {
             testInputJson(json, expected);
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            ex = e;
         }
+        assertNull(ex);
     }
 
     @Test
     public void testInputSeveralRequestsSequentially() {
+        Exception ex = null;
         String json1 = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
-                "  \"status\": \"In Progress\",\n" +
+                "  \"status\": \"open\",\n" +
                 "  \"description\": \"Test Task Description\",\n" +
                 "  \"user-id\": \"42\",\n" +
                 "  \"username\": \"Test user\",\n" +
@@ -94,7 +98,7 @@ public class RequestParserTest {
 
         Task expected1 = new Task();
         expected1.setName("Test Task One");
-        expected1.setStatus("In Progress");
+        expected1.setStatus(Task.Status.OPEN);
         expected1.setDescription("Test Task Description");
         expected1.setUserId("42");
         expected1.setUsername("Test user");
@@ -112,7 +116,7 @@ public class RequestParserTest {
 
         String json2 = "{\n" +
                 "  \"name\": \"Test Task Two\",\n" +
-                "  \"status\": \"Completed\",\n" +
+                "  \"status\": \"closed\",\n" +
                 "  \"description\": \"Test Task2 Description\",\n" +
                 "  \"user-id\": \"423\",\n" +
                 "  \"username\": \"Test user 2\",\n" +
@@ -127,7 +131,7 @@ public class RequestParserTest {
 
         Task expected2 = new Task();
         expected2.setName("Test Task Two");
-        expected2.setStatus("Completed");
+        expected2.setStatus(Task.Status.CLOSED);
         expected2.setDescription("Test Task2 Description");
         expected2.setUserId("423");
         expected2.setUsername("Test user 2");
@@ -148,14 +152,17 @@ public class RequestParserTest {
             testInputJson(json2, expected2);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            ex = e;
         }
+        assertNull(ex);
     }
 
     @Test
     public void testInputPartialTaskRequest() {
+        Exception ex = null;
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
-                "  \"status\": \"In Progress\",\n" +
+                "  \"status\": \"closed\",\n" +
                 "  \"assignee-id\": \"34\",\n" +
                 "  \"assignee-username\": \"Test assignee\",\n" +
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
@@ -166,7 +173,7 @@ public class RequestParserTest {
 
         Task expected = new Task();
         expected.setName("Test Task One");
-        expected.setStatus("In Progress");
+        expected.setStatus(Task.Status.CLOSED);
         expected.setAssigneeId("34");
         expected.setAssigneeUsername("Test assignee");
         expected.setAssigneeEmail("testassignee@riskgap.ru");
@@ -182,11 +189,14 @@ public class RequestParserTest {
             testInputJson(json, expected);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            ex = e;
         }
+        assertNull(ex);
     }
 
     @Test
     public void testInputEmptyRequest() {
+        Exception ex = null;
         String json = "{\n" +
                 "}";
 
@@ -196,7 +206,9 @@ public class RequestParserTest {
             testInputJson(json, expected);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            ex = e;
         }
+        assertNull(ex);
     }
 
     @Test
@@ -211,8 +223,8 @@ public class RequestParserTest {
         Exception actual = null;
 
         try {
-            requestParser.parseInputJson(json);
-        } catch (IOException | ParseException e) {
+            requestParser.parse(json);
+        } catch (IOException e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
         }
@@ -221,9 +233,10 @@ public class RequestParserTest {
 
     @Test
     public void testInputMalformedDate() throws IOException, ParseException {
+        Exception actual = null;
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
-                "  \"status\": \"In Progress\",\n" +
+                "  \"status\": \"open\",\n" +
                 "  \"assignee-id\": \"34\",\n" +
                 "  \"assignee-username\": \"Test assignee\",\n" +
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
@@ -232,14 +245,13 @@ public class RequestParserTest {
                 "  \"target-system\": \"TFS\"\n" +
                 "}";
 
-        ParseException expected = new ParseException("Unparseable date: \"I am a wrong Date and I am not ashamed\"", 0);
-        Exception actual = null;
-
         try {
-            requestParser.parseInputJson(json);
-        } catch (IOException | ParseException e) {
+            requestParser.parse(json);
+        } catch (IOException e) {
             actual = e;
-            assertEquals("Expected ParseException with message, but received", expected.getMessage(), actual.getMessage());
+            StringWriter stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            assertTrue(stringWriter.toString().contains("Unparseable date"));
         }
         assertNotNull("Expected ParseException but none was thrown", actual);
     }

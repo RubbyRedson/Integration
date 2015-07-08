@@ -14,7 +14,7 @@ public class TaskToJsonTest {
 	public void testTaskToJsonFull() {
 		String json = "{\n" +
 				"  \"name\": \"Test Task One\",\n" +
-				"  \"status\": \"In Progress\",\n" +
+				"  \"status\": \"open\",\n" +
 				"  \"description\": \"Test Task Description\",\n" +
 				"  \"user-id\": \"42\",\n" +
 				"  \"username\": \"Test user\",\n" +
@@ -29,7 +29,7 @@ public class TaskToJsonTest {
 
 		Task expected = new Task();
 		expected.setName("Test Task One");
-		expected.setStatus("In Progress");
+		expected.setStatus(Task.Status.OPEN);
 		expected.setDescription("Test Task Description");
 		expected.setUserId("42");
 		expected.setUsername("Test user");
@@ -52,7 +52,7 @@ public class TaskToJsonTest {
 	public void testTaskToJsonPartial() {
 		String json = "{\n" +
 				"  \"name\": \"Test Task One\",\n" +
-				"  \"status\": \"In Progress\",\n" +
+				"  \"status\": \"open\",\n" +
 				"  \"description\": \"null\",\n" +
 				"  \"user-id\": \"null\",\n" +
 				"  \"username\": \"null\",\n" +
@@ -67,7 +67,7 @@ public class TaskToJsonTest {
 
 		Task expected = new Task();
 		expected.setName("Test Task One");
-		expected.setStatus("In Progress");
+		expected.setStatus(Task.Status.OPEN);
 		expected.setAssigneeId("34");
 		expected.setAssigneeUsername("Test assignee");
 		expected.setAssigneeEmail("testassignee@riskgap.ru");

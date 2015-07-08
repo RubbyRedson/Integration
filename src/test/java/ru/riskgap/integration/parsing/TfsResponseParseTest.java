@@ -30,7 +30,7 @@ public class TfsResponseParseTest {
 				"      \"id\": 2,\n" +
 				"      \"rev\": 2,\n" +
 				"      \"fields\":       {\n" +
-				"         \"System.State\": \"To Do\",\n" +
+				"         \"System.State\": \"open\",\n" +
 				"         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.Title\": \"Test Task\",\n" +
@@ -42,7 +42,7 @@ public class TfsResponseParseTest {
 
 		Task expected = new Task();
 		expected.setName("Test Task");
-		expected.setStatus("To Do");
+		expected.setStatus(Task.Status.OPEN);
 		expected.setDescription("Test descr");
 		expected.setUsername("rg");
 		expected.setUserEmail("RISKGAPWIN\\rg");
@@ -72,7 +72,7 @@ public class TfsResponseParseTest {
 				"      \"id\": 2,\n" +
 				"      \"rev\": 2,\n" +
 				"      \"fields\":       {\n" +
-				"         \"System.State\": \"To Do\",\n" +
+				"         \"System.State\": \"open\",\n" +
 				"         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.Title\": \"Test Task\",\n" +
@@ -84,7 +84,7 @@ public class TfsResponseParseTest {
 
 		Task expected1 = new Task();
 		expected1.setName("Test Task");
-		expected1.setStatus("To Do");
+		expected1.setStatus(Task.Status.OPEN);
 		expected1.setDescription("Test descr");
 		expected1.setUsername("rg");
 		expected1.setUserEmail("RISKGAPWIN\\rg");
@@ -104,7 +104,7 @@ public class TfsResponseParseTest {
 				"      \"id\": 3,\n" +
 				"      \"rev\": 4,\n" +
 				"      \"fields\":       {\n" +
-				"         \"System.State\": \"To Do\",\n" +
+				"         \"System.State\": \"open\",\n" +
 				"         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
 				"         \"System.Title\": \"Test Task 2\",\n" +
@@ -116,7 +116,7 @@ public class TfsResponseParseTest {
 
 		Task expected2 = new Task();
 		expected2.setName("Test Task 2");
-		expected2.setStatus("To Do");
+		expected2.setStatus(Task.Status.OPEN);
 		expected2.setDescription("Test descr 2");
 		expected2.setUsername("rg");
 		expected2.setUserEmail("RISKGAPWIN\\rg");
@@ -146,7 +146,7 @@ public class TfsResponseParseTest {
 				"      \"id\": 2,\n" +
 				"      \"rev\": 2,\n" +
 				"      \"fields\":       {\n" +
-				"         \"System.State\": \"To Do\",\n" +
+				"         \"System.State\": \"open\",\n" +
 				"         \"System.Title\": \"Test Task\",\n" +
 				"         \"System.Description\": \"Test descr\"\n" +
 				"      },\n" +
@@ -156,7 +156,7 @@ public class TfsResponseParseTest {
 
 		Task expected = new Task();
 		expected.setName("Test Task");
-		expected.setStatus("To Do");
+		expected.setStatus(Task.Status.OPEN);
 		expected.setDescription("Test descr");
 //		try {
 //			expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));

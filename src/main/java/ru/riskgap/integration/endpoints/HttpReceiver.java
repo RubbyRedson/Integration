@@ -2,7 +2,9 @@ package ru.riskgap.integration.endpoints;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.riskgap.integration.*;
+import ru.riskgap.integration.IntegrationHandler;
+import ru.riskgap.integration.MSProjectHandler;
+import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
@@ -66,7 +68,7 @@ public class HttpReceiver {
     }
 
     private Task getTask (String body) throws IOException, ParseException {
-        Task task = requestParser.parseInputJson(body);
+        Task task = requestParser.parse(body);
         return task;
     }
 

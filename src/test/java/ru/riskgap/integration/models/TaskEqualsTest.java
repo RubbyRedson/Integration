@@ -14,7 +14,7 @@ public class TaskEqualsTest {
 	public void testEqualTasksFull() {
 		Task first = new Task();
 		first.setName("Test Task One");
-		first.setStatus("In Progress");
+		first.setStatus(Task.Status.OPEN);
 		first.setDescription("Test Task Description");
 		first.setUserId("42");
 		first.setUsername("Test user");
@@ -32,7 +32,7 @@ public class TaskEqualsTest {
 
 		Task second = new Task();
 		second.setName("Test Task One");
-		second.setStatus("In Progress");
+		second.setStatus(Task.Status.OPEN);
 		second.setDescription("Test Task Description");
 		second.setUserId("42");
 		second.setUsername("Test user");
@@ -56,7 +56,7 @@ public class TaskEqualsTest {
 	public void testEqualTasksPartial() {
 		Task first = new Task();
 		first.setName("Test Task One");
-		first.setStatus("In Progress");
+		first.setStatus(Task.Status.OPEN);
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
@@ -70,7 +70,7 @@ public class TaskEqualsTest {
 
 		Task second = new Task();
 		second.setName("Test Task One");
-		second.setStatus("In Progress");
+		second.setStatus(Task.Status.OPEN);
 		second.setAssigneeId("34");
 		second.setAssigneeUsername("Test assignee");
 		second.setAssigneeEmail("testassignee@riskgap.ru");
@@ -91,7 +91,7 @@ public class TaskEqualsTest {
 	public void testDifferentTasksFull() {
 		Task first = new Task();
 		first.setName("Test Task One");
-		first.setStatus("In Progress");
+		first.setStatus(Task.Status.OPEN);
 		first.setDescription("Test Task Description");
 		first.setUserId("42");
 		first.setUsername("Test user");
@@ -109,7 +109,7 @@ public class TaskEqualsTest {
 
 		Task second = new Task();
 		second.setName("Test Task Two");
-		second.setStatus("Completed");
+		second.setStatus(Task.Status.CLOSED);
 		second.setDescription("Test Task2 Description");
 		second.setUserId("423");
 		second.setUsername("Test user 2");
@@ -133,7 +133,7 @@ public class TaskEqualsTest {
 	public void testDifferentTasksPartial() {
 		Task first = new Task();
 		first.setName("Test Task One");
-		first.setStatus("In Progress");
+		first.setStatus(Task.Status.OPEN);
 		first.setAssigneeId("34");
 		first.setAssigneeUsername("Test assignee");
 		first.setAssigneeEmail("testassignee@riskgap.ru");
@@ -147,7 +147,7 @@ public class TaskEqualsTest {
 
 		Task second = new Task();
 		second.setName("Test Task Two");
-		second.setStatus("Completed");
+		second.setStatus(Task.Status.CLOSED);
 		second.setDescription("Test Task2 Description");
 		second.setUserId("423");
 		second.setUsername("Test user 2");
