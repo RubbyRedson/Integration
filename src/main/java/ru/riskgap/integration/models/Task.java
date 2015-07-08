@@ -111,7 +111,7 @@ public class Task {
      */
     public static final String TARGET_SYSTEM = "target-system";
     @JsonProperty("target-system")
-    private TargetSystemEnum targetSystem;
+    private TargetSystem targetSystem;
 
     /**
      * Ключ для идентификации приложения, через которое осуществляется доступ к API интегрируемой системы
@@ -227,11 +227,11 @@ public class Task {
         this.riskRef = riskRef;
     }
 
-    public TargetSystemEnum getTargetSystem() {
+    public TargetSystem getTargetSystem() {
         return targetSystem;
     }
 
-    public void setTargetSystem(TargetSystemEnum targetSystem) {
+    public void setTargetSystem(TargetSystem targetSystem) {
         this.targetSystem = targetSystem;
     }
 
@@ -357,7 +357,7 @@ public class Task {
      */
     public enum Status {
         OPEN("open"),
-        CLOSED("close");
+        CLOSED("closed");
 
         private String status;
 
@@ -365,14 +365,48 @@ public class Task {
             this.status = status;
         }
 
-        @JsonCreator
-        public static Status fromString(String status) {
-            return status == null? null:Status.valueOf(status.toUpperCase());
-        }
-
         @JsonValue
         public String getStatus() {
             return status;
+        }
+
+        @JsonCreator
+        public static Status fromString(String status) {
+            if (status != null) {
+                for (Status enumStatus : Status.values()) {
+                    if (enumStatus.getStatus().equals(status))
+                        return enumStatus;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum TargetSystem {
+        TFS("TFS"),
+        MS_PROJECT("MS Project"),
+        TRELLO("Trello");
+
+        private String system;
+
+        TargetSystem(String system) {
+            this.system = system;
+        }
+
+        @JsonValue
+        public String getSystem() {
+            return system;
+        }
+
+        @JsonCreator
+        public static TargetSystem fromString(String system) {
+            if (system != null) {
+                for (TargetSystem targetSystem : TargetSystem.values()) {
+                    if (targetSystem.getSystem().equals(system))
+                        return targetSystem;
+                }
+            }
+            return null;
         }
     }
 

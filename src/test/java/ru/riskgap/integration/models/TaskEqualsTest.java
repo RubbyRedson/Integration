@@ -28,7 +28,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(TargetSystemEnum.MS_PROJECT);
+		first.setTargetSystem(Task.TargetSystem.MS_PROJECT);
 
 		Task second = new Task();
 		second.setName("Test Task One");
@@ -46,7 +46,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference");
-		second.setTargetSystem(TargetSystemEnum.MS_PROJECT);
+		second.setTargetSystem(Task.TargetSystem.MS_PROJECT);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", second.equals(first));
@@ -66,7 +66,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(TargetSystemEnum.TFS);
+		first.setTargetSystem(Task.TargetSystem.TFS);
 
 		Task second = new Task();
 		second.setName("Test Task One");
@@ -80,7 +80,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference");
-		second.setTargetSystem(TargetSystemEnum.TFS);
+		second.setTargetSystem(Task.TargetSystem.TFS);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", second.equals(first));
@@ -105,7 +105,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(TargetSystemEnum.MS_PROJECT);
+		first.setTargetSystem(Task.TargetSystem.MS_PROJECT);
 
 		Task second = new Task();
 		second.setName("Test Task Two");
@@ -123,7 +123,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference 2");
-		second.setTargetSystem(TargetSystemEnum.TFS);
+		second.setTargetSystem(Task.TargetSystem.TFS);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !second.equals(first));
@@ -143,7 +143,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(TargetSystemEnum.TFS);
+		first.setTargetSystem(Task.TargetSystem.TFS);
 
 		Task second = new Task();
 		second.setName("Test Task Two");
@@ -161,7 +161,7 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference 2");
-		second.setTargetSystem(TargetSystemEnum.TFS);
+		second.setTargetSystem(Task.TargetSystem.TFS);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !second.equals(first));

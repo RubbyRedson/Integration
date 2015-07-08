@@ -6,7 +6,6 @@ import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.MSProjectHandler;
 import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
-import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.models.tfs.TFSHandler;
 import ru.riskgap.integration.parsing.RequestParser;
@@ -39,13 +38,12 @@ public class HttpReceiver {
         }
         Task resultTask = targetSystemHandler.getTaskInformation(task);
         return Response.status(200).entity(resultTask.toJson()).build();
-       // return new SmokeEntity(10, "Get Smoke Name", new Date());
+        // return new SmokeEntity(10, "Get Smoke Name", new Date());
         //TODO implement sync request handling
     }
 
 
     /**
-     *
      * @return JSON with task id, comments id
      */
     @RequestMapping(value = "/post", method = RequestMethod.POST)
@@ -67,27 +65,30 @@ public class HttpReceiver {
         return Response.status(200).entity(resultTask.toJson()).build();
     }
 
-    private Task getTask (String body) throws IOException, ParseException {
+    private Task getTask(String body) throws IOException, ParseException {
         Task task = requestParser.parse(body);
         return task;
     }
 
-     private IntegrationHandler getHandler (Task task) throws AbstractException {
-         TargetSystemEnum targetSystem = task.getTargetSystem();
-         if (targetSystem == null)
-             throw new AbstractException("There is no system for integration process");
-         IntegrationHandler targetSystemHandler = null;
-         switch (targetSystem){
-             case MS_PROJECT:
-                 targetSystemHandler = new MSProjectHandler(); break;
-             case TFS:
-                 targetSystemHandler = new TFSHandler(); break;
-             case TRELLO:
-                 targetSystemHandler = new TrelloHandler(); break;
-         }
-         if (targetSystemHandler == null)
-             throw new AbstractException("Undefined sytem");
-         return targetSystemHandler;
-     }
+    private IntegrationHandler getHandler(Task task) throws AbstractException {
+        Task.TargetSystem targetSystem = task.getTargetSystem();
+        if (targetSystem == null)
+            throw new AbstractException("There is no system for integration process");
+        IntegrationHandler targetSystemHandler = null;
+        switch (targetSystem) {
+            case MS_PROJECT:
+                targetSystemHandler = new MSProjectHandler();
+                break;
+            case TFS:
+                targetSystemHandler = new TFSHandler();
+                break;
+            case TRELLO:
+                targetSystemHandler = new TrelloHandler();
+                break;
+        }
+        if (targetSystemHandler == null)
+            throw new AbstractException("Undefined sytem");
+        return targetSystemHandler;
+    }
 
 }

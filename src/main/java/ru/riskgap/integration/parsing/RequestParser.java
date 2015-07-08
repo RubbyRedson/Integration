@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.riskgap.integration.models.Comment;
-import ru.riskgap.integration.models.TargetSystemEnum;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.models.tfs.TfsRequestBuilder;
 
@@ -34,47 +33,14 @@ public class RequestParser {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * @param jsonBody of a request from initiating server. The task created holds info for creating/updating task
+     * @return Task instance with all of the information from jsonBody
+     * @throws IOException when input json is malformed
+     */
     public Task parse(String jsonBody) throws IOException {
         return objectMapper.readValue(jsonBody, Task.class);
     }
-
-
-//    /**
-//     * @param jsonBody of a request from initiating server. The task created holds info for creating/updating task
-//     * @return Task instance with all of the information from jsonBody
-//     * @throws IOException when input json is malformed
-//     * @throws ParseException when Date in json is of incorrect format. The proper one is dd.MM.yyyy
-//     */
-//    @Deprecated
-//    public Task parseInputJson(String jsonBody) throws IOException, ParseException {
-//
-//        Map<String,String> jsonMap = objectMapper.readValue(jsonBody, HashMap.class);
-//        if (logger.isInfoEnabled())
-//            logger.info("Received json body map is " + jsonMap);
-//
-//        Task result = new Task();
-//
-//        result.setName(jsonMap.get(Task.TASK_NAME));
-//        result.setStatus(Task.Status.valueOf(jsonMap.get(Task.TASK_STATUS).toLowerCase()));
-//        result.setDescription(jsonMap.get(Task.TASK_DESCRIPTION));
-//        result.setUserId(jsonMap.get(Task.USER_ID));
-//        result.setUsername(jsonMap.get(Task.USERNAME));
-//        result.setUserEmail(jsonMap.get(Task.USER_EMAIL));
-//        result.setAssigneeId(jsonMap.get(Task.ASSIGNEE_ID));
-//        result.setAssigneeUsername(jsonMap.get(Task.ASSIGNEE_USERNAME));
-//        result.setAssigneeEmail(jsonMap.get(Task.ASSIGNEE_EMAIL));
-//        String date = jsonMap.get(Task.TASK_DUE);
-//        if (date != null) {
-//            result.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse(date));
-//        }
-//        result.setRiskRef(jsonMap.get(Task.RISK_REF));
-//        String targetSystem = jsonMap.get(Task.TARGET_SYSTEM);
-//        if (targetSystem != null) {
-//            result.setTargetSystem(TargetSystemEnum.valueOf(targetSystem));
-//        }
-//
-//        return result;
-//    }
 
     /**
      * @param jsonBody of a TFS response when GET for Work item fields is executed. It converts all of it into a Task instance.
@@ -107,7 +73,7 @@ public class RequestParser {
             return result;
 
         result.setName(jsonMap.get(TfsRequestBuilder.TASK_NAME));
-        result.setStatus(Task.Status.valueOf(jsonMap.get(TfsRequestBuilder.TASK_STATE).toLowerCase()));
+        result.setStatus(Task.Status.valueOf(jsonMap.get(TfsRequestBuilder.TASK_STATE).toUpperCase()));
         result.setDescription(jsonMap.get(TfsRequestBuilder.TASK_DESCR));
         String user = jsonMap.get(TfsRequestBuilder.CHANGED_BY);
 
@@ -129,7 +95,7 @@ public class RequestParser {
 
 //        result.setRiskRef(jsonMap.get(Task.RISK_REF));
 
-        result.setTargetSystem(TargetSystemEnum.TFS);
+        result.setTargetSystem(Task.TargetSystem.TFS);
 
         return result;
 
@@ -168,7 +134,7 @@ public class RequestParser {
                 Comment comment = new Comment();
                 String text = (String) jsonMap.get("value");
                 comment.setText(text);
-                String fullName = ((Map<String, String>)jsonMap.get("revisedBy")).get("name");
+                String fullName = ((Map<String, String>) jsonMap.get("revisedBy")).get("name");
                 String name = getTfsUserName(fullName);
                 comment.setUsername(name);
                 String mail = getTfsUserMail(fullName);

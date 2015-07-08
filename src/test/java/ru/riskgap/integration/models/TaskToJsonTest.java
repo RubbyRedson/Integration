@@ -43,7 +43,7 @@ public class TaskToJsonTest {
 			e.printStackTrace();
 		}
 		expected.setRiskRef("test risk reference");
-		expected.setTargetSystem(TargetSystemEnum.MS_PROJECT);
+		expected.setTargetSystem(Task.TargetSystem.MS_PROJECT);
 
 		Assert.assertEquals("Task to JSON full failed", json, expected.toJson());
 	}
@@ -77,7 +77,7 @@ public class TaskToJsonTest {
 			e.printStackTrace();
 		}
 		expected.setRiskRef("test risk reference");
-		expected.setTargetSystem(TargetSystemEnum.TFS);
+		expected.setTargetSystem(Task.TargetSystem.TFS);
 
 		Assert.assertEquals("Task to JSON partial failed", json, expected.toJson());
 	}
