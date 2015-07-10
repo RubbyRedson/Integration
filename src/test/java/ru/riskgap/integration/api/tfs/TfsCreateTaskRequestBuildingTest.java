@@ -3,6 +3,9 @@ package ru.riskgap.integration.api.tfs;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Nikita on 07.07.2015.
  */
@@ -54,7 +57,10 @@ public class TfsCreateTaskRequestBuildingTest {
 		FieldValuePair taskName = new FieldValuePair(TfsRequestBuilder.TASK_NAME, "Test Task name", true);
 		FieldValuePair taskDescr = new FieldValuePair(TfsRequestBuilder.TASK_DESCR, "Test Task description", false);
 
-		String actual = TfsRequestBuilder.buildUpdateRequestBody(taskName, taskDescr);
+		List<FieldValuePair> pairs = new ArrayList<>();
+		pairs.add(taskName);
+		pairs.add(taskDescr);
+		String actual = TfsRequestBuilder.buildUpdateRequestBody(pairs);
 
 		String expected = "[\n" +
 				"\t{\n" +
@@ -78,8 +84,12 @@ public class TfsCreateTaskRequestBuildingTest {
 		FieldValuePair taskName = new FieldValuePair(TfsRequestBuilder.TASK_NAME, "Test Task name", true);
 		FieldValuePair taskDescr = new FieldValuePair(TfsRequestBuilder.TASK_DESCR, "Test Task description", true);
 
-		String actual = TfsRequestBuilder.buildCreateRequestBody(taskName, taskDescr);
 
+		List<FieldValuePair> pairs = new ArrayList<>();
+		pairs.add(taskName);
+		pairs.add(taskDescr);
+
+		String actual = TfsRequestBuilder.buildCreateRequestBody(pairs);
 		String expected = "[\n" +
 				"\t{\n" +
 				"\t\t\"op\" : \"add\",\n" +
@@ -98,7 +108,7 @@ public class TfsCreateTaskRequestBuildingTest {
 
 	@Test
 	public void testEmptyFieldsCreate() {
-		String actual = TfsRequestBuilder.buildCreateRequestBody();
+		String actual = TfsRequestBuilder.buildCreateRequestBody(new ArrayList<FieldValuePair>());
 
 		String expected = "[\n"  +
 				"]";

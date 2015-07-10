@@ -3,6 +3,8 @@ package ru.riskgap.integration.api.tfs;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 /**
  * Created by Nikita on 07.07.2015.
  */
@@ -106,7 +108,7 @@ public class TfsUpdateTaskRequestBuildingTest {
 
 	@Test
 	public void testEmptyFieldsUpdate() {
-		String actual = TfsRequestBuilder.buildUpdateRequestBody();
+		String actual = TfsRequestBuilder.buildUpdateRequestBody(new ArrayList<FieldValuePair>());
 
 		String expected = "[\n"  +
 				"]";

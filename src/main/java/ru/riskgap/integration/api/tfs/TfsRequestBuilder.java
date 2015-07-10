@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * A class that has all the necessary methods to build requests to TFS
@@ -116,7 +117,7 @@ public class TfsRequestBuilder {
 	 * @param fields - the fields  of the task that should be updated in TFS, wrapped in FieldValuePair
 	 * @return JSON body of a request to modify the fields of a task
 	 */
-	public static String buildUpdateRequestBody(FieldValuePair... fields) {
+	public static String buildUpdateRequestBody(List<FieldValuePair> fields) {
 		StringBuilder prepFields = new StringBuilder();
 		prepFields.append(BEGIN_BODY);
 		for (FieldValuePair field : fields) {
@@ -138,7 +139,7 @@ public class TfsRequestBuilder {
 	 * @param fields - the fields  of the task that should be created in TFS, wrapped in FieldValuePair
 	 * @return JSON body of a request to create a task with some fields
 	 */
-	public static String buildCreateRequestBody(FieldValuePair... fields) {
+	public static String buildCreateRequestBody(List<FieldValuePair> fields) {
 		StringBuilder prepFields = new StringBuilder();
 		prepFields.append(BEGIN_BODY);
 		for (FieldValuePair field : fields) {

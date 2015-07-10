@@ -122,8 +122,15 @@ public class Task {
     @JsonProperty("user-token")
     private String userToken; //TODO: add tests
 
+    // Integration parameters, not used in comparison
+    @JsonProperty("target-url")
+    private String targetUrl;
 
+    @JsonProperty("login")
+    private String login;
 
+    @JsonProperty("password")
+    private String password;
 
     /*
     todo TFS
@@ -265,6 +272,30 @@ public class Task {
 
     public void setUserToken(String userToken) {
         this.userToken = userToken;
+    }
+
+    public String getTargetUrl() {
+        return targetUrl;
+    }
+
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
