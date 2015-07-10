@@ -122,7 +122,9 @@ public class Task {
     @JsonProperty("user-token")
     private String userToken; //TODO: add tests
 
-    // Integration parameters, not used in comparison
+    /**
+     * Конечный адрес задачи в интегрируемой системе
+     */
     @JsonProperty("target-url")
     private String targetUrl;
 

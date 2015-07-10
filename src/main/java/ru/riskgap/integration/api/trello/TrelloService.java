@@ -24,23 +24,26 @@ import java.util.Map;
 public class TrelloService {
 
     private final Logger log = LoggerFactory.getLogger(TrelloService.class);
-
+    private final static SimpleDateFormat TRELLO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final String BASE_URL = "https://api.trello.com/1/";
     private static final String GET_LISTS_OF_BOARD = "boards/{0}/lists";
     private static final String GET_CARD_BY_ID = "cards/{0}";
     private static final String GET_LIST_BY_ID = "lists/{0}";
+    private static final String POST_CARD = "cards";
     private static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {
             put(Task.Status.OPEN, "To Do");
             put(Task.Status.CLOSED, "Done");
         }
     };
+
     private HttpClient httpClient;
     private ObjectMapper objectMapper;
 
     public TrelloService(HttpClient httpClient) {
         this.httpClient = httpClient;
         objectMapper = new ObjectMapper();
+
     }
 
     /**
@@ -104,6 +107,42 @@ public class TrelloService {
         return null;
     }
 
+    /**
+     * Creates card in Trello using Task object and fills its id and ids of comments
+     *
+     * @param task data which be used mapped to Trello card
+     * @param appKey    application key
+     * @param userToken token of the user, who has access to the board
+     * @return task object with filled task id and ids of comments
+     * @throws IOException
+     */
+    public Task createCardByTask(Task task, String appKey, String userToken) throws IOException {
+        task.setTaskId(createTaskOnly(task, appKey, userToken));
+        return task;
+    }
+
+    String createTaskOnly(Task task, String appKey, String userToken) throws IOException {
+        String withoutParams = BASE_URL + POST_CARD;
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .addParameter("name", task.getName())
+                    .addParameter("desc", task.getDescription())
+                    .addParameter("idList", task.getContainerId())
+                    .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                    .addParameter("urlSource", task.getRiskRef())
+                    .build().toString();
+            log.info("createCardByTask, URL: {}", url);
+            CloseableHttpResponse createCardResponse = httpClient.post(url, null);
+            String entity = httpClient.extractEntity(createCardResponse, true);
+            return objectMapper.readTree(entity).get("id").asText();
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
+        }
+        return null;
+    }
+
     Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
@@ -112,7 +151,7 @@ public class TrelloService {
         task.setContainerId(root.get("idBoard").asText());
         task.setName(root.get("name").asText());
         task.setDescription(root.get("desc").asText());
-        task.setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(root.get("due").asText()));
+        task.setDue(TRELLO_DATE_FORMAT.parse(root.get("due").asText()));
         task.setUserId(getIdCreatorFromActions(root.get("actions"))); //from action "createCard"
         task.setAssigneeId(root.get("idMembers").get(0).asText()); //only first member is assigned for the task
         task.setRiskRef(getLinkFromAttachments(root.get("attachments")));
@@ -141,7 +180,6 @@ public class TrelloService {
     }
 
 
-
     /**
      * Gets status of tasks in the given list by using "list name" <=> "status" conversion.
      *
@@ -151,7 +189,7 @@ public class TrelloService {
      * @return status of tasks in the given list
      * @throws IOException
      */
-     Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
+    Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_LIST_BY_ID, listId);
         try {
             String url = new URIBuilder(withoutParams)
