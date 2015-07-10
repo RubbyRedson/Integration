@@ -52,19 +52,19 @@ public class SecurityTest {
 
     @Test
     public void notFound_correctToken() throws Exception {
-        mockMvc.perform(get("aaaaaaaa/?X-Api-Key=TEST_TOKEN1"))
+        mockMvc.perform(get("aaaaaaaa/").header("X-Api-Key", "TEST_TOKEN1"))
                 .andExpect(status().is(404));
     }
 
     @Test
     public void found_correctToken() throws Exception {
-        mockMvc.perform(get("/get?X-Api-Key=TEST_TOKEN"))
+        mockMvc.perform(get("/get").header("X-Api-Key", "TEST_TOKEN"))
                 .andExpect(status().is(200));
     }
 
     @Test
     public void found_invalidToken() throws Exception {
-        mockMvc.perform(get("/get?X-Api-Key=INVALID_TOKEN"))
+        mockMvc.perform(get("/get").header("X-Api-Key", "INVALID_TOKEN"))
                 .andExpect(status().is(401));
     }
 
