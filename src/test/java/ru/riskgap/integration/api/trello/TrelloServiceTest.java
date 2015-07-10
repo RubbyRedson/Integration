@@ -19,6 +19,7 @@ public class TrelloServiceTest {
     private static FakeTrelloHttpClient fakeTrelloHttpClient;
 
     private static final String BOARD_ID = "myBoardId";
+    private static final String CARD_ID = "myCardId";
     private static final String KEY = "myKeyId";
     private static final String TOKEN = "myUserToken";
 
@@ -34,7 +35,16 @@ public class TrelloServiceTest {
         trelloService.getListIdByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
         assertEquals("https://api.trello.com/1/boards/" + BOARD_ID + "/lists?key=" + KEY + "&token=" + TOKEN,
                 fakeTrelloHttpClient.getLastUrl());
+    }
 
+    @Test(expected = NullPointerException.class) //test for URL only, not for real content
+    public void getTaskByCardId_testRequestUrl() throws IOException, ParseException {
+        try {
+            trelloService.getTaskByCardId(CARD_ID, KEY, TOKEN);
+        } finally {
+            assertEquals("https://api.trello.com/1/cards/" + CARD_ID + "?key=" + KEY + "&token=" + TOKEN,
+                    fakeTrelloHttpClient.getLastUrl());
+        }
     }
 
     @Test
@@ -143,14 +153,14 @@ public class TrelloServiceTest {
                 "        \"fogbugz\": \"\",\n" +
                 "        \"checkItems\": 0,\n" +
                 "        \"checkItemsChecked\": 0,\n" +
-                "        \"comments\": 0,\n" +
-                "        \"attachments\": 1,\n" +
+                "        \"comments\": 1,\n" +
+                "        \"attachments\": 2,\n" +
                 "        \"description\": true,\n" +
                 "        \"due\": \"2015-05-07T04:00:00.000Z\"\n" +
                 "    },\n" +
                 "    \"checkItemStates\": [],\n" +
                 "    \"closed\": false,\n" +
-                "    \"dateLastActivity\": \"2015-07-08T08:19:26.821Z\",\n" +
+                "    \"dateLastActivity\": \"2015-07-10T14:05:39.535Z\",\n" +
                 "    \"desc\": \"Test Description!\",\n" +
                 "    \"descData\": {\n" +
                 "        \"emoji\": {}\n" +
@@ -168,7 +178,7 @@ public class TrelloServiceTest {
                 "    \"idAttachmentCover\": \"\",\n" +
                 "    \"manualCoverAttachment\": false,\n" +
                 "    \"labels\": [],\n" +
-                "    \"name\": \"Risk Gap task\",\n" +
+                "    \"name\": \"Simple task\",\n" +
                 "    \"pos\": 81919,\n" +
                 "    \"shortUrl\": \"https://trello.com/c/2ToaglTp\",\n" +
                 "    \"url\": \"https://trello.com/c/2ToaglTp/3-risk-gap-task\",\n" +
@@ -184,6 +194,18 @@ public class TrelloServiceTest {
                 "            \"name\": \"http://google.ru\",\n" +
                 "            \"previews\": [],\n" +
                 "            \"url\": \"http://google.ru\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"id\": \"559fd13359c4a2e8153c4153\",\n" +
+                "            \"bytes\": null,\n" +
+                "            \"date\": \"2015-07-10T14:05:39.526Z\",\n" +
+                "            \"edgeColor\": null,\n" +
+                "            \"idMember\": \"5134d76e21518d64320053a7\",\n" +
+                "            \"isUpload\": false,\n" +
+                "            \"mimeType\": \"\",\n" +
+                "            \"name\": \"http://4pda.ru\",\n" +
+                "            \"previews\": [],\n" +
+                "            \"url\": \"http://4pda.ru\"\n" +
                 "        }\n" +
                 "    ],\n" +
                 "    \"members\": [\n" +
@@ -196,6 +218,37 @@ public class TrelloServiceTest {
                 "        }\n" +
                 "    ],\n" +
                 "    \"actions\": [\n" +
+                "        {\n" +
+                "            \"id\": \"559f59621ff3af6b3a01cc02\",\n" +
+                "            \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
+                "            \"data\": {\n" +
+                "                \"list\": {\n" +
+                "                    \"name\": \"To Do\",\n" +
+                "                    \"id\": \"559381ce9af4e9c91ab2dbae\"\n" +
+                "                },\n" +
+                "                \"board\": {\n" +
+                "                    \"shortLink\": \"3RNfcaVO\",\n" +
+                "                    \"name\": \"Test Integrations!\",\n" +
+                "                    \"id\": \"559381ce9af4e9c91ab2dbad\"\n" +
+                "                },\n" +
+                "                \"card\": {\n" +
+                "                    \"shortLink\": \"2ToaglTp\",\n" +
+                "                    \"idShort\": 3,\n" +
+                "                    \"name\": \"Simple task\",\n" +
+                "                    \"id\": \"559a048632b6165b1416dabd\"\n" +
+                "                },\n" +
+                "                \"text\": \"dfdf\"\n" +
+                "            },\n" +
+                "            \"type\": \"commentCard\",\n" +
+                "            \"date\": \"2015-07-10T05:34:26.863Z\",\n" +
+                "            \"memberCreator\": {\n" +
+                "                \"id\": \"5134d76e21518d64320053a7\",\n" +
+                "                \"avatarHash\": \"f5d7aa54fa594f2b6ba608e870df38d9\",\n" +
+                "                \"fullName\": \"Андрей Куликов\",\n" +
+                "                \"initials\": \"АК\",\n" +
+                "                \"username\": \"a274bae93a51409fbf7555edab1e4925\"\n" +
+                "            }\n" +
+                "        },\n" +
                 "        {\n" +
                 "            \"id\": \"559a048632b6165b1416dac0\",\n" +
                 "            \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
@@ -242,15 +295,13 @@ public class TrelloServiceTest {
         expected.setAssigneeId("5134d76e21518d64320053a7");
         expected.setContainerId("559381ce9af4e9c91ab2dbad");
         expected.setTaskId("559a048632b6165b1416dabd");
-        expected.setName("Risk Gap task");
+        expected.setName("Simple task");
         expected.setDescription("Test Description!");
         expected.setStatus(Task.Status.OPEN);
         expected.setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"));
         expected.setRiskRef("http://google.ru");
         expected.setTargetSystem(Task.TargetSystem.TRELLO);
         assertEquals(expected, actual);
-        System.out.println(actual);
-
     }
 
 

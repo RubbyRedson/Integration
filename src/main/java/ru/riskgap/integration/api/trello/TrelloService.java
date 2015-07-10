@@ -53,7 +53,7 @@ public class TrelloService {
      * @return id of a list
      * @throws IOException
      */
-    public String getListIdByStatus(Task.Status status, String boardId, String appKey, String userToken) throws IOException {
+    String getListIdByStatus(Task.Status status, String boardId, String appKey, String userToken) throws IOException {
         try {
             String withoutParams = MessageFormat.format(BASE_URL + GET_LISTS_OF_BOARD, boardId);
             String url = new URIBuilder(withoutParams)
@@ -80,22 +80,21 @@ public class TrelloService {
     /**
      * Gets Task details by card ID in Trello
      *
-     * @param taskId    ID of card in Trello
+     * @param cardId    ID of card in Trello
      * @param appKey    application key
      * @param userToken token of the user, who has access to the board
      * @return instance of Task with information of card from Trello
      * @throws IOException
      * @throws ParseException
      */
-    public Task getTaskDetails(String taskId, String appKey, String userToken) throws IOException, ParseException {
-        //TODO: validate fields in task
+    public Task getTaskByCardId(String cardId, String appKey, String userToken) throws IOException, ParseException {
         try {
-            String withoutParams = MessageFormat.format(BASE_URL + GET_CARD_BY_ID, taskId);
+            String withoutParams = MessageFormat.format(BASE_URL + GET_CARD_BY_ID, cardId);
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
                     .addParameter("token", userToken)
                     .build().toString();
-            log.info("getTaskDetails, URL: {}", url);
+            log.info("getTaskByCardId, URL: {}", url);
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);
             return parseCardInTask(entity, appKey, userToken);
@@ -105,7 +104,7 @@ public class TrelloService {
         return null;
     }
 
-    public Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
+    Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
         task.setTargetSystem(Task.TargetSystem.TRELLO);
@@ -114,11 +113,31 @@ public class TrelloService {
         task.setName(root.get("name").asText());
         task.setDescription(root.get("desc").asText());
         task.setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(root.get("due").asText()));
-        task.setUserId(root.get("actions").get(0).get("memberCreator").get("id").asText()); //from action "createCard"
+        task.setUserId(getIdCreatorFromActions(root.get("actions"))); //from action "createCard"
         task.setAssigneeId(root.get("idMembers").get(0).asText()); //only first member is assigned for the task
-        task.setRiskRef(root.get("attachments").get(0).get("url").asText()); //link to risk in RiskGap
+        task.setRiskRef(getLinkFromAttachments(root.get("attachments")));
+
         task.setStatus(getStatusByList(root.get("idList").asText(), appKey, userToken));
         return task;
+    }
+
+    private String getLinkFromAttachments(JsonNode attachmentsArray) throws IOException {
+        log.info("attachments are array? {}", attachmentsArray.isArray());
+        for (JsonNode attachment : attachmentsArray) {
+            String name = attachment.get("name").asText();
+            if (name.startsWith("http"))
+                return name; //for links 'name' is URL
+        }
+        return null;
+    }
+
+    private String getIdCreatorFromActions(JsonNode actionsArray) {
+        log.info("actions are array? {}", actionsArray.isArray());
+        for (JsonNode action : actionsArray) {
+            if (action.get("type").asText().equals("createCard"))
+                return action.get("memberCreator").get("id").asText();
+        }
+        return null;
     }
 
 
@@ -132,7 +151,7 @@ public class TrelloService {
      * @return status of tasks in the given list
      * @throws IOException
      */
-    public Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
+     Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_LIST_BY_ID, listId);
         try {
             String url = new URIBuilder(withoutParams)

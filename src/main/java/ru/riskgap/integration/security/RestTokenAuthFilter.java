@@ -23,7 +23,7 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     private TokenStore tokenStore;
 
     private static final Logger logger = LoggerFactory.getLogger(RestTokenAuthFilter.class);
-    public static final String TOKEN_PARAM = "X-Api-Key";
+    public static final String HEADER_TOKEN_PARAM = "X-Api-Key";
 
 
     public RestTokenAuthFilter(String defaultFilterProcessesUrl) {
@@ -36,7 +36,7 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws
             AuthenticationException, IOException, ServletException {
-        String token = req.getParameter(TOKEN_PARAM);
+        String token = req.getHeader(HEADER_TOKEN_PARAM);
         if (logger.isInfoEnabled()) {
             logger.info("token found: {}", token);
         }
