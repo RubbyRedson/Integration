@@ -2,11 +2,15 @@ package ru.riskgap.integration.api.trello;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.riskgap.integration.models.Comment;
+import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,7 +53,7 @@ public class TrelloServiceTest {
 
     @Test
     public void getListIdByStatus_taskOpenStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.ALL_LISTS_OF_BOARD,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
                 "[\n" +
                         "    {\n" +
                         "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
@@ -83,7 +87,7 @@ public class TrelloServiceTest {
 
     @Test
     public void getListIdByStatus_closedStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.ALL_LISTS_OF_BOARD,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
                 "[\n" +
                         "    {\n" +
                         "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
@@ -116,7 +120,7 @@ public class TrelloServiceTest {
 
     @Test
     public void getStatusByList_openStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.LIST_BY_ID,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
                         "    \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
                         "    \"name\": \"To Do\",\n" +
@@ -130,7 +134,7 @@ public class TrelloServiceTest {
 
     @Test
     public void getStatusByList_closedStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.LIST_BY_ID,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
                         "    \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
                         "    \"name\": \"Done\",\n" +
@@ -281,7 +285,7 @@ public class TrelloServiceTest {
                 "        }\n" +
                 "    ]\n" +
                 "}";
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.LIST_BY_ID,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
                         "    \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
                         "    \"name\": \"To Do\",\n" +
@@ -304,5 +308,145 @@ public class TrelloServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void createCardByTask_noComments() throws ParseException, IOException {
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
+                "{\n" +
+                        "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +
+                        "    \"badges\": {\n" +
+                        "        \"votes\": 0,\n" +
+                        "        \"viewingMemberVoted\": false,\n" +
+                        "        \"subscribed\": false,\n" +
+                        "        \"fogbugz\": \"\",\n" +
+                        "        \"checkItems\": 0,\n" +
+                        "        \"checkItemsChecked\": 0,\n" +
+                        "        \"comments\": 0,\n" +
+                        "        \"attachments\": 1,\n" +
+                        "        \"description\": false,\n" +
+                        "        \"due\": \"2015-05-07T04:00:00.000Z\"\n" +
+                        "    },\n" +
+                        "    \"checkItemStates\": [],\n" +
+                        "    \"closed\": false,\n" +
+                        "    \"dateLastActivity\": \"2015-07-10T20:47:51.998Z\",\n" +
+                        "    \"desc\": \"\",\n" +
+                        "    \"descData\": {\n" +
+                        "        \"emoji\": {}\n" +
+                        "    },\n" +
+                        "    \"due\": \"2015-05-07T04:00:00.000Z\",\n" +
+                        "    \"email\": \"a274bae93a51409fbf7555edab1e4925+5134d76e21518d64320053a7+55a02f77277fb81cdaff3d33+8f93b1222f3bd9c099c5709cede336ecc4c44714@boards.trello.com\",\n" +
+                        "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+                        "    \"idChecklists\": [],\n" +
+                        "    \"idLabels\": [],\n" +
+                        "    \"idList\": \"559381ce9af4e9c91ab2dbae\",\n" +
+                        "    \"idMembers\": [],\n" +
+                        "    \"idShort\": 9,\n" +
+                        "    \"idAttachmentCover\": null,\n" +
+                        "    \"manualCoverAttachment\": false,\n" +
+                        "    \"labels\": [],\n" +
+                        "    \"name\": \"MyCard\",\n" +
+                        "    \"pos\": 163839,\n" +
+                        "    \"shortUrl\": \"https://trello.com/c/GZztVE1c\",\n" +
+                        "    \"url\": \"https://trello.com/c/GZztVE1c/9-mycard\",\n" +
+                        "    \"stickers\": []\n" +
+                        "}");
+        Task task = new Task();
+        task.setContainerId("559381ce9af4e9c91ab2dbae");
+        task.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"));
+        task.setRiskRef("http://google.ru");
+        task.setName("MyCard");
+        trelloService.createCardByTask(task, task.getApplicationKey(), task.getUserToken());
+        assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
+    }
 
+    @Test
+    //checks for filling ids
+    public void createCardByTask_withComments() throws ParseException, IOException {
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
+                "{\n" +
+                        "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +
+                        "    \"checkItemStates\": [],\n" +
+                        "    \"closed\": false,\n" +
+                        "    \"desc\": \"\",\n" +
+                        "    \"descData\": {\n" +
+                        "        \"emoji\": {}\n" +
+                        "    },\n" +
+                        "    \"due\": \"2015-05-07T04:00:00.000Z\",\n" +
+                        "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+                        "    \"idChecklists\": [],\n" +
+                        "    \"idLabels\": [],\n" +
+                        "    \"idList\": \"559381ce9af4e9c91ab2dbae\",\n" +
+                        "    \"idMembers\": [],\n" +
+                        "    \"name\": \"MyCard\",\n" +
+                        "    \"pos\": 163839,\n" +
+                        "    \"shortUrl\": \"https://trello.com/c/GZztVE1c\",\n" +
+                        "    \"url\": \"https://trello.com/c/GZztVE1c/9-mycard\",\n" +
+                        "    \"stickers\": []\n" +
+                        "}");
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_COMMENT,
+                "{\n" +
+                        "    \"id\": \"55a033df0c69600cdadfd912\",\n" +
+                        "    \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
+                        "    \"data\": {\n" +
+                        "        \"text\": \"Hello!\",\n" +
+                        "        \"textData\": {\n" +
+                        "            \"emoji\": {}\n" +
+                        "        },\n" +
+                        "        \"card\": {\n" +
+                        "            \"id\": \"559a0a3d41fbf1920844aade\",\n" +
+                        "            \"name\": \"MyCard\",\n" +
+                        "            \"idShort\": 4,\n" +
+                        "            \"shortLink\": \"JAT9xeHO\"\n" +
+                        "        },\n" +
+                        "        \"board\": {\n" +
+                        "            \"id\": \"559381ce9af4e9c91ab2dbad\",\n" +
+                        "            \"name\": \"Test Integrations!\",\n" +
+                        "            \"shortLink\": \"3RNfcaVO\"\n" +
+                        "        },\n" +
+                        "        \"list\": {\n" +
+                        "            \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
+                        "            \"name\": \"To Do\"\n" +
+                        "        }\n" +
+                        "    },\n" +
+                        "    \"type\": \"commentCard\",\n" +
+                        "    \"date\": \"2015-07-10T21:06:39.904Z\",\n" +
+                        "    \"entities\": [\n" +
+                        "        {\n" +
+                        "            \"type\": \"member\",\n" +
+                        "            \"id\": \"5134d76e21518d64320053a7\",\n" +
+                        "            \"username\": \"a274bae93a51409fbf7555edab1e4925\",\n" +
+                        "            \"text\": \"Андрей Куликов\"\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "            \"type\": \"text\",\n" +
+                        "            \"text\": \"on\",\n" +
+                        "            \"hideIfContext\": true,\n" +
+                        "            \"idContext\": \"559a0a3d41fbf1920844aade\"\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "            \"type\": \"card\",\n" +
+                        "            \"hideIfContext\": true,\n" +
+                        "            \"shortLink\": \"JAT9xeHO\",\n" +
+                        "            \"id\": \"559a0a3d41fbf1920844aade\",\n" +
+                        "            \"text\": \"MyCard\"\n" +
+                        "        },\n" +
+                        "        {\n" +
+                        "            \"type\": \"comment\",\n" +
+                        "            \"text\": \"Hello!\"\n" +
+                        "        }\n" +
+                        "    ]\n" +
+                        "}");
+        Task task = new Task();
+        task.setContainerId("559381ce9af4e9c91ab2dbae");
+        task.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"));
+        task.setRiskRef("http://google.ru");
+        task.setName("MyCard");
+        task.setComments(Arrays.asList(
+                new Comment(new Date(), "Hello!"),
+                new Comment(new Date(), "Good Bye!")));
+        trelloService.createCardByTask(task, task.getApplicationKey(), task.getUserToken());
+        assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
+        assertEquals(2, task.getComments().size());
+        assertEquals("55a033df0c69600cdadfd912", task.getComments().get(0).getCommentId());
+        assertEquals("55a033df0c69600cdadfd912", task.getComments().get(1).getCommentId());
+    }
 }

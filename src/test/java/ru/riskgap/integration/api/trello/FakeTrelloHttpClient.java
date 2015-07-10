@@ -20,14 +20,18 @@ public class FakeTrelloHttpClient implements HttpClient {
     private String lastUrl;
     private HashMap<Pattern, CloseableHttpResponse> uriResponseMapper;
     private HashMap<CloseableHttpResponse, String> responseEntityMapper;
-    public static CloseableHttpResponse ALL_LISTS_OF_BOARD = new FakeHttpResponse();
-    public static CloseableHttpResponse LIST_BY_ID = new FakeHttpResponse();
+    public static CloseableHttpResponse GET_ALL_LISTS_OF_BOARD = new FakeHttpResponse();
+    public static CloseableHttpResponse GET_LIST_BY_ID = new FakeHttpResponse();
+    public static CloseableHttpResponse POST_CARD = new FakeHttpResponse();
+    public static CloseableHttpResponse POST_COMMENT = new FakeHttpResponse();
 
     public FakeTrelloHttpClient() {
         responseEntityMapper = new HashMap<>();
         uriResponseMapper = new HashMap<>();
-        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/boards/.*/lists.*"), ALL_LISTS_OF_BOARD);
-        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/lists/.*\\?.*"), LIST_BY_ID);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/comments.*"), POST_COMMENT);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/boards/.*/lists.*"), GET_ALL_LISTS_OF_BOARD);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/lists/.*\\?.*"), GET_LIST_BY_ID);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards.*"), POST_CARD);
 
 
     }
@@ -45,18 +49,30 @@ public class FakeTrelloHttpClient implements HttpClient {
     @Override
     public CloseableHttpResponse post(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
+            if (entry.getKey().matcher(url).matches())
+                return entry.getValue();
+        }
         return null;
     }
 
     @Override
     public CloseableHttpResponse put(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
+            if (entry.getKey().matcher(url).matches())
+                return entry.getValue();
+        }
         return null;
     }
 
     @Override
     public CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
+            if (entry.getKey().matcher(url).matches())
+                return entry.getValue();
+        }
         return null;
     }
 

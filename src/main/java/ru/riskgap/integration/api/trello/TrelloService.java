@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +113,7 @@ public class TrelloService {
     /**
      * Creates card in Trello using Task object and fills its id and ids of comments
      *
-     * @param task data which be used mapped to Trello card
+     * @param task      data which be used mapped to Trello card
      * @param appKey    application key
      * @param userToken token of the user, who has access to the board
      * @return task object with filled task id and ids of comments
@@ -122,7 +121,12 @@ public class TrelloService {
      */
     public Task createCardByTask(Task task, String appKey, String userToken) throws IOException {
         task.setTaskId(createTaskOnly(task, appKey, userToken));
-        //TODO: add creating comments
+        List<Comment> comments = task.getComments();
+        if (comments !=null) {
+            for (Comment comment : comments) {
+                comment.setCommentId(addComment(task.getTaskId(), comment, appKey, userToken));
+            }
+        }
         return task;
     }
 
@@ -148,25 +152,22 @@ public class TrelloService {
         return null;
     }
 
-    List<String> createCommentsOnly(String taskId, List<Comment> comments, String appKey, String userToken) throws IOException {
+    String addComment(String taskId, Comment comment, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, taskId);
-        List<String> commentIds = new ArrayList<>();
-        for (Comment comment : comments) {
-            try {
-                String url = new URIBuilder(withoutParams)
-                        .addParameter("key", appKey)
-                        .addParameter("token", userToken)
-                        .addParameter("text", comment.getText())
-                        .build().toString();
-                log.info("createCommentsOnly, URL: {}", url);
-                CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
-                String entity = httpClient.extractEntity(createCommentResponse, true);
-                commentIds.add(objectMapper.readTree(entity).get("id").asText());
-            } catch (URISyntaxException e) {
-                log.error("Illegal Trello URL", e);
-            }
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .addParameter("text", comment.getText())
+                    .build().toString();
+            log.info("addComment, URL: {}", url);
+            CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
+            String entity = httpClient.extractEntity(createCommentResponse, true);
+            return objectMapper.readTree(entity).get("id").asText();
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
         }
-        return commentIds;
+        return null;
     }
 
     Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {

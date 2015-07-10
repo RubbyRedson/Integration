@@ -106,6 +106,22 @@ public class Comment {
         this.key = key;
     }
 
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -147,4 +163,6 @@ public class Comment {
                 ", key='" + key + '\'' +
                 '}';
     }
+
+
 }
