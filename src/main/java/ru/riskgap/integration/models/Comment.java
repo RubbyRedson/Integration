@@ -13,6 +13,12 @@ public class Comment {
  - список комментариев (дата, коментатор, текст комментария, ключ api, если комментарий уже существует в интегрируемой системе)
      */
 
+    /**
+     * ID комментария во внешней системе
+     */
+    @JsonProperty("comment-id")
+    private String commentId;
+
     public static final String DATE = "date";
     @JsonProperty("date")
     @JsonDeserialize(using = CustomJsonDateDeserializer.class)
@@ -31,6 +37,12 @@ public class Comment {
     public static final String EMAIL = "email";
     @JsonProperty("email")
     private String email;
+
+    /**
+     * ID пользователя, написавшего комментарий
+     */
+    @JsonProperty("user-id")
+    private String userId;
 
     /**
      * Текст комментария
@@ -96,20 +108,23 @@ public class Comment {
 
         Comment comment = (Comment) o;
 
+        if (commentId != null ? !commentId.equals(comment.commentId) : comment.commentId != null) return false;
         if (date != null ? !date.equals(comment.date) : comment.date != null) return false;
-        if (email != null ? !email.equals(comment.email) : comment.email != null) return false;
-        if (key != null ? !key.equals(comment.key) : comment.key != null) return false;
-        if (text != null ? !text.equals(comment.text) : comment.text != null) return false;
         if (username != null ? !username.equals(comment.username) : comment.username != null) return false;
+        if (email != null ? !email.equals(comment.email) : comment.email != null) return false;
+        if (userId != null ? !userId.equals(comment.userId) : comment.userId != null) return false;
+        if (text != null ? !text.equals(comment.text) : comment.text != null) return false;
+        return !(key != null ? !key.equals(comment.key) : comment.key != null);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = date != null ? date.hashCode() : 0;
+        int result = commentId != null ? commentId.hashCode() : 0;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (key != null ? key.hashCode() : 0);
         return result;
@@ -118,9 +133,11 @@ public class Comment {
     @Override
     public String toString() {
         return "Comment{" +
-                "date=" + date +
+                "commentId='" + commentId + '\'' +
+                ", date=" + date +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
+                ", userId='" + userId + '\'' +
                 ", text='" + text + '\'' +
                 ", key='" + key + '\'' +
                 '}';
