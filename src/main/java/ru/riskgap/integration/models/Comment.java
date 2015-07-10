@@ -13,6 +13,11 @@ public class Comment {
  - список комментариев (дата, коментатор, текст комментария, ключ api, если комментарий уже существует в интегрируемой системе)
      */
 
+    public Comment(Date date, String text) {
+        this.date = date;
+        this.text = text;
+    }
+
     /**
      * ID комментария во внешней системе
      */

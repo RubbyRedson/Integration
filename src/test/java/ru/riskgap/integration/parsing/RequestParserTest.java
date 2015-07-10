@@ -1,6 +1,7 @@
 package ru.riskgap.integration.parsing;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.RequestParser;
@@ -9,6 +10,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -190,6 +194,63 @@ public class RequestParserTest {
         }
         assertNull(ex);
     }
+
+    @Test
+    public void testInputTaskWithComments() throws ParseException {
+        Exception ex = null;
+        String json = "{\n" +
+                "  \"name\": \"andrey\",\n" +
+                "  \"status\": \"closed\",\n" +
+                "  \"due\": \"12.08.2015\",\n" +
+                "  \"comments\": [\n" +
+                "    {\"text\": \"First Comment!\", \"date\": \"13.09.2015\"},\n" +
+                "    {\"text\": \"Second Comment!\", \"date\": \"14.09.2015\"}\n" +
+                "  ] \n" +
+                "}";
+        Task expected = new Task();
+        expected.setName("andrey");
+        expected.setStatus(Task.Status.CLOSED);
+        expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"));
+        List<Comment> comments = Arrays.asList(
+                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"),"First Comment!"),
+                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.09.2015"), "Second Comment!"));
+        expected.setComments(comments);
+        try {
+            testInputJson(json, expected);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ex = e;
+        }
+        assertNull(ex);
+    }
+
+    @Test
+    public void testInputTaskWithEmptyComments() throws ParseException {
+        Exception ex = null;
+        String json = "{\n" +
+                "  \"name\": \"andrey\",\n" +
+                "  \"status\": \"closed\",\n" +
+                "  \"due\": \"12.08.2015\",\n" +
+                "  \"comments\": []\n" +
+                "}";
+        Task expected = new Task();
+        expected.setName("andrey");
+        expected.setStatus(Task.Status.CLOSED);
+        expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"));
+        List<Comment> comments = new ArrayList<>();
+        expected.setComments(comments);
+        try {
+            testInputJson(json, expected);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ex = e;
+        }
+        assertNull(ex);
+    }
+
+
+
+
 
     @Test
     public void testInputEmptyRequest() {

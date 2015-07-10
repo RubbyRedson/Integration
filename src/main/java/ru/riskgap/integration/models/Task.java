@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Nikita on 16.06.2015.
@@ -133,6 +134,10 @@ public class Task {
 
     @JsonProperty("password")
     private String password;
+
+
+    @JsonProperty("comments")
+    private List<Comment> comments;
 
     /*
     todo TFS
@@ -307,11 +312,10 @@ public class Task {
 
         Task task = (Task) o;
 
-
         if (containerId != null ? !containerId.equals(task.containerId) : task.containerId != null) return false;
         if (taskId != null ? !taskId.equals(task.taskId) : task.taskId != null) return false;
         if (name != null ? !name.equals(task.name) : task.name != null) return false;
-        if (status != null ? !status.equals(task.status) : task.status != null) return false;
+        if (status != task.status) return false;
         if (description != null ? !description.equals(task.description) : task.description != null) return false;
         if (userId != null ? !userId.equals(task.userId) : task.userId != null) return false;
         if (username != null ? !username.equals(task.username) : task.username != null) return false;
@@ -323,7 +327,14 @@ public class Task {
             return false;
         if (due != null ? !due.equals(task.due) : task.due != null) return false;
         if (riskRef != null ? !riskRef.equals(task.riskRef) : task.riskRef != null) return false;
-        return targetSystem == task.targetSystem;
+        if (targetSystem != task.targetSystem) return false;
+        if (applicationKey != null ? !applicationKey.equals(task.applicationKey) : task.applicationKey != null)
+            return false;
+        if (userToken != null ? !userToken.equals(task.userToken) : task.userToken != null) return false;
+        if (targetUrl != null ? !targetUrl.equals(task.targetUrl) : task.targetUrl != null) return false;
+        if (login != null ? !login.equals(task.login) : task.login != null) return false;
+        if (password != null ? !password.equals(task.password) : task.password != null) return false;
+        return !(comments != null ? !comments.equals(task.comments) : task.comments != null);
 
     }
 
@@ -343,7 +354,12 @@ public class Task {
         result = 31 * result + (due != null ? due.hashCode() : 0);
         result = 31 * result + (riskRef != null ? riskRef.hashCode() : 0);
         result = 31 * result + (targetSystem != null ? targetSystem.hashCode() : 0);
-
+        result = 31 * result + (applicationKey != null ? applicationKey.hashCode() : 0);
+        result = 31 * result + (userToken != null ? userToken.hashCode() : 0);
+        result = 31 * result + (targetUrl != null ? targetUrl.hashCode() : 0);
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (comments != null ? comments.hashCode() : 0);
         return result;
     }
 
@@ -353,7 +369,7 @@ public class Task {
                 "containerId='" + containerId + '\'' +
                 ", taskId='" + taskId + '\'' +
                 ", name='" + name + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", description='" + description + '\'' +
                 ", userId='" + userId + '\'' +
                 ", username='" + username + '\'' +
@@ -361,9 +377,15 @@ public class Task {
                 ", assigneeId='" + assigneeId + '\'' +
                 ", assigneeUsername='" + assigneeUsername + '\'' +
                 ", assigneeEmail='" + assigneeEmail + '\'' +
-                ", due='" + (due == null ? null : due) + '\'' +
+                ", due=" + due +
                 ", riskRef='" + riskRef + '\'' +
                 ", targetSystem=" + targetSystem +
+                ", applicationKey='" + applicationKey + '\'' +
+                ", userToken='" + userToken + '\'' +
+                ", targetUrl='" + targetUrl + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", comments=" + comments +
                 '}';
     }
 
@@ -383,6 +405,14 @@ public class Task {
                 "  \"risk-reference\": \"" + riskRef + "\",\n" +
                 "  \"target-system\": \"" + targetSystem + "\"\n" +
                 "}";
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     /**
