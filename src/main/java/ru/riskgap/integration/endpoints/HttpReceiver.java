@@ -7,7 +7,7 @@ import ru.riskgap.integration.MSProjectHandler;
 import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.models.Task;
-import ru.riskgap.integration.models.tfs.TFSHandler;
+import ru.riskgap.integration.models.tfs.TfsHandler;
 import ru.riskgap.integration.parsing.RequestParser;
 
 import javax.ws.rs.core.Response;
@@ -80,7 +80,7 @@ public class HttpReceiver {
                 targetSystemHandler = new MSProjectHandler();
                 break;
             case TFS:
-                targetSystemHandler = new TFSHandler();
+                targetSystemHandler = new TfsHandler();
                 break;
             case TRELLO:
                 targetSystemHandler = new TrelloHandler();

@@ -32,6 +32,9 @@ public class RequestParser {
      * @throws IOException when input json is malformed
      */
     public Task parse(String jsonBody) throws IOException {
-        return objectMapper.readValue(jsonBody, Task.class);
+        Task result = objectMapper.readValue(jsonBody, Task.class);
+        if (logger.isInfoEnabled())
+            logger.info("Received new " + result);
+        return result;
     }
 }

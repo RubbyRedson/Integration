@@ -23,7 +23,7 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     private TokenStore tokenStore;
 
     private static final Logger logger = LoggerFactory.getLogger(RestTokenAuthFilter.class);
-    public static final String TOKEN_PARAM = "token";
+    public static final String TOKEN_PARAM = "X-Api-Key";
 
 
     public RestTokenAuthFilter(String defaultFilterProcessesUrl) {

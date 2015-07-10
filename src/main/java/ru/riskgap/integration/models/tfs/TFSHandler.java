@@ -3,7 +3,7 @@ package ru.riskgap.integration.models.tfs;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Task;
 
-public class TFSHandler implements IntegrationHandler {
+public class TfsHandler implements IntegrationHandler {
     @Override
     public Task createOrUpdateTask(Task task) {
         //TODO implement method
