@@ -129,7 +129,7 @@ public class TfsHandler implements IntegrationHandler {
         return builder.build();
     }
 
-    private List<FieldValuePair> formFieldValuePairs(Task task, boolean update) {
+    List<FieldValuePair> formFieldValuePairs(Task task, boolean update) {
         List<FieldValuePair> pairs = new ArrayList<>();
         String name = task.getName();
         if (name != null && !name.isEmpty()) {
@@ -148,15 +148,15 @@ public class TfsHandler implements IntegrationHandler {
         String email = task.getUserEmail();
         if (username != null && !username.isEmpty() &&
                 email != null && !email.isEmpty())
-            pairs.add(new FieldValuePair(username + " <" + email + ">",
-                    update ? TfsRequestBuilder.CHANGED_BY : TfsRequestBuilder.CREATED_BY, update));
+            pairs.add(new FieldValuePair(update ? TfsRequestBuilder.CHANGED_BY : TfsRequestBuilder.CREATED_BY,
+                    username + " <" + email + ">", update));
 
         String assigneeName = task.getAssigneeUsername();
         String assigneeEmail = task.getAssigneeEmail();
         if (assigneeName != null && !assigneeName.isEmpty() &&
                 assigneeEmail != null && !assigneeEmail.isEmpty())
-            pairs.add(new FieldValuePair(assigneeName + " <" + assigneeEmail + ">",
-                    TfsRequestBuilder.TASK_ASSIGNEE, update));
+            pairs.add(new FieldValuePair(TfsRequestBuilder.TASK_ASSIGNEE,
+                    assigneeName + " <" + assigneeEmail + ">", update));
         return pairs;
     }
 }
