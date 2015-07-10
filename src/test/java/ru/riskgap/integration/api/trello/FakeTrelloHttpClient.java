@@ -1,4 +1,4 @@
-package ru.riskgap.integration.models.trello;
+package ru.riskgap.integration.api.trello;
 
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;

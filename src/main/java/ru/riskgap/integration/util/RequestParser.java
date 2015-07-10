@@ -1,4 +1,4 @@
-package ru.riskgap.integration.parsing;
+package ru.riskgap.integration.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

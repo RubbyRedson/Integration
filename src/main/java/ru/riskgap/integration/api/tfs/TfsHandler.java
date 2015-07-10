@@ -1,4 +1,4 @@
-package ru.riskgap.integration.models.tfs;
+package ru.riskgap.integration.api.tfs;
 
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Task;

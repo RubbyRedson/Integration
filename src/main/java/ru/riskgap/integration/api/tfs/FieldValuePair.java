@@ -1,4 +1,4 @@
-package ru.riskgap.integration.models.tfs;
+package ru.riskgap.integration.api.tfs;
 
 /**
  * A simple wrapper class for a field of a TFS task that should be created or updated

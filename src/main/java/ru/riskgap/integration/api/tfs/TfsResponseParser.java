@@ -1,4 +1,4 @@
-package ru.riskgap.integration.models.tfs;
+package ru.riskgap.integration.api.tfs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

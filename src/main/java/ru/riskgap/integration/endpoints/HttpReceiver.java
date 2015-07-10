@@ -1,14 +1,13 @@
 package ru.riskgap.integration.endpoints;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.MSProjectHandler;
 import ru.riskgap.integration.TrelloHandler;
+import ru.riskgap.integration.api.tfs.TfsHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.models.Task;
-import ru.riskgap.integration.models.tfs.TfsHandler;
-import ru.riskgap.integration.parsing.RequestParser;
+import ru.riskgap.integration.util.RequestParser;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -18,8 +17,7 @@ import java.text.ParseException;
 @RestController
 public class HttpReceiver {
 
-    @Autowired
-    private RequestParser requestParser;
+    private RequestParser requestParser = new RequestParser();
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody

@@ -1,4 +1,4 @@
-package ru.riskgap.integration.models.trello;
+package ru.riskgap.integration.api.trello;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
