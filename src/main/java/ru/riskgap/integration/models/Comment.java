@@ -3,8 +3,6 @@ package ru.riskgap.integration.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -16,7 +14,6 @@ public class Comment {
      */
 
     public static final String DATE = "date";
-    public static final DateFormat TFS_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'.'SS'Z'");
     @JsonProperty("date")
     @JsonDeserialize(using = CustomJsonDateDeserializer.class)
     private Date date;
@@ -42,7 +39,6 @@ public class Comment {
     @JsonProperty("text")
     private String text;
 
-   //todo ключ api? В TFS есть полная ссылка до коммента, пока предполагаю, что это равнозначные понятия
     /**
      * Ключ в API
      */

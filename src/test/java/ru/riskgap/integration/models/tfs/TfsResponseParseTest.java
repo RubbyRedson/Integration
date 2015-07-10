@@ -1,23 +1,26 @@
-package ru.riskgap.integration.parsing;
+package ru.riskgap.integration.models.tfs;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by Nikita on 05.07.2015.
  */
 public class TfsResponseParseTest {
     //unit test, no spring autowiring
-    RequestParser requestParser = new RequestParser();
+    TfsResponseParser parser = new TfsResponseParser();
 
 
     private void test(String input, Task expected) throws IOException {
-        Task actual = requestParser.parseTfsGetWorkItemFieldsResponseJson(input);
+        Task actual = parser.parseTfsGetWorkItemFieldsResponseJson(input);
         assertEquals("TFS JSON parsing test failed", expected, actual);
     }
 
@@ -198,12 +201,59 @@ public class TfsResponseParseTest {
         Exception actual = null;
 
         try {
-            requestParser.parseTfsGetWorkItemFieldsResponseJson(json);
+            parser.parseTfsGetWorkItemFieldsResponseJson(json);
         } catch (IOException e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
         }
         assertNotNull("Expected IOException but none was thrown", actual);
+    }
+
+    @Test
+    public void testParseCommentsResponse() throws ParseException {
+        String response = "{\n" +
+                "\t\"count\": 3,\n" +
+                "\t\"value\":\r [\n" +
+                "\t\t\t\t{\n" +
+                "\t\t\t\t\"rev\": 2,\n" +
+                "\t\t\t\t\"value\": \"Adding the necessary spec\",\n" +
+                "\t\t\t\t\"revisedBy\":          {\n" +
+                "\t\t\t\t\t\"id\": \"e05ad0af-18c6-46eb-ac02-bab333d46f5c\",\n" +
+                "\t\t\t\t\t\"name\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
+                "\t\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU Test Collection/_apis/Identities/e05ad0af-18c6-46eb-ac02-bab333d46f5c\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"revisedDate\": \"2015-07-07T09:08:49.31Z\",\n" +
+                "\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU%20Test%20Collection/_apis/wit/workItems/2/history/2\"\n" +
+                "\t\t},\n" +
+                "\t\t\t\t{\n" +
+                "\t\t\t\t\"rev\": 2,\n" +
+                "\t\t\t\t\"value\": \"Adding the necessary spec\",\n" +
+                "\t\t\t\t\"revisedBy\":          {\n" +
+                "\t\t\t\t\t\"id\": \"e05ad0af-18c6-46eb-ac02-bab333d46f5c\",\n" +
+                "\t\t\t\t\t\"name\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
+                "\t\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU Test Collection/_apis/Identities/e05ad0af-18c6-46eb-ac02-bab333d46f5c\"\n" +
+                "\t\t\t\t},\n" +
+                "\t\t\t\t\"revisedDate\": \"2015-07-07T09:08:49.31Z\",\n" +
+                "\t\t\t\t\"url\": \"http://riskgapwin:8080/tfs/NIGU%20Test%20Collection/_apis/wit/workItems/2/history/2\"\n" +
+                "\t\t}\n" +
+                "\t]\n" +
+                "}";
+        List<Comment> actual = new ArrayList<>();
+        try {
+            actual = parser.parseTfsGetWorkItemHistoryResponseJson(response);
+        } catch (IOException e) {
+            assertNull("Test failed, expected no exception", e);
+        }
+
+        Comment comment1 = new Comment();
+        comment1.setUsername("rg");
+        comment1.setEmail("RISKGAPWIN\\rg");
+        comment1.setText("Adding the necessary spec");
+        comment1.setDate(TfsResponseParser.TFS_DATE_FORMATTER.parse("2015-07-07T09:08:49.31Z"));
+
+        assertTrue("The length of resulting list should be 2", actual.size() == 2);
+        assertEquals("Comment is not correct", comment1, actual.get(0));
+        assertEquals("Comment is not correct", comment1, actual.get(1));
     }
 
     // todo malformed username/assignee names tests, Due Date?

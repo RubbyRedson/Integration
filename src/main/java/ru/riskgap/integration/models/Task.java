@@ -357,6 +357,8 @@ public class Task {
      */
     public enum Status {
         OPEN("open"),
+        IN_PROGRESS("in progress"),
+        RESOLVED("resolved"),
         CLOSED("closed");
 
         private String status;
