@@ -6,7 +6,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Comment;
@@ -50,15 +49,18 @@ public class TfsHandler implements IntegrationHandler {
 
         String getFieldsUrl = TfsRequestBuilder.buildGetUrlForTaskFields(url, taskId);
         String getCommentsUrl = TfsRequestBuilder.buildGetUrlForWorkItemHistory(url, taskId);
+
         try {
             Task result = responseParser.parseTfsGetWorkItemFieldsResponseJson(
-                    EntityUtils.toString(httpClient.get(getFieldsUrl).getEntity()));
+                    httpClient.extractEntity(httpClient.get(getFieldsUrl), false));
             List<Comment> commentList = responseParser.parseTfsGetWorkItemHistoryResponseJson(
-                    EntityUtils.toString(httpClient.get(getCommentsUrl).getEntity()));
+                    httpClient.extractEntity(httpClient.get(getCommentsUrl), true));
             //todo set comments in task
             return result;
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            httpClient.close();
         }
         return null;
     }
@@ -77,10 +79,13 @@ public class TfsHandler implements IntegrationHandler {
 
         String updateTaskUrl = TfsRequestBuilder.buildUpdateUrl(url, taskId);
         String updateRequestBody = TfsRequestBuilder.buildUpdateRequestBody(formFieldValuePairs(task, true));
+
         try {
-            httpClient.patch(updateTaskUrl, updateRequestBody).getEntity();
+            httpClient.patch(updateTaskUrl, updateRequestBody);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            httpClient.close();
         }
         return getTaskInformation(task);
     }
@@ -102,7 +107,10 @@ public class TfsHandler implements IntegrationHandler {
             httpClient.patch(createTaskUrl, createRequestBody).getEntity();
         } catch (IOException e) {
             e.printStackTrace();
+        }   finally {
+            httpClient.close();
         }
+
         return getTaskInformation(task);
     }
 

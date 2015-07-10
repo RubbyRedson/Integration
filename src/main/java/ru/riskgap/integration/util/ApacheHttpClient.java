@@ -4,6 +4,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -60,15 +61,14 @@ public class ApacheHttpClient implements HttpClient {
         try {
             entity = EntityUtils.toString(response.getEntity());
         } finally {
-            if (close)
-                response.close();
+            if (close) HttpClientUtils.closeQuietly(response);
         }
         return entity;
     }
 
     public int extractStatus(CloseableHttpResponse response, boolean close) throws IOException {
         int status = response.getStatusLine().getStatusCode();
-        if (close) response.close();
+        if (close) HttpClientUtils.closeQuietly(response);
         return status;
     }
 
@@ -77,7 +77,8 @@ public class ApacheHttpClient implements HttpClient {
         for (Header header : response.getAllHeaders()) {
             headers.add(new BasicNameValuePair(header.getName(), header.getValue()));
         }
-        if (close) response.close();
+        if (close)
+            HttpClientUtils.closeQuietly(response);
         return headers;
     }
 
@@ -85,5 +86,9 @@ public class ApacheHttpClient implements HttpClient {
         for (NameValuePair header : headers) {
             request.setHeader(header.getName(), header.getValue());
         }
+    }
+
+    public void close() {
+        HttpClientUtils.closeQuietly(this.httpClient);
     }
 }
