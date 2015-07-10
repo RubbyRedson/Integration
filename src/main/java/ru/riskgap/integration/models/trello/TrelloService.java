@@ -27,7 +27,7 @@ public class TrelloService {
 
     private static final String BASE_URL = "https://api.trello.com/1/";
     private static final String GET_LISTS_OF_BOARD = "boards/{0}/lists";
-    private static final String GET_CARD_OF_BOARD = "boards/{0}/cards/{1}";
+    private static final String GET_CARD_BY_ID = "cards/{0}";
     private static final String GET_LIST_BY_ID = "lists/{0}";
     private static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {
@@ -47,7 +47,7 @@ public class TrelloService {
      * Get list (column) of board for the task by its status
      *
      * @param status    status of a task
-     * @param boardId   id of a board where new task will be created
+     * @param boardId   id of a board with lists
      * @param appKey    application key
      * @param userToken token of the user, who has access to the board
      * @return id of a list
@@ -77,11 +77,20 @@ public class TrelloService {
         return null;
     }
 
-    public Task getTaskDetails(String containerId, String taskId, String appKey, String userToken) throws IOException {
+    /**
+     * Gets Task details by card ID in Trello
+     *
+     * @param taskId    ID of card in Trello
+     * @param appKey    application key
+     * @param userToken token of the user, who has access to the board
+     * @return instance of Task with information of card from Trello
+     * @throws IOException
+     * @throws ParseException
+     */
+    public Task getTaskDetails(String taskId, String appKey, String userToken) throws IOException, ParseException {
         //TODO: validate fields in task
         try {
-            String withoutParams = MessageFormat.format(BASE_URL + GET_CARD_OF_BOARD,
-                    containerId, taskId);
+            String withoutParams = MessageFormat.format(BASE_URL + GET_CARD_BY_ID, taskId);
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
                     .addParameter("token", userToken)
@@ -89,9 +98,7 @@ public class TrelloService {
             log.info("getTaskDetails, URL: {}", url);
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);
-            //  objectMapper.readTree(entity).
-
-
+            return parseCardInTask(entity, appKey, userToken);
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }
@@ -110,10 +117,21 @@ public class TrelloService {
         task.setUserId(root.get("actions").get(0).get("memberCreator").get("id").asText()); //from action "createCard"
         task.setAssigneeId(root.get("idMembers").get(0).asText()); //only first member is assigned for the task
         task.setRiskRef(root.get("attachments").get(0).get("url").asText()); //link to risk in RiskGap
-        task.setStatus(getStatusByList(root.get("idList").asText(),appKey, userToken));
+        task.setStatus(getStatusByList(root.get("idList").asText(), appKey, userToken));
         return task;
     }
 
+
+
+    /**
+     * Gets status of tasks in the given list by using "list name" <=> "status" conversion.
+     *
+     * @param listId    id of the list in Trello
+     * @param appKey    Trello application key
+     * @param userToken token of a Trello user
+     * @return status of tasks in the given list
+     * @throws IOException
+     */
     public Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_LIST_BY_ID, listId);
         try {
