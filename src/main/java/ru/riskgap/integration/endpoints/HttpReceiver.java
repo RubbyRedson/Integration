@@ -1,5 +1,6 @@
 package ru.riskgap.integration.endpoints;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.MSProjectHandler;
@@ -8,7 +9,7 @@ import ru.riskgap.integration.api.tfs.TfsHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Task;
-import ru.riskgap.integration.util.RequestParser;
+import ru.riskgap.integration.util.RequestConverter;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -18,11 +19,11 @@ import java.text.ParseException;
 @RestController
 public class HttpReceiver {
 
-    private RequestParser requestParser = new RequestParser();
+    private RequestConverter requestConverter = new RequestConverter();
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     @ResponseBody
-    public Response handleGet(@RequestBody String body) {
+    public Response handleGet(@RequestBody String body) throws JsonProcessingException {
         Task task = null;
         try {
             task = getTask(body);
@@ -36,7 +37,7 @@ public class HttpReceiver {
             return Response.status(400).entity(e).build();
         }
         Task resultTask = targetSystemHandler.getTaskInformation(task);
-        return Response.status(200).entity(resultTask.toJson()).build();
+        return Response.status(200).entity(requestConverter.fromTaskToJSON(resultTask)).build();
         // return new SmokeEntity(10, "Get Smoke Name", new Date());
         //TODO implement sync request handling
     }
@@ -47,7 +48,7 @@ public class HttpReceiver {
      */
     @RequestMapping(value = "/post", method = RequestMethod.POST)
     @ResponseBody
-    public Response handlePost(@RequestBody String body) {
+    public Response handlePost(@RequestBody String body) throws JsonProcessingException {
         Task task = null;
         try {
             task = getTask(body);
@@ -61,11 +62,11 @@ public class HttpReceiver {
             return Response.status(400).entity(e).build();
         }
         Task resultTask = targetSystemHandler.createOrUpdateTask(task);
-        return Response.status(200).entity(resultTask.toJson()).build();
+        return Response.status(200).entity(requestConverter.fromTaskToJSON(resultTask)).build();
     }
 
     private Task getTask(String body) throws IOException, ParseException {
-        Task task = requestParser.parse(body);
+        Task task = requestConverter.fromJSONtoTask(body);
         return task;
     }
 

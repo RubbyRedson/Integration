@@ -2,6 +2,7 @@ package ru.riskgap.integration.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
@@ -27,6 +28,7 @@ public class Comment {
     public static final String DATE = "date";
     @JsonProperty("date")
     @JsonDeserialize(using = CustomJsonDateDeserializer.class)
+    @JsonSerialize(using = CustomJsonDateSerializer.class)
     private Date date;
 
     /**

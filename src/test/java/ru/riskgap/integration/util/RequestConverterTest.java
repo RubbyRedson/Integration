@@ -1,11 +1,7 @@
-package ru.riskgap.integration.parsing;
+package ru.riskgap.integration.util;
 
 import org.junit.Test;
-import ru.riskgap.integration.models.Auth;
-import ru.riskgap.integration.models.Comment;
-import ru.riskgap.integration.models.CustomJsonDateDeserializer;
-import ru.riskgap.integration.models.Task;
-import ru.riskgap.integration.util.RequestParser;
+import ru.riskgap.integration.models.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +9,6 @@ import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -22,17 +17,17 @@ import static org.junit.Assert.*;
  * Created by Nikita on 03.07.2015.
  */
 
-public class RequestParserTest {
+public class RequestConverterTest {
     //unit test, no spring autowiring
-    RequestParser requestParser = new RequestParser();
+    RequestConverter requestConverter = new RequestConverter();
 
     private void testInputJson(String input, Task expected) throws IOException, ParseException {
-        Task actual = requestParser.parse(input);
+        Task actual = requestConverter.fromJSONtoTask(input);
         assertEquals("JSON parsing test", expected, actual);
     }
 
     @Test
-    public void testInputOneRequest() {
+    public void testInputOneRequest() throws ParseException {
         Exception ex = null;
         String json = "{\n" +
                 "  \"container-id\": \"Project X\",\n" +
@@ -53,27 +48,24 @@ public class RequestParserTest {
                 "  }" +
                 "}";
 
-        Task expected = new Task();
-        expected.setContainerId("Project X");
-        expected.setTaskId("12");
-        expected.setName("Test Task One");
-        expected.setStatus(Task.Status.OPEN);
-        expected.setDescription("Test Task Description");
-        expected.setUserId("42");
-        expected.setUsername("Test user");
-        expected.setUserEmail("testuser@riskgap.ru");
-        expected.setAssigneeId("34");
-        expected.setAssigneeUsername("Test assignee");
-        expected.setAssigneeEmail("testassignee@riskgap.ru");
-        try {
-            expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        expected.setRiskRef("test risk reference");
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
-        expected.setAuth(auth);
+        Task expected = new TaskBuilder()
+                .setContainerId("Project X")
+                .setTaskId("12")
+                .setName("Test Task One")
+                .setStatus(Task.Status.OPEN)
+                .setDescription("Test Task Description")
+                .setUserId("42")
+                .setUsername("Test user")
+                .setUserEmail("testuser@riskgap.ru")
+                .setAssigneeId("34")
+                .setAssigneeUsername("Test assignee")
+                .setAssigneeEmail("testassignee@riskgap.ru")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setRiskRef("test risk reference")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
+                        .build())
+                .build();
 
         try {
             testInputJson(json, expected);
@@ -85,7 +77,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void testInputSeveralRequestsSequentially() {
+    public void testInputSeveralRequestsSequentially() throws ParseException {
         Exception ex = null;
         String json1 = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
@@ -104,25 +96,22 @@ public class RequestParserTest {
                 "  }" +
                 "}";
 
-        Task expected1 = new Task();
-        expected1.setName("Test Task One");
-        expected1.setStatus(Task.Status.OPEN);
-        expected1.setDescription("Test Task Description");
-        expected1.setUserId("42");
-        expected1.setUsername("Test user");
-        expected1.setUserEmail("testuser@riskgap.ru");
-        expected1.setAssigneeId("34");
-        expected1.setAssigneeUsername("Test assignee");
-        expected1.setAssigneeEmail("testassignee@riskgap.ru");
-        try {
-            expected1.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        expected1.setRiskRef("test risk reference");
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
-        expected1.setAuth(auth);
+        Task expected1 = new TaskBuilder()
+                .setName("Test Task One")
+                .setStatus(Task.Status.OPEN)
+                .setDescription("Test Task Description")
+                .setUserId("42")
+                .setUsername("Test user")
+                .setUserEmail("testuser@riskgap.ru")
+                .setAssigneeId("34")
+                .setAssigneeUsername("Test assignee")
+                .setAssigneeEmail("testassignee@riskgap.ru")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setRiskRef("test risk reference")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
+                        .build())
+                .build();
 
         String json2 = "{\n" +
                 "  \"name\": \"Test Task Two\",\n" +
@@ -141,25 +130,22 @@ public class RequestParserTest {
                 "  }" +
                 "}";
 
-        Task expected2 = new Task();
-        expected2.setName("Test Task Two");
-        expected2.setStatus(Task.Status.CLOSED);
-        expected2.setDescription("Test Task2 Description");
-        expected2.setUserId("423");
-        expected2.setUsername("Test user 2");
-        expected2.setUserEmail("testuser2@riskgap.ru");
-        expected2.setAssigneeId("42");
-        expected2.setAssigneeUsername("Test assignee 2");
-        expected2.setAssigneeEmail("testassignee2@riskgap.ru");
-        try {
-            expected2.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        expected2.setRiskRef("test risk reference 2");
-        Auth auth2 = new Auth();
-        auth2.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
-        expected2.setAuth(auth2);
+        Task expected2 = new TaskBuilder()
+                .setName("Test Task Two")
+                .setStatus(Task.Status.CLOSED)
+                .setDescription("Test Task2 Description")
+                .setUserId("423")
+                .setUsername("Test user 2")
+                .setUserEmail("testuser2@riskgap.ru")
+                .setAssigneeId("42")
+                .setAssigneeUsername("Test assignee 2")
+                .setAssigneeEmail("testassignee2@riskgap.ru")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"))
+                .setRiskRef("test risk reference 2")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
+                        .build())
+                .build();
 
         try {
             testInputJson(json1, expected1);
@@ -172,7 +158,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void testInputPartialTaskRequest() {
+    public void testInputPartialTaskRequest() throws ParseException {
         Exception ex = null;
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
@@ -187,22 +173,18 @@ public class RequestParserTest {
                 "  }" +
                 "}";
 
-        Task expected = new Task();
-        expected.setName("Test Task One");
-        expected.setStatus(Task.Status.CLOSED);
-        expected.setAssigneeId("34");
-        expected.setAssigneeUsername("Test assignee");
-        expected.setAssigneeEmail("testassignee@riskgap.ru");
-        try {
-            expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        expected.setRiskRef("test risk reference");
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
-        expected.setAuth(auth);
-
+        Task expected = new TaskBuilder()
+                .setName("Test Task One")
+                .setStatus(Task.Status.CLOSED)
+                .setAssigneeId("34")
+                .setAssigneeUsername("Test assignee")
+                .setAssigneeEmail("testassignee@riskgap.ru")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setRiskRef("test risk reference")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
+                        .build())
+                .build();
         try {
             testInputJson(json, expected);
         } catch (IOException | ParseException e) {
@@ -224,14 +206,14 @@ public class RequestParserTest {
                 "    {\"text\": \"Second Comment!\", \"date\": \"14.09.2015\"}\n" +
                 "  ] \n" +
                 "}";
-        Task expected = new Task();
-        expected.setName("andrey");
-        expected.setStatus(Task.Status.CLOSED);
-        expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"));
-        List<Comment> comments = Arrays.asList(
-                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"), "First Comment!"),
-                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.09.2015"), "Second Comment!"));
-        expected.setComments(comments);
+        Task expected = new TaskBuilder()
+                .setName("andrey")
+                .setStatus(Task.Status.CLOSED)
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"))
+                .setComments(Arrays.asList(
+                        new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"), "First Comment!"),
+                        new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.09.2015"), "Second Comment!")))
+                .build();
         try {
             testInputJson(json, expected);
         } catch (IOException e) {
@@ -250,12 +232,12 @@ public class RequestParserTest {
                 "  \"due\": \"12.08.2015\",\n" +
                 "  \"comments\": []\n" +
                 "}";
-        Task expected = new Task();
-        expected.setName("andrey");
-        expected.setStatus(Task.Status.CLOSED);
-        expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"));
-        List<Comment> comments = new ArrayList<>();
-        expected.setComments(comments);
+        Task expected = new TaskBuilder()
+                .setName("andrey")
+                .setStatus(Task.Status.CLOSED)
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"))
+                .setComments(new ArrayList<Comment>())
+                .build();
         try {
             testInputJson(json, expected);
         } catch (IOException e) {
@@ -295,7 +277,7 @@ public class RequestParserTest {
         Exception actual = null;
 
         try {
-            requestParser.parse(json);
+            requestConverter.fromJSONtoTask(json);
         } catch (IOException e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
@@ -320,7 +302,7 @@ public class RequestParserTest {
                 "}";
 
         try {
-            requestParser.parse(json);
+            requestConverter.fromJSONtoTask(json);
         } catch (IOException e) {
             actual = e;
             StringWriter stringWriter = new StringWriter();

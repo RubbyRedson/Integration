@@ -1,9 +1,9 @@
 package ru.riskgap.integration.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
@@ -12,17 +12,16 @@ import java.io.IOException;
  * Receives the request body as json and parses it to create a Task object that holds all the received information
  * Created by Nikita on 16.06.2015.
  */
-@Component
-public class RequestParser {
+public class RequestConverter {
     private final ObjectMapper objectMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestConverter.class);
 
-    public RequestParser() {
+    public RequestConverter() {
         this(new ObjectMapper());
     }
 
-    public RequestParser(ObjectMapper objectMapper) {
+    public RequestConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -31,10 +30,17 @@ public class RequestParser {
      * @return Task instance with all of the information from jsonBody
      * @throws IOException when input json is malformed
      */
-    public Task parse(String jsonBody) throws IOException {
+    public Task fromJSONtoTask(String jsonBody) throws IOException {
         Task result = objectMapper.readValue(jsonBody, Task.class);
         if (logger.isInfoEnabled())
             logger.info("Received new " + result);
         return result;
+    }
+
+    public String fromTaskToJSON(Task task) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(task);
+        if (logger.isInfoEnabled())
+            logger.info("Send new " + json);
+        return json;
     }
 }

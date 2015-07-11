@@ -1,9 +1,11 @@
 package ru.riskgap.integration.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 import java.util.List;
@@ -98,6 +100,7 @@ public class Task {
 
     @JsonProperty("due")
     @JsonDeserialize(using = CustomJsonDateDeserializer.class)
+    @JsonSerialize(using = CustomJsonDateSerializer.class)
     private Date due;
 
     /**
@@ -119,7 +122,7 @@ public class Task {
     @JsonProperty("comments")
     private List<Comment> comments;
 
-    @JsonProperty("auth")
+
     private Auth auth;
 
     /*
@@ -256,10 +259,12 @@ public class Task {
         this.comments = comments;
     }
 
+    @JsonIgnore
     public Auth getAuth() {
         return auth;
     }
 
+    @JsonProperty("auth")
     public void setAuth(Auth auth) {
         this.auth = auth;
     }
@@ -335,24 +340,6 @@ public class Task {
                 ", auth=" + auth +
                 '}';
     }
-
-    @Deprecated
-    public String toJson() {
-        return "{\n" +
-                "  \"name\": \"" + name + "\",\n" +
-                "  \"status\": \"" + status.toString().toLowerCase() + "\",\n" +
-                "  \"description\": \"" + description + "\",\n" +
-                "  \"user-id\": \"" + userId + "\",\n" +
-                "  \"username\": \"" + username + "\",\n" +
-                "  \"user-email\": \"" + userEmail + "\",\n" +
-                "  \"assignee-id\": \"" + assigneeId + "\",\n" +
-                "  \"assignee-username\": \"" + assigneeUsername + "\",\n" +
-                "  \"assignee-email\": \"" + assigneeEmail + "\",\n" +
-                "  \"due\": \"" + (due == null ? null : CustomJsonDateDeserializer.DATE_FORMATTER.format(due)) + "\",\n" +
-                "  \"risk-reference\": \"" + riskRef + "\",\n" +
-                "}";
-    }
-
 
 
     /**
