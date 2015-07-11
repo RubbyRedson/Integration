@@ -1,6 +1,7 @@
 package ru.riskgap.integration.parsing;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.Task;
@@ -47,7 +48,9 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"TFS\"\n" +
+                "  \"auth\": {\n" +
+                "     \"target-system\": \"MS Project\"\n" +
+                "  }" +
                 "}";
 
         Task expected = new Task();
@@ -68,7 +71,9 @@ public class RequestParserTest {
             e.printStackTrace();
         }
         expected.setRiskRef("test risk reference");
-        expected.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+        expected.setAuth(auth);
 
         try {
             testInputJson(json, expected);
@@ -94,7 +99,9 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"MS Project\"\n" +
+                "  \"auth\": {\n" +
+                "    \"target-system\": \"MS Project\"\n" +
+                "  }" +
                 "}";
 
         Task expected1 = new Task();
@@ -113,7 +120,9 @@ public class RequestParserTest {
             e.printStackTrace();
         }
         expected1.setRiskRef("test risk reference");
-        expected1.setTargetSystem(Task.TargetSystem.MS_PROJECT);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+        expected1.setAuth(auth);
 
         String json2 = "{\n" +
                 "  \"name\": \"Test Task Two\",\n" +
@@ -127,7 +136,9 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee2@riskgap.ru\",\n" +
                 "  \"due\": \"14.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference 2\",\n" +
-                "  \"target-system\": \"TFS\"\n" +
+                "  \"auth\": {\n" +
+                "    \"target-system\": \"MS Project\"\n" +
+                "  }" +
                 "}";
 
         Task expected2 = new Task();
@@ -146,7 +157,9 @@ public class RequestParserTest {
             e.printStackTrace();
         }
         expected2.setRiskRef("test risk reference 2");
-        expected2.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth2 = new Auth();
+        auth2.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+        expected2.setAuth(auth2);
 
         try {
             testInputJson(json1, expected1);
@@ -169,7 +182,9 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"12.02.2015\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"TFS\"\n" +
+                "  \"auth\": {\n" +
+                "    \"target-system\": \"MS Project\"\n" +
+                "  }" +
                 "}";
 
         Task expected = new Task();
@@ -184,7 +199,9 @@ public class RequestParserTest {
             e.printStackTrace();
         }
         expected.setRiskRef("test risk reference");
-        expected.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+        expected.setAuth(auth);
 
         try {
             testInputJson(json, expected);
@@ -212,7 +229,7 @@ public class RequestParserTest {
         expected.setStatus(Task.Status.CLOSED);
         expected.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"));
         List<Comment> comments = Arrays.asList(
-                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"),"First Comment!"),
+                new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"), "First Comment!"),
                 new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.09.2015"), "Second Comment!"));
         expected.setComments(comments);
         try {
@@ -247,9 +264,6 @@ public class RequestParserTest {
         }
         assertNull(ex);
     }
-
-
-
 
 
     @Test
@@ -300,7 +314,9 @@ public class RequestParserTest {
                 "  \"assignee-email\": \"testassignee@riskgap.ru\",\n" +
                 "  \"due\": \"I am a wrong Date and I am not ashamed\",\n" +
                 "  \"risk-reference\": \"test risk reference\",\n" +
-                "  \"target-system\": \"TFS\"\n" +
+                "  \"auth\": {\n" +
+                "    \"target-system\": \"MS Project\"\n" +
+                "  }," +
                 "}";
 
         try {

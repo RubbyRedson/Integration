@@ -1,6 +1,7 @@
 package ru.riskgap.integration.api.tfs;
 
 import org.junit.Test;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 
@@ -56,7 +57,9 @@ public class TfsResponseParseTest {
 //			e.printStackTrace();
 //		}
 //		expected.setRiskRef("test risk reference");
-        expected.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TFS);
+        expected.setAuth(auth);
 
 
         try {
@@ -98,7 +101,9 @@ public class TfsResponseParseTest {
 //			e.printStackTrace();
 //		}
 //		expected1.setRiskRef("test risk reference");
-        expected1.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TFS);
+        expected1.setAuth(auth);
 
         String json2 = "{\n" +
                 "   \"count\": 1,\n" +
@@ -130,7 +135,9 @@ public class TfsResponseParseTest {
 //			e.printStackTrace();
 //		}
 //		expected2.setRiskRef("test risk reference 2");
-        expected2.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth2 = new Auth();
+        auth2.setTargetSystem(Auth.TargetSystem.TFS);
+        expected2.setAuth(auth2);
 
         try {
             test(json1, expected1);
@@ -166,7 +173,9 @@ public class TfsResponseParseTest {
 //			e.printStackTrace();
 //		}
 //		expected.setRiskRef("test risk reference");
-        expected.setTargetSystem(Task.TargetSystem.TFS);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TFS);
+        expected.setAuth(auth);
 
         try {
             test(json, expected);

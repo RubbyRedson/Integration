@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 
@@ -88,7 +89,9 @@ public class TfsResponseParser {
 
 //        result.setRiskRef(jsonMap.get(Task.RISK_REF));
 
-		result.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth = new Auth();
+		auth.setTargetSystem(Auth.TargetSystem.TFS);
+		result.setAuth(auth);
 
 		return result;
 

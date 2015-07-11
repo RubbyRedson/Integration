@@ -105,23 +105,9 @@ public class Task {
      */
     public static final String RISK_REF = "risk-reference";
     @JsonProperty("risk-reference")
-    private String riskRef; //todo It is a URL to RiskGap risk, maybe some validation
+    private String riskRef;
 
-    /**
-     * Система, в которой находится задание
-     */
-    public static final String TARGET_SYSTEM = "target-system";
-    @JsonProperty("target-system")
-    private TargetSystem targetSystem;
 
-    /**
-     * Ключ для идентификации приложения, через которое осуществляется доступ к API интегрируемой системы
-     */
-    @JsonProperty("application-key")
-    private String applicationKey; //TODO: add tests
-
-    @JsonProperty("user-token")
-    private String userToken; //TODO: add tests
 
     /**
      * Конечный адрес задачи в интегрируемой системе
@@ -129,15 +115,12 @@ public class Task {
     @JsonProperty("target-url")
     private String targetUrl;
 
-    @JsonProperty("login")
-    private String login;
-
-    @JsonProperty("password")
-    private String password;
-
 
     @JsonProperty("comments")
     private List<Comment> comments;
+
+    @JsonProperty("auth")
+    private Auth auth;
 
     /*
     todo TFS
@@ -241,14 +224,6 @@ public class Task {
         this.riskRef = riskRef;
     }
 
-    public TargetSystem getTargetSystem() {
-        return targetSystem;
-    }
-
-    public void setTargetSystem(TargetSystem targetSystem) {
-        this.targetSystem = targetSystem;
-    }
-
     public String getTaskId() {
         return taskId;
     }
@@ -265,22 +240,6 @@ public class Task {
         this.containerId = containerId;
     }
 
-    public String getApplicationKey() {
-        return applicationKey;
-    }
-
-    public void setApplicationKey(String applicationKey) {
-        this.applicationKey = applicationKey;
-    }
-
-    public String getUserToken() {
-        return userToken;
-    }
-
-    public void setUserToken(String userToken) {
-        this.userToken = userToken;
-    }
-
     public String getTargetUrl() {
         return targetUrl;
     }
@@ -289,21 +248,22 @@ public class Task {
         this.targetUrl = targetUrl;
     }
 
-    public String getLogin() {
-        return login;
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
-    public String getPassword() {
-        return password;
+    public Auth getAuth() {
+        return auth;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAuth(Auth auth) {
+        this.auth = auth;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -327,14 +287,9 @@ public class Task {
             return false;
         if (due != null ? !due.equals(task.due) : task.due != null) return false;
         if (riskRef != null ? !riskRef.equals(task.riskRef) : task.riskRef != null) return false;
-        if (targetSystem != task.targetSystem) return false;
-        if (applicationKey != null ? !applicationKey.equals(task.applicationKey) : task.applicationKey != null)
-            return false;
-        if (userToken != null ? !userToken.equals(task.userToken) : task.userToken != null) return false;
         if (targetUrl != null ? !targetUrl.equals(task.targetUrl) : task.targetUrl != null) return false;
-        if (login != null ? !login.equals(task.login) : task.login != null) return false;
-        if (password != null ? !password.equals(task.password) : task.password != null) return false;
-        return !(comments != null ? !comments.equals(task.comments) : task.comments != null);
+        if (comments != null ? !comments.equals(task.comments) : task.comments != null) return false;
+        return !(auth != null ? !auth.equals(task.auth) : task.auth != null);
 
     }
 
@@ -353,13 +308,9 @@ public class Task {
         result = 31 * result + (assigneeEmail != null ? assigneeEmail.hashCode() : 0);
         result = 31 * result + (due != null ? due.hashCode() : 0);
         result = 31 * result + (riskRef != null ? riskRef.hashCode() : 0);
-        result = 31 * result + (targetSystem != null ? targetSystem.hashCode() : 0);
-        result = 31 * result + (applicationKey != null ? applicationKey.hashCode() : 0);
-        result = 31 * result + (userToken != null ? userToken.hashCode() : 0);
         result = 31 * result + (targetUrl != null ? targetUrl.hashCode() : 0);
-        result = 31 * result + (login != null ? login.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (comments != null ? comments.hashCode() : 0);
+        result = 31 * result + (auth != null ? auth.hashCode() : 0);
         return result;
     }
 
@@ -379,13 +330,9 @@ public class Task {
                 ", assigneeEmail='" + assigneeEmail + '\'' +
                 ", due=" + due +
                 ", riskRef='" + riskRef + '\'' +
-                ", targetSystem=" + targetSystem +
-                ", applicationKey='" + applicationKey + '\'' +
-                ", userToken='" + userToken + '\'' +
                 ", targetUrl='" + targetUrl + '\'' +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
                 ", comments=" + comments +
+                ", auth=" + auth +
                 '}';
     }
 
@@ -403,17 +350,10 @@ public class Task {
                 "  \"assignee-email\": \"" + assigneeEmail + "\",\n" +
                 "  \"due\": \"" + (due == null ? null : CustomJsonDateDeserializer.DATE_FORMATTER.format(due)) + "\",\n" +
                 "  \"risk-reference\": \"" + riskRef + "\",\n" +
-                "  \"target-system\": \"" + targetSystem + "\"\n" +
                 "}";
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
     /**
      * Статус задачи
@@ -441,34 +381,6 @@ public class Task {
                 for (Status enumStatus : Status.values()) {
                     if (enumStatus.getStatus().equals(status))
                         return enumStatus;
-                }
-            }
-            return null;
-        }
-    }
-
-    public enum TargetSystem {
-        TFS("TFS"),
-        MS_PROJECT("MS Project"),
-        TRELLO("Trello");
-
-        private String system;
-
-        TargetSystem(String system) {
-            this.system = system;
-        }
-
-        @JsonValue
-        public String getSystem() {
-            return system;
-        }
-
-        @JsonCreator
-        public static TargetSystem fromString(String system) {
-            if (system != null) {
-                for (TargetSystem targetSystem : TargetSystem.values()) {
-                    if (targetSystem.getSystem().equals(system))
-                        return targetSystem;
                 }
             }
             return null;

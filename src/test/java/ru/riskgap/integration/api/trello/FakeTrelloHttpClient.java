@@ -6,7 +6,7 @@ import org.apache.http.params.HttpParams;
 import ru.riskgap.integration.util.HttpClient;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -18,16 +18,16 @@ import java.util.regex.Pattern;
 public class FakeTrelloHttpClient implements HttpClient {
 
     private String lastUrl;
-    private HashMap<Pattern, CloseableHttpResponse> uriResponseMapper;
-    private HashMap<CloseableHttpResponse, String> responseEntityMapper;
+    private LinkedHashMap<Pattern, CloseableHttpResponse> uriResponseMapper;
+    private LinkedHashMap<CloseableHttpResponse, String> responseEntityMapper;
     public static CloseableHttpResponse GET_ALL_LISTS_OF_BOARD = new FakeHttpResponse();
     public static CloseableHttpResponse GET_LIST_BY_ID = new FakeHttpResponse();
     public static CloseableHttpResponse POST_CARD = new FakeHttpResponse();
     public static CloseableHttpResponse POST_COMMENT = new FakeHttpResponse();
 
     public FakeTrelloHttpClient() {
-        responseEntityMapper = new HashMap<>();
-        uriResponseMapper = new HashMap<>();
+        responseEntityMapper = new LinkedHashMap<>();
+        uriResponseMapper = new LinkedHashMap<>();
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/comments.*"), POST_COMMENT);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/boards/.*/lists.*"), GET_ALL_LISTS_OF_BOARD);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/lists/.*\\?.*"), GET_LIST_BY_ID);

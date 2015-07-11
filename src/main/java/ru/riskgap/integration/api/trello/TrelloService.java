@@ -6,6 +6,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.HttpClient;
@@ -173,7 +174,9 @@ public class TrelloService {
     Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
-        task.setTargetSystem(Task.TargetSystem.TRELLO);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
+        task.setAuth(auth);
         task.setTaskId(root.get("id").asText());
         task.setContainerId(root.get("idBoard").asText());
         task.setName(root.get("name").asText());

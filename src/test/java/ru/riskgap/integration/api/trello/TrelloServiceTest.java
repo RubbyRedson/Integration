@@ -2,6 +2,7 @@ package ru.riskgap.integration.api.trello;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.CustomJsonDateDeserializer;
 import ru.riskgap.integration.models.Task;
@@ -304,7 +305,9 @@ public class TrelloServiceTest {
         expected.setStatus(Task.Status.OPEN);
         expected.setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"));
         expected.setRiskRef("http://google.ru");
-        expected.setTargetSystem(Task.TargetSystem.TRELLO);
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
+        expected.setAuth(auth);
         assertEquals(expected, actual);
     }
 
@@ -354,7 +357,12 @@ public class TrelloServiceTest {
         task.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"));
         task.setRiskRef("http://google.ru");
         task.setName("MyCard");
-        trelloService.createCardByTask(task, task.getApplicationKey(), task.getUserToken());
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
+        auth.setApplicationKey(KEY);
+        auth.setUserToken(TOKEN);
+        task.setAuth(auth);
+        trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
     }
 
@@ -443,7 +451,12 @@ public class TrelloServiceTest {
         task.setComments(Arrays.asList(
                 new Comment(new Date(), "Hello!"),
                 new Comment(new Date(), "Good Bye!")));
-        trelloService.createCardByTask(task, task.getApplicationKey(), task.getUserToken());
+        Auth auth = new Auth();
+        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
+        auth.setApplicationKey(KEY);
+        auth.setUserToken(TOKEN);
+        task.setAuth(auth);
+        trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
         assertEquals(2, task.getComments().size());
         assertEquals("55a033df0c69600cdadfd912", task.getComments().get(0).getCommentId());

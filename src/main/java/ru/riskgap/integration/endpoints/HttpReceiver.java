@@ -6,6 +6,7 @@ import ru.riskgap.integration.MSProjectHandler;
 import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.api.tfs.TfsHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
+import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.RequestParser;
 
@@ -69,7 +70,7 @@ public class HttpReceiver {
     }
 
     private IntegrationHandler getHandler(Task task) throws AbstractException {
-        Task.TargetSystem targetSystem = task.getTargetSystem();
+        Auth.TargetSystem targetSystem = task.getAuth().getTargetSystem();
         if (targetSystem == null)
             throw new AbstractException("There is no system for integration process");
         IntegrationHandler targetSystemHandler = null;

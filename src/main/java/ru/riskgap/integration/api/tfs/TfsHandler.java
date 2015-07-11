@@ -117,12 +117,12 @@ public class TfsHandler implements IntegrationHandler {
     private CloseableHttpClient createHttpClient(Task task) {
         HttpClientBuilder builder = HttpClientBuilder.create();
 
-        String login = task.getLogin();
-        String password = task.getPassword();
+        String login = task.getAuth().getLogin();
+        String password = task.getAuth().getPassword();
         if (login != null && !login.isEmpty() && password != null) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(task.getLogin(), task.getPassword()));
+                    new UsernamePasswordCredentials(task.getAuth().getLogin(), task.getAuth().getPassword()));
             builder.setDefaultCredentialsProvider(credentialsProvider);
         }
 

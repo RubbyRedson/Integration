@@ -28,7 +28,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(Task.TargetSystem.MS_PROJECT);
+		Auth auth = new Auth();
+		auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+		first.setAuth(auth);
 
 		Task second = new Task();
 		second.setName("Test Task One");
@@ -46,7 +48,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference");
-		second.setTargetSystem(Task.TargetSystem.MS_PROJECT);
+		Auth auth2 = new Auth();
+		auth2.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+		second.setAuth(auth2);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", second.equals(first));
@@ -66,7 +70,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth1 = new Auth();
+		auth1.setTargetSystem(Auth.TargetSystem.TFS);
+		first.setAuth(auth1);
 
 		Task second = new Task();
 		second.setName("Test Task One");
@@ -80,7 +86,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference");
-		second.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth2 = new Auth();
+		auth2.setTargetSystem(Auth.TargetSystem.TFS);
+		second.setAuth(auth2);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks should have been equal:", second.equals(first));
@@ -105,7 +113,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(Task.TargetSystem.MS_PROJECT);
+		Auth auth = new Auth();
+		auth.setTargetSystem(Auth.TargetSystem.MS_PROJECT);
+		first.setAuth(auth);
 
 		Task second = new Task();
 		second.setName("Test Task Two");
@@ -123,7 +133,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference 2");
-		second.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth2 = new Auth();
+		auth2.setTargetSystem(Auth.TargetSystem.TFS);
+		second.setAuth(auth2);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !second.equals(first));
@@ -143,7 +155,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		first.setRiskRef("test risk reference");
-		first.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth = new Auth();
+		auth.setTargetSystem(Auth.TargetSystem.TFS);
+		first.setAuth(auth);
 
 		Task second = new Task();
 		second.setName("Test Task Two");
@@ -161,7 +175,9 @@ public class TaskEqualsTest {
 			e.printStackTrace();
 		}
 		second.setRiskRef("test risk reference 2");
-		second.setTargetSystem(Task.TargetSystem.TFS);
+		Auth auth2 = new Auth();
+		auth2.setTargetSystem(Auth.TargetSystem.TFS);
+		second.setAuth(auth);
 
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !first.equals(second));
 		Assert.assertTrue("Tasks Equals test failed. Tasks shouldn't have been equal:", !second.equals(first));
