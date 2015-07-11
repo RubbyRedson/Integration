@@ -1,6 +1,7 @@
 package ru.riskgap.integration.api.tfs;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import ru.riskgap.integration.models.Task;
 
@@ -35,5 +36,44 @@ public class TfsHandlerTest {
 
 		List<FieldValuePair> actualPairs = handler.formFieldValuePairs(task, true);
 		Assert.assertEquals("", expectedPairs, actualPairs);
+	}
+
+	@Test
+	@Ignore
+	public void testCreate() {
+
+		Task task = new Task();
+		task.setName("Test Task 3");
+		task.setStatus(Task.Status.OPEN);
+		task.setDescription("Test descr");
+		task.setUsername("rg");
+		task.setUserEmail("RISKGAPWIN\\rg");
+		task.setAssigneeUsername("rg");
+		task.setAssigneeEmail("RISKGAPWIN\\rg");
+
+		//todo set integration params
+
+		TfsHandler handler = new TfsHandler();
+		handler.createOrUpdateTask(task);
+	}
+
+	@Test
+	@Ignore
+	public void testGet() {
+
+		Task task = new Task();
+		task.setTaskId("2");
+//        task.setName("Test Task 3");
+//        task.setStatus(Task.Status.OPEN);
+//        task.setDescription("Test descr");
+//        task.setUsername("rg");
+//        task.setUserEmail("RISKGAPWIN\\rg");
+//        task.setAssigneeUsername("rg");
+//        task.setAssigneeEmail("RISKGAPWIN\\rg");
+
+	//todo set integration params
+
+		TfsHandler handler = new TfsHandler();
+		System.out.println(handler.getTaskInformation(task));
 	}
 }

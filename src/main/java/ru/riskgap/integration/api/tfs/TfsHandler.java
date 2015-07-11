@@ -1,7 +1,7 @@
 package ru.riskgap.integration.api.tfs;
 
 import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -121,8 +121,9 @@ public class TfsHandler implements IntegrationHandler {
         String password = task.getAuth().getPassword();
         if (login != null && !login.isEmpty() && password != null) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            //todo resolve workstation/domain
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(task.getAuth().getLogin(), task.getAuth().getPassword()));
+                    new NTCredentials(task.getAuth().getLogin(), task.getAuth().getPassword(), "workstation", "domain"));
             builder.setDefaultCredentialsProvider(credentialsProvider);
         }
 
