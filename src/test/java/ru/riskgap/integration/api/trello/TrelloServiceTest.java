@@ -2,10 +2,7 @@ package ru.riskgap.integration.api.trello;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.riskgap.integration.models.Auth;
-import ru.riskgap.integration.models.Comment;
-import ru.riskgap.integration.models.CustomJsonDateDeserializer;
-import ru.riskgap.integration.models.Task;
+import ru.riskgap.integration.models.*;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -295,19 +292,21 @@ public class TrelloServiceTest {
                         "    \"pos\": 16384\n" +
                         "}");
         Task actual = trelloService.parseCardInTask(jsonCard, KEY, TOKEN);
-        Task expected = new Task();
-        expected.setUserId("5134d76e21518d64320053a7");
-        expected.setAssigneeId("5134d76e21518d64320053a7");
-        expected.setContainerId("559381ce9af4e9c91ab2dbad");
-        expected.setTaskId("559a048632b6165b1416dabd");
-        expected.setName("Simple task");
-        expected.setDescription("Test Description!");
-        expected.setStatus(Task.Status.OPEN);
-        expected.setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"));
-        expected.setRiskRef("http://google.ru");
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
-        expected.setAuth(auth);
+
+        Task expected = new TaskBuilder()
+                .setUserId("5134d76e21518d64320053a7")
+                .setAssigneeId("5134d76e21518d64320053a7")
+                .setContainerId("559381ce9af4e9c91ab2dbad")
+                .setTaskId("559a048632b6165b1416dabd")
+                .setName("Simple task")
+                .setDescription("Test Description!")
+                .setStatus(Task.Status.OPEN)
+                .setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"))
+                .setRiskRef("http://google.ru")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.TRELLO)
+                        .build())
+                .build();
         assertEquals(expected, actual);
     }
 
@@ -352,16 +351,17 @@ public class TrelloServiceTest {
                         "    \"url\": \"https://trello.com/c/GZztVE1c/9-mycard\",\n" +
                         "    \"stickers\": []\n" +
                         "}");
-        Task task = new Task();
-        task.setContainerId("559381ce9af4e9c91ab2dbae");
-        task.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"));
-        task.setRiskRef("http://google.ru");
-        task.setName("MyCard");
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
-        auth.setApplicationKey(KEY);
-        auth.setUserToken(TOKEN);
-        task.setAuth(auth);
+        Task task = new TaskBuilder()
+                .setContainerId("559381ce9af4e9c91ab2dbae")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"))
+                .setRiskRef("http://google.ru")
+                .setName("MyCard")
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.TRELLO)
+                        .setApplicationKey(KEY)
+                        .setUserToken(TOKEN)
+                        .build())
+                .build();
         trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
     }
@@ -443,19 +443,20 @@ public class TrelloServiceTest {
                         "        }\n" +
                         "    ]\n" +
                         "}");
-        Task task = new Task();
-        task.setContainerId("559381ce9af4e9c91ab2dbae");
-        task.setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"));
-        task.setRiskRef("http://google.ru");
-        task.setName("MyCard");
-        task.setComments(Arrays.asList(
-                new Comment(new Date(), "Hello!"),
-                new Comment(new Date(), "Good Bye!")));
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
-        auth.setApplicationKey(KEY);
-        auth.setUserToken(TOKEN);
-        task.setAuth(auth);
+        Task task = new TaskBuilder()
+                .setContainerId("559381ce9af4e9c91ab2dbae")
+                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"))
+                .setRiskRef("http://google.ru")
+                .setName("MyCard")
+                .setComments(Arrays.asList(
+                        new Comment(new Date(), "Hello!"),
+                        new Comment(new Date(), "Good Bye!")))
+                .setAuth(new AuthBuilder()
+                        .setTargetSystem(Auth.TargetSystem.TRELLO)
+                        .setApplicationKey(KEY)
+                        .setUserToken(TOKEN)
+                        .build())
+                .build();
         trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
         assertEquals(2, task.getComments().size());
