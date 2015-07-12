@@ -30,7 +30,7 @@ public class TrelloService {
     private final static SimpleDateFormat TRELLO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final String BASE_URL = "https://api.trello.com/1/";
     private static final String GET_LISTS_OF_BOARD = "boards/{0}/lists";
-    private static final String GET_CARD_BY_ID = "cards/{0}";
+    private static final String GET_OR_CHANGE_CARD_BY_ID = "cards/{0}";
     private static final String GET_LIST_BY_ID = "lists/{0}";
     private static final String POST_CARD = "cards";
     private static final String POST_COMMENT = "cards/{0}/actions/comments";
@@ -96,10 +96,12 @@ public class TrelloService {
      */
     public Task getTaskByCardId(String cardId, String appKey, String userToken) throws IOException, ParseException {
         try {
-            String withoutParams = MessageFormat.format(BASE_URL + GET_CARD_BY_ID, cardId);
+            String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
                     .addParameter("token", userToken)
+                    .addParameter("attachments", String.valueOf(true))
+                    .addParameter("actions", "createCard,commentCard")
                     .build().toString();
             log.info("getTaskByCardId, URL: {}", url);
             CloseableHttpResponse response = httpClient.get(url);
@@ -108,6 +110,13 @@ public class TrelloService {
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }
+        return null;
+    }
+
+    public Task saveCardByTask(Task task, String appKey, String userToken) throws IOException {
+        if (task.getTaskId() == null)
+            return createCard(task, appKey, userToken);
+        //TODO: updateCard
         return null;
     }
 
@@ -120,10 +129,10 @@ public class TrelloService {
      * @return task object with filled task id and ids of comments
      * @throws IOException
      */
-    public Task createCardByTask(Task task, String appKey, String userToken) throws IOException {
+    public Task createCard(Task task, String appKey, String userToken) throws IOException {
         task.setTaskId(createTaskOnly(task, appKey, userToken));
         List<Comment> comments = task.getComments();
-        if (comments !=null) {
+        if (comments != null) {
             for (Comment comment : comments) {
                 comment.setCommentId(addComment(task.getTaskId(), comment, appKey, userToken));
             }
@@ -139,7 +148,8 @@ public class TrelloService {
                     .addParameter("token", userToken)
                     .addParameter("name", task.getName())
                     .addParameter("desc", task.getDescription())
-                    .addParameter("idList", task.getContainerId())
+                    .addParameter("idList",
+                            getListIdByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
                     .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
                     .addParameter("urlSource", task.getRiskRef())
                     .build().toString();
@@ -165,6 +175,29 @@ public class TrelloService {
             CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
             String entity = httpClient.extractEntity(createCommentResponse, true);
             return objectMapper.readTree(entity).get("id").asText();
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
+        }
+        return null;
+    }
+
+    String updateCardOnly(Task task, String appKey, String userToken) throws IOException {
+        String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, task.getTaskId());
+        //TODO: can link to a risk be changed?
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .addParameter("name", task.getName())
+                    .addParameter("desc", task.getDescription())
+                    .addParameter("idList",
+                            getListIdByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
+                    .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                    .build().toString();
+            log.info("updateCardOnly, URL: {}", url);
+            CloseableHttpResponse createCommentResponse = httpClient.put(url, null);
+            String entity = httpClient.extractEntity(createCommentResponse, true);
+            return objectMapper.readTree(entity).get("id").asText(); //has 'id' => all is ok
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }

@@ -44,7 +44,8 @@ public class TrelloServiceTest {
         try {
             trelloService.getTaskByCardId(CARD_ID, KEY, TOKEN);
         } finally {
-            assertEquals("https://api.trello.com/1/cards/" + CARD_ID + "?key=" + KEY + "&token=" + TOKEN,
+            assertEquals("https://api.trello.com/1/cards/" + CARD_ID + "?key=" + KEY + "&token=" + TOKEN +
+                    "&attachments=true&actions=createCard%2CcommentCard",
                     fakeTrelloHttpClient.getLastUrl());
         }
     }
@@ -362,7 +363,7 @@ public class TrelloServiceTest {
                         .setUserToken(TOKEN)
                         .build())
                 .build();
-        trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        trelloService.createCard(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
     }
 
@@ -457,7 +458,7 @@ public class TrelloServiceTest {
                         .setUserToken(TOKEN)
                         .build())
                 .build();
-        trelloService.createCardByTask(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        trelloService.createCard(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
         assertEquals(2, task.getComments().size());
         assertEquals("55a033df0c69600cdadfd912", task.getComments().get(0).getCommentId());
