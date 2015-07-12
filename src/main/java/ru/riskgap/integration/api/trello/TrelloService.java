@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
+import ru.riskgap.integration.models.CommentBuilder;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.HttpClient;
 
@@ -16,6 +17,7 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +28,16 @@ import java.util.Map;
 //TODO: Add error handler of trello responses
 public class TrelloService {
 
+    public final static SimpleDateFormat TRELLO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     private final Logger log = LoggerFactory.getLogger(TrelloService.class);
-    private final static SimpleDateFormat TRELLO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final String BASE_URL = "https://api.trello.com/1/";
     private static final String GET_LISTS_OF_BOARD = "boards/{0}/lists";
     private static final String GET_OR_CHANGE_CARD_BY_ID = "cards/{0}";
     private static final String GET_LIST_BY_ID = "lists/{0}";
     private static final String POST_CARD = "cards";
     private static final String POST_COMMENT = "cards/{0}/actions/comments";
+    private static final String CHANGE_COMMENT = "cards/{0}/actions/{1}/comments";
     private static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {
             put(Task.Status.OPEN, "To Do");
@@ -113,7 +117,7 @@ public class TrelloService {
         return null;
     }
 
-    public Task saveCardByTask(Task task, String appKey, String userToken) throws IOException {
+    public Task saveCard(Task task, String appKey, String userToken) throws IOException {
         if (task.getTaskId() == null)
             return createCard(task, appKey, userToken);
         //TODO: updateCard
@@ -140,6 +144,11 @@ public class TrelloService {
         return task;
     }
 
+    public Task updateCard(Task task, String appKey, String userToken) throws IOException {
+        task.setTaskId(updateCardOnly(task, appKey, userToken)); //id doesn't change
+        return null;
+    }
+
     String createTaskOnly(Task task, String appKey, String userToken) throws IOException {
         String withoutParams = BASE_URL + POST_CARD;
         try {
@@ -163,23 +172,6 @@ public class TrelloService {
         return null;
     }
 
-    String addComment(String taskId, Comment comment, String appKey, String userToken) throws IOException {
-        String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, taskId);
-        try {
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .addParameter("text", comment.getText())
-                    .build().toString();
-            log.info("addComment, URL: {}", url);
-            CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
-            String entity = httpClient.extractEntity(createCommentResponse, true);
-            return objectMapper.readTree(entity).get("id").asText();
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
-        }
-        return null;
-    }
 
     String updateCardOnly(Task task, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, task.getTaskId());
@@ -204,6 +196,28 @@ public class TrelloService {
         return null;
     }
 
+    String addComment(String taskId, Comment comment, String appKey, String userToken) throws IOException {
+        String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, taskId);
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .addParameter("text", comment.getText())
+                    .build().toString();
+            log.info("addComment, URL: {}", url);
+            CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
+            String entity = httpClient.extractEntity(createCommentResponse, true);
+            return objectMapper.readTree(entity).get("id").asText();
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
+        }
+        return null;
+    }
+
+    String changeComment(String taskId, Comment comment, String appKey, String userToken) {
+        return null;
+    }
+
     Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
@@ -218,7 +232,7 @@ public class TrelloService {
         task.setUserId(getIdCreatorFromActions(root.get("actions"))); //from action "createCard"
         task.setAssigneeId(root.get("idMembers").get(0).asText()); //only first member is assigned for the task
         task.setRiskRef(getLinkFromAttachments(root.get("attachments")));
-
+        //TODO: add parsing comments
         task.setStatus(getStatusByList(root.get("idList").asText(), appKey, userToken));
         return task;
     }
@@ -240,6 +254,19 @@ public class TrelloService {
                 return action.get("memberCreator").get("id").asText();
         }
         return null;
+    }
+
+    private List<Comment> getCommentsFromActions(JsonNode actionsArray) throws ParseException {
+        List<Comment> comments = new ArrayList<>();
+        for (JsonNode action : actionsArray) {
+            if (action.get("type").asText().equals("commentCard"))
+                comments.add(new CommentBuilder()
+                        .setCommentId(action.get("id").asText())
+                        .setDate(TRELLO_DATE_FORMAT.parse(action.get("date").asText()))
+                        .setText(action.get("data").get("text").asText())
+                        .build());
+        }
+        return comments;
     }
 
 
