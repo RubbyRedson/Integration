@@ -17,10 +17,7 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by andrey on 06.07.15.
@@ -54,6 +51,7 @@ public class TrelloService {
 
     }
 
+
     /**
      * Get list (column) of board for the task by its status
      *
@@ -64,6 +62,7 @@ public class TrelloService {
      * @return id of a list
      * @throws IOException
      */
+    @Deprecated
     String getListIdByStatus(Task.Status status, String boardId, String appKey, String userToken) throws IOException {
         try {
             String withoutParams = MessageFormat.format(BASE_URL + GET_LISTS_OF_BOARD, boardId);
@@ -98,6 +97,7 @@ public class TrelloService {
      * @throws IOException
      * @throws ParseException
      */
+    @Deprecated
     public Task getTaskByCardId(String cardId, String appKey, String userToken) throws IOException, ParseException {
         try {
             String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
@@ -117,6 +117,7 @@ public class TrelloService {
         return null;
     }
 
+    @Deprecated
     public Task saveCard(Task task, String appKey, String userToken) throws IOException {
         if (task.getTaskId() == null)
             return createCard(task, appKey, userToken);
@@ -133,6 +134,7 @@ public class TrelloService {
      * @return task object with filled task id and ids of comments
      * @throws IOException
      */
+    @Deprecated
     public Task createCard(Task task, String appKey, String userToken) throws IOException {
         task.setTaskId(createTaskOnly(task, appKey, userToken));
         List<Comment> comments = task.getComments();
@@ -144,11 +146,34 @@ public class TrelloService {
         return task;
     }
 
-    public Task updateCard(Task task, String appKey, String userToken) throws IOException {
+    @Deprecated
+    public Task updateCard(Task task, String appKey, String userToken) throws IOException, URISyntaxException, ParseException {
         task.setTaskId(updateCardOnly(task, appKey, userToken)); //id doesn't change
+        List<Comment> newComments = new ArrayList<>();
+        newComments.addAll(task.getComments()); //make copy
+        List<Comment> currentComments = getCommentsByCard(task.getTaskId(), appKey, userToken);
+        for (Comment newComment : newComments) {
+            if (newComment.getCommentId() == null) {
+                addComment(task.getTaskId(), newComment, appKey, userToken);
+            } else {
+                Comment currentComment = findCommentById(newComment.getCommentId(), currentComments);
+
+            }
+        }
+        //under construction
         return null;
     }
 
+    @Deprecated
+    private Comment findCommentById(String commentId, Collection<Comment> comments) {
+        for (Comment comment : comments) {
+            if (commentId.equals(comment.getCommentId()))
+                return comment;
+        }
+        return null;
+    }
+
+    @Deprecated
     String createTaskOnly(Task task, String appKey, String userToken) throws IOException {
         String withoutParams = BASE_URL + POST_CARD;
         try {
@@ -172,7 +197,7 @@ public class TrelloService {
         return null;
     }
 
-
+    @Deprecated
     String updateCardOnly(Task task, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, task.getTaskId());
         //TODO: can link to a risk be changed?
@@ -196,6 +221,7 @@ public class TrelloService {
         return null;
     }
 
+    @Deprecated
     String addComment(String taskId, Comment comment, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, taskId);
         try {
@@ -214,10 +240,12 @@ public class TrelloService {
         return null;
     }
 
+    @Deprecated
     String changeComment(String taskId, Comment comment, String appKey, String userToken) {
         return null;
     }
 
+    @Deprecated
     Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
@@ -237,6 +265,7 @@ public class TrelloService {
         return task;
     }
 
+    @Deprecated
     private String getLinkFromAttachments(JsonNode attachmentsArray) throws IOException {
         log.info("attachments are array? {}", attachmentsArray.isArray());
         for (JsonNode attachment : attachmentsArray) {
@@ -247,6 +276,7 @@ public class TrelloService {
         return null;
     }
 
+    @Deprecated
     private String getIdCreatorFromActions(JsonNode actionsArray) {
         log.info("actions are array? {}", actionsArray.isArray());
         for (JsonNode action : actionsArray) {
@@ -256,6 +286,7 @@ public class TrelloService {
         return null;
     }
 
+    @Deprecated
     private List<Comment> getCommentsFromActions(JsonNode actionsArray) throws ParseException {
         List<Comment> comments = new ArrayList<>();
         for (JsonNode action : actionsArray) {
@@ -279,6 +310,7 @@ public class TrelloService {
      * @return status of tasks in the given list
      * @throws IOException
      */
+    @Deprecated
     Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_LIST_BY_ID, listId);
         try {
@@ -298,6 +330,21 @@ public class TrelloService {
             log.error("Illegal Trello URL", e);
         }
         throw new IllegalArgumentException("Can't recognize status of tasks in the list with id=" + listId);
+    }
+
+    @Deprecated
+    private List<Comment> getCommentsByCard(String taskId, String appKey, String userToken) throws URISyntaxException, IOException, ParseException {
+        String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, taskId);
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("userToken", userToken)
+                .addParameter("board_fields", "")
+                .addParameter("actions", "commentCard")
+                .addParameter("fields", "idBoard")
+                .build().toString();
+        CloseableHttpResponse response = httpClient.get(url);
+        String entity = httpClient.extractEntity(response, true);
+        return getCommentsFromActions(objectMapper.readTree(entity).get("actions"));
     }
 
 
