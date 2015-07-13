@@ -54,7 +54,7 @@ public class CardService extends BaseTrelloService {
             log.info("getTaskByCardId, URL: {}", url);
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);
-            return parseCardInTask(entity, appKey, userToken);
+            return fromJson(entity, appKey, userToken);
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }
@@ -152,7 +152,7 @@ public class CardService extends BaseTrelloService {
         return null;
     }
 
-    Task parseCardInTask(String cardJson, String appKey, String userToken) throws IOException, ParseException {
+    Task fromJson(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new Task();
         Auth auth = new Auth();

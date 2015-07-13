@@ -41,12 +41,14 @@ public class ListService extends BaseTrelloService {
             log.info("getListIdByStatus, URL: {}", url);
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);
-            JsonNode jsonNode = objectMapper.readTree(entity);
-            if (jsonNode.isArray()) {
-                for (JsonNode node : jsonNode) {
-                    String listName = node.get("name").asText();
-                    if (listName.equals(STATUS_LIST_MAP.get(status)))
-                        return node.get("id").asText();
+            if (entity != null) { //TODO: Add entity validator
+                JsonNode jsonNode = objectMapper.readTree(entity);
+                if (jsonNode.isArray()) {
+                    for (JsonNode node : jsonNode) {
+                        String listName = node.get("name").asText();
+                        if (listName.equals(STATUS_LIST_MAP.get(status)))
+                            return node.get("id").asText();
+                    }
                 }
             }
         } catch (URISyntaxException e) {

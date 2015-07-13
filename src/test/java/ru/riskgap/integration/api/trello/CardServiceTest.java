@@ -1,152 +1,53 @@
 package ru.riskgap.integration.api.trello;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.riskgap.integration.models.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by andrey on 06.07.15.
+ * Created by andrey on 13.07.15.
  */
-public class TrelloServiceTest {
-
-    private static TrelloService trelloService;
-    private static FakeTrelloHttpClient fakeTrelloHttpClient;
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(
+        classes = {TestTrelloContextConfig.class})
+public class CardServiceTest {
     private static final String BOARD_ID = "myBoardId";
     private static final String CARD_ID = "myCardId";
     private static final String KEY = "myKeyId";
     private static final String TOKEN = "myUserToken";
 
-    @BeforeClass
-    public static void initTest() {
-        fakeTrelloHttpClient = new FakeTrelloHttpClient();
-        trelloService = new TrelloService(fakeTrelloHttpClient);
+    private FakeTrelloHttpClient fakeTrelloHttpClient;
+
+    @Autowired
+    private CardService cardService;
+
+    @PostConstruct
+    public void init() {
+        fakeTrelloHttpClient = (FakeTrelloHttpClient) cardService.getHttpClient();
     }
 
-
-    @Test
-    public void getListIdByStatus_testRequestUrl() throws IOException {
-        trelloService.getListIdByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
-        assertEquals("https://api.trello.com/1/boards/" + BOARD_ID + "/lists?key=" + KEY + "&token=" + TOKEN,
-                fakeTrelloHttpClient.getLastUrl());
-    }
 
     @Test(expected = NullPointerException.class) //test for URL only, not for real content
     public void getTaskByCardId_testRequestUrl() throws IOException, ParseException {
         try {
-            trelloService.getTaskByCardId(CARD_ID, KEY, TOKEN);
+            cardService.getById(CARD_ID, KEY, TOKEN);
         } finally {
             assertEquals("https://api.trello.com/1/cards/" + CARD_ID + "?key=" + KEY + "&token=" + TOKEN +
-                    "&attachments=true&actions=createCard%2CcommentCard",
+                            "&attachments=true&actions=createCard%2CcommentCard",
                     fakeTrelloHttpClient.getLastUrl());
         }
-    }
-
-    @Test
-    public void getListIdByStatus_taskOpenStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
-                "[\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
-                        "        \"name\": \"To Do\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 16384,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbaf\",\n" +
-                        "        \"name\": \"Doing\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 32768,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "        \"name\": \"Done\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 49152,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    }\n" +
-                        "]");
-        String toDoTask = trelloService.getListIdByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
-        assertEquals("559381ce9af4e9c91ab2dbae", toDoTask);
-    }
-
-
-    @Test
-    public void getListIdByStatus_closedStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
-                "[\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
-                        "        \"name\": \"To Do\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 16384,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbaf\",\n" +
-                        "        \"name\": \"Doing\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 32768,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "        \"name\": \"Done\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 49152,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    }\n" +
-                        "]");
-        String doneTask = trelloService.getListIdByStatus(Task.Status.CLOSED, BOARD_ID, KEY, TOKEN);
-        assertEquals("559381cf9af4e9c91ab2dbb0", doneTask);
-    }
-
-    @Test
-    public void getStatusByList_openStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
-                "{\n" +
-                        "    \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
-                        "    \"name\": \"To Do\",\n" +
-                        "    \"closed\": false,\n" +
-                        "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "    \"pos\": 16384\n" +
-                        "}");
-        Task.Status status = trelloService.getStatusByList("559381ce9af4e9c91ab2dbae", KEY, TOKEN);
-        assertEquals(Task.Status.OPEN, status);
-    }
-
-    @Test
-    public void getStatusByList_closedStatus() throws IOException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
-                "{\n" +
-                        "    \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "    \"name\": \"Done\",\n" +
-                        "    \"closed\": false,\n" +
-                        "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "    \"pos\": 49152\n" +
-                        "}");
-        Task.Status status = trelloService.getStatusByList("559381cf9af4e9c91ab2dbb0", KEY, TOKEN);
-        assertEquals(Task.Status.CLOSED, status);
     }
 
     @Test
@@ -296,7 +197,7 @@ public class TrelloServiceTest {
                         "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
                         "    \"pos\": 16384\n" +
                         "}");
-        Task actual = trelloService.parseCardInTask(jsonCard, KEY, TOKEN);
+        Task actual = cardService.fromJson(jsonCard, KEY, TOKEN);
 
         Task expected = new TaskBuilder()
                 .setUserId("5134d76e21518d64320053a7")
@@ -315,8 +216,9 @@ public class TrelloServiceTest {
         assertEquals(expected, actual);
     }
 
+
     @Test
-    public void createCardByTask_noComments() throws ParseException, IOException {
+    public void create_noComments() throws ParseException, IOException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
                 "{\n" +
                         "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +
@@ -367,13 +269,13 @@ public class TrelloServiceTest {
                         .setUserToken(TOKEN)
                         .build())
                 .build();
-        trelloService.createCard(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        cardService.create(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
     }
 
     @Test
     //checks for filling ids
-    public void createCardByTask_withComments() throws ParseException, IOException {
+    public void create_withComments() throws ParseException, IOException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
                 "{\n" +
                         "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +
@@ -462,140 +364,12 @@ public class TrelloServiceTest {
                         .setUserToken(TOKEN)
                         .build())
                 .build();
-        trelloService.createCard(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        cardService.create(task, task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
         assertEquals("55a02f77277fb81cdaff3d33", task.getTaskId());
         assertEquals(2, task.getComments().size());
         assertEquals("55a033df0c69600cdadfd912", task.getComments().get(0).getCommentId());
         assertEquals("55a033df0c69600cdadfd912", task.getComments().get(1).getCommentId());
     }
-        @Test
-        public void getCommentsFromActions_oneComment() throws Exception {
-                String json = " [\n" +
-                        "        {\n" +
-                        "            \"id\": \"55a221dc086ba632709546eb\",\n" +
-                        "            \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
-                        "            \"data\": {\n" +
-                        "                \"list\": {\n" +
-                        "                    \"name\": \"To Do\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbae\"\n" +
-                        "                },\n" +
-                        "                \"board\": {\n" +
-                        "                    \"shortLink\": \"3RNfcaVO\",\n" +
-                        "                    \"name\": \"Test Integrations!\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbad\"\n" +
-                        "                },\n" +
-                        "                \"card\": {\n" +
-                        "                    \"shortLink\": \"GZztVE1c\",\n" +
-                        "                    \"idShort\": 9,\n" +
-                        "                    \"name\": \"MyCard Test\",\n" +
-                        "                    \"id\": \"55a02f77277fb81cdaff3d33\"\n" +
-                        "                },\n" +
-                        "                \"text\": \"Test!\"\n" +
-                        "            },\n" +
-                        "            \"type\": \"commentCard\",\n" +
-                        "            \"date\": \"2015-07-12T08:14:20.657Z\",\n" +
-                        "            \"memberCreator\": {\n" +
-                        "                \"id\": \"5134d76e21518d64320053a7\",\n" +
-                        "                \"avatarHash\": \"f5d7aa54fa594f2b6ba608e870df38d9\",\n" +
-                        "                \"fullName\": \"Андрей Куликов\",\n" +
-                        "                \"initials\": \"АК\",\n" +
-                        "                \"username\": \"a274bae93a51409fbf7555edab1e4925\"\n" +
-                        "            }\n" +
-                        "        }\n" +
-                        "    ]";
-                Comment expected = new CommentBuilder()
-                        .setCommentId("55a221dc086ba632709546eb")
-                        .setDate(TrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T08:14:20.657Z"))
-                        .setText("Test!").build();
-                Method method = TrelloService.class.getDeclaredMethod("getCommentsFromActions", JsonNode.class);
-                method.setAccessible(true);
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode actionsNode = objectMapper.readTree(json);
-                Comment actual = ((List<Comment>) method.invoke(trelloService, actionsNode)).get(0);
-                assertEquals(expected, actual);
-        }
 
-        @Test
-        public void getCommentsFromActions_twoComments() throws Exception {
-                String json = " [\n" +
-                        "        {\n" +
-                        "            \"id\": \"55a23241db84aedab5f34684\",\n" +
-                        "            \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
-                        "            \"data\": {\n" +
-                        "                \"list\": {\n" +
-                        "                    \"name\": \"To Do\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbae\"\n" +
-                        "                },\n" +
-                        "                \"board\": {\n" +
-                        "                    \"shortLink\": \"3RNfcaVO\",\n" +
-                        "                    \"name\": \"Test Integrations!\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbad\"\n" +
-                        "                },\n" +
-                        "                \"card\": {\n" +
-                        "                    \"shortLink\": \"GZztVE1c\",\n" +
-                        "                    \"idShort\": 9,\n" +
-                        "                    \"name\": \"MyCard Test\",\n" +
-                        "                    \"id\": \"55a02f77277fb81cdaff3d33\"\n" +
-                        "                },\n" +
-                        "                \"text\": \"Another Test!\"\n" +
-                        "            },\n" +
-                        "            \"type\": \"commentCard\",\n" +
-                        "            \"date\": \"2015-07-12T09:24:17.017Z\",\n" +
-                        "            \"memberCreator\": {\n" +
-                        "                \"id\": \"5134d76e21518d64320053a7\",\n" +
-                        "                \"avatarHash\": \"f5d7aa54fa594f2b6ba608e870df38d9\",\n" +
-                        "                \"fullName\": \"Андрей Куликов\",\n" +
-                        "                \"initials\": \"АК\",\n" +
-                        "                \"username\": \"a274bae93a51409fbf7555edab1e4925\"\n" +
-                        "            }\n" +
-                        "        },\n" +
-                        "        {\n" +
-                        "            \"id\": \"55a221dc086ba632709546eb\",\n" +
-                        "            \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +
-                        "            \"data\": {\n" +
-                        "                \"list\": {\n" +
-                        "                    \"name\": \"To Do\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbae\"\n" +
-                        "                },\n" +
-                        "                \"board\": {\n" +
-                        "                    \"shortLink\": \"3RNfcaVO\",\n" +
-                        "                    \"name\": \"Test Integrations!\",\n" +
-                        "                    \"id\": \"559381ce9af4e9c91ab2dbad\"\n" +
-                        "                },\n" +
-                        "                \"card\": {\n" +
-                        "                    \"shortLink\": \"GZztVE1c\",\n" +
-                        "                    \"idShort\": 9,\n" +
-                        "                    \"name\": \"MyCard Test\",\n" +
-                        "                    \"id\": \"55a02f77277fb81cdaff3d33\"\n" +
-                        "                },\n" +
-                        "                \"text\": \"Test!\"\n" +
-                        "            },\n" +
-                        "            \"type\": \"commentCard\",\n" +
-                        "            \"date\": \"2015-07-12T08:14:20.657Z\",\n" +
-                        "            \"memberCreator\": {\n" +
-                        "                \"id\": \"5134d76e21518d64320053a7\",\n" +
-                        "                \"avatarHash\": \"f5d7aa54fa594f2b6ba608e870df38d9\",\n" +
-                        "                \"fullName\": \"Андрей Куликов\",\n" +
-                        "                \"initials\": \"АК\",\n" +
-                        "                \"username\": \"a274bae93a51409fbf7555edab1e4925\"\n" +
-                        "            }\n" +
-                        "        }\n" +
-                        "    ]";
-                List<Comment> expected = Arrays.asList(
-                        new CommentBuilder()
-                        .setCommentId("55a23241db84aedab5f34684")
-                        .setDate(TrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T09:24:17.017Z"))
-                        .setText("Another Test!").build(),
-                        new CommentBuilder()
-                        .setCommentId("55a221dc086ba632709546eb")
-                        .setDate(TrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T08:14:20.657Z"))
-                        .setText("Test!").build());
-                Method method = TrelloService.class.getDeclaredMethod("getCommentsFromActions", JsonNode.class);
-                method.setAccessible(true);
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode actionsNode = objectMapper.readTree(json);
-                List<Comment> actual = ((List<Comment>) method.invoke(trelloService, actionsNode));
-                assertEquals(expected, actual);
 
-        }
 }

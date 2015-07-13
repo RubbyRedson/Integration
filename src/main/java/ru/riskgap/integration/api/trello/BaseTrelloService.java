@@ -28,7 +28,7 @@ public abstract class BaseTrelloService {
         }
     };
 
-    protected final Logger log = LoggerFactory.getLogger(TrelloService.class);
+    protected final Logger log = LoggerFactory.getLogger(BaseTrelloService.class);
 
     protected final HttpClient httpClient;
     protected final ObjectMapper objectMapper;
@@ -37,5 +37,7 @@ public abstract class BaseTrelloService {
         this.objectMapper = new ObjectMapper();
     }
 
-
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
 }
