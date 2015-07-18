@@ -26,6 +26,8 @@ public class CommentService extends BaseTrelloService {
         super(httpClient);
     }
 
+
+
     Comment findById(String commentId, Collection<Comment> comments) {
         for (Comment comment : comments) {
             if (commentId.equals(comment.getCommentId()))
@@ -34,8 +36,8 @@ public class CommentService extends BaseTrelloService {
         return null;
     }
 
-    public List<Comment> getByCard(String taskId, String appKey, String userToken) throws URISyntaxException, IOException, ParseException {
-        String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, taskId);
+    public List<Comment> getByCard(String cardId, String appKey, String userToken) throws URISyntaxException, IOException, ParseException {
+        String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
         String url = new URIBuilder(withoutParams)
                 .addParameter("key", appKey)
                 .addParameter("userToken", userToken)
@@ -63,8 +65,8 @@ public class CommentService extends BaseTrelloService {
     }
 
 
-    String create(String taskId, Comment comment, String appKey, String userToken) throws IOException {
-        String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, taskId);
+    Comment create(String cardId, Comment comment, String appKey, String userToken) throws IOException {
+        String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, cardId);
         try {
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
@@ -74,24 +76,78 @@ public class CommentService extends BaseTrelloService {
             log.info("create, URL: {}", url);
             CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
             String entity = httpClient.extractEntity(createCommentResponse, true);
-            return objectMapper.readTree(entity).get("id").asText();
+            comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }
-        return null;
+        return comment;
     }
 
-    String update(String taskId, Comment comment, String appKey, String userToken) {
-        return null;
+    Comment update(String cardId, Comment comment, String appKey, String userToken) throws IOException {
+        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_COMMENT, cardId, comment.getCommentId());
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .addParameter("text", comment.getText())
+                    .build().toString();
+            log.info("update, URL: {}", url);
+            CloseableHttpResponse updateCommentResponse = httpClient.put(url, null);
+            String entity = httpClient.extractEntity(updateCommentResponse, true);
+            //TODO: entity validator
+            comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
+        }
+        return comment;
     }
 
-    void delete(String taskId, Comment comment, String appKey, String userToken) {
-
+    void delete(String cardId, Comment comment, String appKey, String userToken) throws IOException {
+        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_COMMENT, cardId, comment.getCommentId());
+        try {
+            String url = new URIBuilder(withoutParams)
+                    .addParameter("key", appKey)
+                    .addParameter("token", userToken)
+                    .build().toString();
+            log.info("delete, URL: {}", url);
+            CloseableHttpResponse updateCommentResponse = httpClient.delete(url);
+            String entity = httpClient.extractEntity(updateCommentResponse, true);
+            //TODO: entity validator
+        } catch (URISyntaxException e) {
+            log.error("Illegal Trello URL", e);
+        }
     }
 
-    void syncComments(List<Comment> newComments, List<Comment> currentCommnents) {
-
+    /**
+     * Synchronizes new and current lists of comments for the given card. Supported operations:
+     * create, update, delete. Returns list of new comments with filled IDs.
+     * @param cardId ID of card in Trello
+     * @param newComments new list of comments for cardId
+     * @param currentComments current list comments for cardId
+     * @param appKey    application key
+     * @param userToken token of the user, who has access to the card
+     * @return list of new comments with filled IDs
+     * @throws IOException
+     */
+    List<Comment> sync(String cardId, List<Comment> newComments, List<Comment> currentComments, String appKey, String userToken) throws IOException {
+        List<Comment> currCommentsCopy = new ArrayList<>(currentComments.size());
+        currCommentsCopy.addAll(currentComments);
+        for (Comment newComment : newComments) {
+            if (newComment.getCommentId() == null) {
+                create(cardId, newComment, appKey, userToken);
+                continue;
+            }
+            Comment currComment = findById(newComment.getCommentId(), currentComments);
+            if (currComment == null) {
+                throw new IllegalStateException("Comment with id="+newComment.getCommentId()+" doesn't exist");
+            }
+            //newComment - updated version of existing comment
+            update(cardId, newComment, appKey, userToken);
+            currCommentsCopy.remove(currComment);
+        }
+        for (Comment remaining : currCommentsCopy) {
+            delete(cardId, remaining, appKey, userToken);
+        }
+        return newComments;
     }
-
-
 }

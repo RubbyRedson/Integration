@@ -297,7 +297,7 @@ public class CardServiceTest {
                         "    \"url\": \"https://trello.com/c/GZztVE1c/9-mycard\",\n" +
                         "    \"stickers\": []\n" +
                         "}");
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_COMMENT,
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_OR_DElETE_COMMENT,
                 "{\n" +
                         "    \"id\": \"55a033df0c69600cdadfd912\",\n" +
                         "    \"idMemberCreator\": \"5134d76e21518d64320053a7\",\n" +

@@ -21,6 +21,7 @@ public abstract class BaseTrelloService {
     protected static final String POST_CARD = "cards";
     protected static final String POST_COMMENT = "cards/{0}/actions/comments";
     protected static final String CHANGE_COMMENT = "cards/{0}/actions/{1}/comments";
+    protected static final String DELETE_COMMENT = "cards/{0}/actions/{1}/comments";
     protected static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {
             put(Task.Status.OPEN, "To Do");

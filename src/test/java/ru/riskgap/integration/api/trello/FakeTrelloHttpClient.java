@@ -20,15 +20,23 @@ public class FakeTrelloHttpClient implements HttpClient {
     private String lastUrl;
     private LinkedHashMap<Pattern, CloseableHttpResponse> uriResponseMapper;
     private LinkedHashMap<CloseableHttpResponse, String> responseEntityMapper;
+    private int getCounter = 0;
+    private int postCounter = 0;
+    private int putCounter = 0;
+    private int deleteCounter = 0;
+    private int patchCounter = 0;
     public static CloseableHttpResponse GET_ALL_LISTS_OF_BOARD = new FakeHttpResponse();
     public static CloseableHttpResponse GET_LIST_BY_ID = new FakeHttpResponse();
     public static CloseableHttpResponse POST_CARD = new FakeHttpResponse();
-    public static CloseableHttpResponse POST_COMMENT = new FakeHttpResponse();
+    public static CloseableHttpResponse POST_OR_DElETE_COMMENT = new FakeHttpResponse();
+    public static CloseableHttpResponse PUT_COMMENT = new FakeHttpResponse();
 
     public FakeTrelloHttpClient() {
         responseEntityMapper = new LinkedHashMap<>();
         uriResponseMapper = new LinkedHashMap<>();
-        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/comments.*"), POST_COMMENT);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/.*/comments.*"),
+                PUT_COMMENT);
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/comments.*"), POST_OR_DElETE_COMMENT);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/boards/.*/lists.*"), GET_ALL_LISTS_OF_BOARD);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/lists/.*\\?.*"), GET_LIST_BY_ID);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards.*"), POST_CARD);
@@ -36,9 +44,14 @@ public class FakeTrelloHttpClient implements HttpClient {
 
     }
 
+    public void resetCounters() {
+        getCounter = postCounter = putCounter = deleteCounter = 0;
+    }
+
     @Override
     public CloseableHttpResponse get(String url, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        getCounter++;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
             if (entry.getKey().matcher(url).matches())
                 return entry.getValue();
@@ -49,6 +62,7 @@ public class FakeTrelloHttpClient implements HttpClient {
     @Override
     public CloseableHttpResponse post(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        postCounter++;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
             if (entry.getKey().matcher(url).matches())
                 return entry.getValue();
@@ -59,6 +73,7 @@ public class FakeTrelloHttpClient implements HttpClient {
     @Override
     public CloseableHttpResponse put(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        putCounter++;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
             if (entry.getKey().matcher(url).matches())
                 return entry.getValue();
@@ -69,6 +84,7 @@ public class FakeTrelloHttpClient implements HttpClient {
     @Override
     public CloseableHttpResponse delete(String url, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        deleteCounter++;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
             if (entry.getKey().matcher(url).matches())
                 return entry.getValue();
@@ -79,6 +95,7 @@ public class FakeTrelloHttpClient implements HttpClient {
     @Override
     public CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
+        patchCounter++;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
             if (entry.getKey().matcher(url).matches())
                 return entry.getValue();
@@ -107,6 +124,26 @@ public class FakeTrelloHttpClient implements HttpClient {
 
     public void setEntityForResponse(CloseableHttpResponse response, String entity) {
         responseEntityMapper.put(response, entity);
+    }
+
+    public int getGetCounter() {
+        return getCounter;
+    }
+
+    public int getPostCounter() {
+        return postCounter;
+    }
+
+    public int getPutCounter() {
+        return putCounter;
+    }
+
+    public int getDeleteCounter() {
+        return deleteCounter;
+    }
+
+    public int getPatchCounter() {
+        return patchCounter;
     }
 
     public static class FakeHttpResponse implements CloseableHttpResponse {

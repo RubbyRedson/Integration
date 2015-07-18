@@ -82,7 +82,9 @@ public class CardService extends BaseTrelloService {
         List<Comment> comments = task.getComments();
         if (comments != null) {
             for (Comment comment : comments) {
-                comment.setCommentId(commentSrvc.create(task.getTaskId(), comment, appKey, userToken));
+                comment.setCommentId(commentSrvc
+                        .create(task.getTaskId(), comment, appKey, userToken)
+                        .getCommentId());
             }
         }
         return task;
