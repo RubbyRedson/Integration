@@ -49,6 +49,12 @@ public class ApacheHttpClient implements HttpClient {
         return httpClient.execute(put);
     }
 
+    public CloseableHttpResponse delete(String url, NameValuePair... headers) throws IOException {
+        HttpDelete delete = new HttpDelete(url);
+        setHeaders(delete, headers);
+        return httpClient.execute(delete);
+    }
+
     public CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException {
         HttpPatch patch = new HttpPatch(url);
         setHeaders(patch, headers);

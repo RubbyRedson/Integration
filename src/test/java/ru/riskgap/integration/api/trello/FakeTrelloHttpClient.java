@@ -67,6 +67,16 @@ public class FakeTrelloHttpClient implements HttpClient {
     }
 
     @Override
+    public CloseableHttpResponse delete(String url, NameValuePair... headers) throws IOException {
+        lastUrl = url;
+        for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {
+            if (entry.getKey().matcher(url).matches())
+                return entry.getValue();
+        }
+        return null;
+    }
+
+    @Override
     public CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException {
         lastUrl = url;
         for (Map.Entry<Pattern, CloseableHttpResponse> entry : uriResponseMapper.entrySet()) {

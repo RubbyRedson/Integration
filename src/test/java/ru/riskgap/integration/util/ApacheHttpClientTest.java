@@ -92,6 +92,13 @@ public class ApacheHttpClientTest {
         assertTrue("Body wasn't set", entity.contains("\"data\": \"Body string\""));
     }
 
+    @Test
+    public void delete_withArgs() throws IOException {
+        CloseableHttpResponse response = client.delete(BASE_URL + "delete?hello=world");
+        String entity = client.extractEntity(response, true);
+        assertTrue("Query params weren't set", entity.contains("\"hello\": \"world\""));
+    }
+
 
 
 

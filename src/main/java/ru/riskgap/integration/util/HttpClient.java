@@ -14,6 +14,7 @@ public interface HttpClient {
     CloseableHttpResponse get(String url, NameValuePair... headers) throws IOException;
     CloseableHttpResponse post(String url, String body, NameValuePair... headers) throws IOException;
     CloseableHttpResponse put(String url, String body, NameValuePair... headers) throws IOException;
+    CloseableHttpResponse delete(String url,  NameValuePair... headers) throws IOException;
     CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException;
 
     /**
