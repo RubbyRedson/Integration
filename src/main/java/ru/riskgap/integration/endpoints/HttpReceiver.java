@@ -10,6 +10,7 @@ import ru.riskgap.integration.MSProjectHandler;
 import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.api.tfs.TfsHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
+import ru.riskgap.integration.exceptions.InternalServerException;
 import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.exceptions.InvalidInputDataException.Reason;
 import ru.riskgap.integration.models.Auth;
@@ -27,14 +28,10 @@ public class HttpReceiver {
     private RequestConverter requestConverter = new RequestConverter();
 
     @RequestMapping(value = "/get", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleGet(@RequestBody String body) throws JsonProcessingException, AbstractException {
+    public ResponseEntity<String> handleGet(@RequestBody String body) throws IOException, AbstractException, ParseException {
         Task task = null;
-        try {
-            task = getTask(body);
-        } catch (IOException | ParseException e) {
-            //return Response.status(500).entity(e).build();
-            return null;
-        }
+        task = getTask(body);
+        //return Response.status(500).entity(e).build();
         IntegrationHandler targetSystemHandler;
         targetSystemHandler = getHandler(task);
         Task resultTask = targetSystemHandler.getTaskInformation(task);
@@ -94,11 +91,10 @@ public class HttpReceiver {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleOwnExceptions(Exception exception) {
-        if (exception instanceof AbstractException) {
-            return new ResponseEntity<>(exception.getMessage(),
-                    HttpStatus.valueOf(((AbstractException) exception).getStatus()));
-        }
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        if (!(exception instanceof AbstractException))
+            exception = new InternalServerException(exception.getMessage());
+        return new ResponseEntity<>(exception.getMessage(),
+                HttpStatus.valueOf(((AbstractException) exception).getStatus()));
     }
 
 }
