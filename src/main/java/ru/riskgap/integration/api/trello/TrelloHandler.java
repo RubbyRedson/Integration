@@ -1,18 +1,31 @@
-package ru.riskgap.integration;
+package ru.riskgap.integration.api.trello;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Task;
 
+import java.io.IOException;
+import java.text.ParseException;
+
+@Component
 public class TrelloHandler implements IntegrationHandler {
+
+    @Autowired
+    private CardService cardService;
+
     @Override
     public Task createOrUpdateTask(Task task) {
-        //TODO implement method
         return null;
     }
 
     @Override
-    public Task getTaskInformation(Task task) {
-        //TODO implement method
-        return null;
+    public Task getTaskInformation(Task task) throws IOException, ParseException {
+        return cardService.getById(
+                task.getTaskId(),
+                task.getAuth().getApplicationKey(),
+                task.getAuth().getUserToken());
+        //return null;
     }
 
     /**

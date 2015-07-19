@@ -3,7 +3,6 @@ package ru.riskgap.integration.api.trello;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.stereotype.Component;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.HttpClient;
 
@@ -15,7 +14,6 @@ import java.util.Map;
 /**
  * Created by andrey on 13.07.15.
  */
-@Component
 public class ListService extends BaseTrelloService {
     public ListService(HttpClient httpClient) {
         super(httpClient);
@@ -71,7 +69,7 @@ public class ListService extends BaseTrelloService {
         try {
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
-                    .addParameter("userToken", userToken)
+                    .addParameter("token", userToken)
                     .build().toString();
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);

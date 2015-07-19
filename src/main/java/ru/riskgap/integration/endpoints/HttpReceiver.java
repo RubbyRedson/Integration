@@ -1,14 +1,15 @@
 package ru.riskgap.integration.endpoints;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.MSProjectHandler;
-import ru.riskgap.integration.TrelloHandler;
 import ru.riskgap.integration.api.tfs.TfsHandler;
+import ru.riskgap.integration.api.trello.TrelloHandler;
 import ru.riskgap.integration.exceptions.AbstractException;
 import ru.riskgap.integration.exceptions.InternalServerException;
 import ru.riskgap.integration.exceptions.InvalidInputDataException;
@@ -25,10 +26,13 @@ import java.text.ParseException;
 @RestController
 public class HttpReceiver {
 
+    @Autowired
+    private ApplicationContext context;
+
     private RequestConverter requestConverter = new RequestConverter();
 
     @RequestMapping(value = "/get", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleGet(@RequestBody String body) throws IOException, AbstractException, ParseException {
+    public ResponseEntity<String> handleGet(@RequestBody String body) throws Exception {
         Task task = null;
         task = getTask(body);
         //return Response.status(500).entity(e).build();
@@ -46,7 +50,7 @@ public class HttpReceiver {
      */
     @RequestMapping(value = "/post", method = RequestMethod.POST)
     @ResponseBody
-    public Response handlePost(@RequestBody String body) throws JsonProcessingException {
+    public Response handlePost(@RequestBody String body) throws Exception {
         Task task = null;
         try {
             task = getTask(body);
@@ -81,7 +85,7 @@ public class HttpReceiver {
                 targetSystemHandler = new TfsHandler();
                 break;
             case TRELLO:
-                targetSystemHandler = new TrelloHandler();
+                targetSystemHandler = context.getBean(TrelloHandler.class);
                 break;
             default:
                 throw new InvalidInputDataException("targetSystem", Reason.INCORRECT);

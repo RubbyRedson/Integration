@@ -15,7 +15,8 @@ import ru.riskgap.integration.util.HttpClient;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan({"ru.riskgap.integration.endpoints", "ru.riskgap.integration.api.tfs"})
+@ComponentScan({"ru.riskgap.integration.endpoints", "ru.riskgap.integration.api.tfs",
+        "ru.riskgap.integration.api.trello"})
 public class RestServletConfig {
     private HttpClient httpClient;
 

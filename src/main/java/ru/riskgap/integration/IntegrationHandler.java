@@ -13,12 +13,12 @@ public interface IntegrationHandler {
      * @param task information from request that was parsed.
      * @return changed task
      */
-    public Task createOrUpdateTask(Task task);
+    public Task createOrUpdateTask(Task task) throws Exception;
 
     /**
      *
      * @param task information about id, place of task, which info we want to get
      * @return info about Task
      */
-    public Task getTaskInformation(Task task);
+    public Task getTaskInformation(Task task) throws Exception;
 }

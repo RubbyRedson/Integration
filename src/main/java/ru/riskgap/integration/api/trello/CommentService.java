@@ -3,7 +3,6 @@ package ru.riskgap.integration.api.trello;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
-import org.springframework.stereotype.Component;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.CommentBuilder;
 import ru.riskgap.integration.util.HttpClient;
@@ -19,7 +18,6 @@ import java.util.List;
 /**
  * Created by andrey on 13.07.15.
  */
-@Component
 public class CommentService extends BaseTrelloService {
 
     public CommentService(HttpClient httpClient) {
