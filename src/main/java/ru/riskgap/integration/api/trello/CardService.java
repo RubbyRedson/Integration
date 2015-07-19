@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
+import ru.riskgap.integration.models.TaskBuilder;
 import ru.riskgap.integration.util.HttpClient;
 
 import java.io.IOException;
@@ -154,20 +154,17 @@ public class CardService extends BaseTrelloService {
 
     Task fromJson(String cardJson, String appKey, String userToken) throws IOException, ParseException {
         JsonNode root = objectMapper.readTree(cardJson);
-        Task task = new Task();
-        Auth auth = new Auth();
-        auth.setTargetSystem(Auth.TargetSystem.TRELLO);
-        task.setAuth(auth);
-        task.setTaskId(root.get("id").asText());
-        task.setContainerId(root.get("idBoard").asText());
-        task.setName(root.get("name").asText());
-        task.setDescription(root.get("desc").asText());
-        task.setDue(TRELLO_DATE_FORMAT.parse(root.get("due").asText()));
-        task.setUserId(getIdCreatorFromActions(root.get("actions"))); //from action "createCard"
-        task.setAssigneeId(root.get("idMembers").get(0).asText()); //only first member is assigned for the task
-        task.setRiskRef(getLinkFromAttachments(root.get("attachments")));
-        //TODO: add parsing comments
-        task.setStatus(listSrvc.getStatusByList(root.get("idList").asText(), appKey, userToken));
+        Task task = new TaskBuilder()
+                .setTaskId(root.get("id").asText())
+                .setContainerId(root.get("idBoard").asText())
+                .setName(root.get("name").asText())
+                .setDescription(root.get("desc").asText())
+                .setDue(TRELLO_DATE_FORMAT.parse(root.get("due").asText()))
+                .setUserId(getIdCreatorFromActions(root.get("actions"))) //from action "createCard"
+                .setAssigneeId(root.get("idMembers").get(0).asText()) //only first member is assigned for the task
+                .setRiskRef(getLinkFromAttachments(root.get("attachments")))
+                .setStatus(listSrvc.getStatusByList(root.get("idList").asText(), appKey, userToken))
+                .setComments(commentSrvc.getFromActions(root.get("actions"))).build();
         return task;
     }
 
@@ -189,7 +186,4 @@ public class CardService extends BaseTrelloService {
         }
         return null;
     }
-
-
-
 }
