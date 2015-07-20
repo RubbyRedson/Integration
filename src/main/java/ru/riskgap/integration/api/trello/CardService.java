@@ -62,6 +62,7 @@ public class CardService extends BaseTrelloService {
     public Task save(Task task, String appKey, String userToken) throws IOException {
         if (task.getTaskId() == null)
             return create(task, appKey, userToken);
+//        return update(task, appKey, userToken);
         //TODO: updateCard
         return null;
     }
@@ -92,6 +93,7 @@ public class CardService extends BaseTrelloService {
         task.setTaskId(updateWithoutComments(task, appKey, userToken)); //id doesn't change
         List<Comment> newComments = new ArrayList<>();
         //TODO: move functional to 'syncComments' in CommentService
+
         newComments.addAll(task.getComments()); //make copy
         List<Comment> currentComments = commentSrvc.getByCard(task.getTaskId(), appKey, userToken);
         for (Comment newComment : newComments) {

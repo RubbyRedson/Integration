@@ -12,6 +12,6 @@ public class InvalidInputDataException extends AbstractException {
     }
 
     public InvalidInputDataException(String parameter, Reason reason) {
-        super("Invalid input data", MessageFormat.format("Parameter {0} is {1}", parameter, reason.toString().toLowerCase()),400);
+        super("Invalid input data", MessageFormat.format("Parameter {0} is {1}", "'"+parameter+"'", reason.toString().toLowerCase()),400);
     }
 }

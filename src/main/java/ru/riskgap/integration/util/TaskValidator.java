@@ -4,8 +4,6 @@ import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.models.Auth;
 import ru.riskgap.integration.models.Task;
 
-import java.util.Arrays;
-
 import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.INCORRECT;
 import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.MISSED;
 
@@ -16,7 +14,21 @@ public class TaskValidator {
     public static void validateForGet(Task task) throws InvalidInputDataException {
         validateAuthData(task);
         if (task.getTaskId() == null)
-            throw new InvalidInputDataException("task-id",MISSED);
+            throw new InvalidInputDataException("task-id", MISSED);
+    }
+
+    public static void validateForPost(Task task) throws InvalidInputDataException {
+        validateAuthData(task);
+        if (task.getName() == null)
+            throw new InvalidInputDataException("name", MISSED);
+        if (task.getStatus() == null)
+            throw new InvalidInputDataException("status", MISSED);
+        if (task.getStatus() == Task.Status.UNKNOWN)
+            throw new InvalidInputDataException("status", INCORRECT);
+        if (task.getContainerId() == null)
+            throw new InvalidInputDataException("container-id", MISSED);
+        if (task.getRiskRef()==null)
+            throw new InvalidInputDataException("risk-reference", MISSED);
     }
 
     private static void validateAuthData(Task task) throws InvalidInputDataException {
@@ -26,7 +38,7 @@ public class TaskValidator {
         if (task.getAuth().getTargetSystem() == null) {
             throw new InvalidInputDataException("target-system", MISSED);
         }
-        if (!Arrays.asList(Auth.TargetSystem.values()).contains(task.getAuth().getTargetSystem())) {
+        if (task.getAuth().getTargetSystem() == Auth.TargetSystem.UNKNOWN) {
             throw new InvalidInputDataException("target-system", INCORRECT);
         }
         switch (task.getAuth().getTargetSystem()) {

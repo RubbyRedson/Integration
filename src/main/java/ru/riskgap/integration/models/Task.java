@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 
 import java.util.Date;
 import java.util.List;
@@ -349,7 +350,8 @@ public class Task {
         OPEN("open"),
         IN_PROGRESS("in progress"),
         RESOLVED("resolved"),
-        CLOSED("closed");
+        CLOSED("closed"),
+        UNKNOWN(null);
 
         private String status;
 
@@ -363,14 +365,14 @@ public class Task {
         }
 
         @JsonCreator
-        public static Status fromString(String status) {
+        public static Status fromString(String status) throws InvalidInputDataException {
             if (status != null) {
                 for (Status enumStatus : Status.values()) {
-                    if (enumStatus.getStatus().equals(status))
+                    if (status.equals(enumStatus.getStatus()))
                         return enumStatus;
                 }
             }
-            return null;
+            return UNKNOWN;
         }
     }
 

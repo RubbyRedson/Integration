@@ -109,7 +109,8 @@ public class Auth {
     public enum TargetSystem {
         TFS("TFS"),
         MS_PROJECT("MS Project"),
-        TRELLO("Trello");
+        TRELLO("Trello"),
+        UNKNOWN(null);
 
         private String system;
 
@@ -126,11 +127,11 @@ public class Auth {
         public static TargetSystem fromString(String system) {
             if (system != null) {
                 for (TargetSystem targetSystem : TargetSystem.values()) {
-                    if (targetSystem.getSystem().equals(system))
+                    if (system.equals(targetSystem.getSystem()))
                         return targetSystem;
                 }
             }
-            return null;
+            return UNKNOWN;
         }
     }
 }

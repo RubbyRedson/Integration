@@ -52,6 +52,7 @@ public class ListService extends BaseTrelloService {
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);
         }
+
         return null;
     }
 

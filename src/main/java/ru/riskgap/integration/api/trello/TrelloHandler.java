@@ -15,8 +15,11 @@ public class TrelloHandler implements IntegrationHandler {
     private CardService cardService;
 
     @Override
-    public Task createOrUpdateTask(Task task) {
-        return null;
+    public Task createOrUpdateTask(Task task) throws IOException {
+        return cardService.save(
+                task,
+                task.getAuth().getApplicationKey(),
+                task.getAuth().getUserToken());
     }
 
     @Override

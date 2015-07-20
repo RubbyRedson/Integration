@@ -17,7 +17,6 @@ import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.RequestConverter;
 import ru.riskgap.integration.util.TaskValidator;
 
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -44,23 +43,13 @@ public class HttpReceiver {
     /**
      * @return JSON with task id, comments id
      */
-    @RequestMapping(value = "/post", method = RequestMethod.POST)
-    @ResponseBody
-    public Response handlePost(@RequestBody String body) throws Exception {
-        Task task = null;
-        try {
-            task = getTask(body);
-        } catch (IOException | ParseException e) {
-            return Response.status(500).entity(e).build();
-        }
-        IntegrationHandler targetSystemHandler;
-        try {
-            targetSystemHandler = getHandler(task);
-        } catch (AbstractException e) {
-            return Response.status(400).entity(e).build();
-        }
+    @RequestMapping(value = "/post", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handlePost(@RequestBody String body) throws Exception {
+        Task task = getTask(body);
+        TaskValidator.validateForPost(task);
+        IntegrationHandler targetSystemHandler= getHandler(task);
         Task resultTask = targetSystemHandler.createOrUpdateTask(task);
-        return Response.status(200).entity(requestConverter.fromTaskToJSON(resultTask)).build();
+        return new ResponseEntity<>(requestConverter.fromTaskToJSON(resultTask), HttpStatus.OK);
     }
 
     private Task getTask(String body) throws IOException, ParseException {
