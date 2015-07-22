@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,8 +39,7 @@ public class CardService extends BaseTrelloService {
      * @throws IOException
      * @throws ParseException
      */
-    public Task getById(String cardId, String appKey, String userToken) throws IOException, ParseException {
-        try {
+    public Task getById(String cardId, String appKey, String userToken) throws IOException, ParseException, URISyntaxException {
             String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
@@ -53,18 +51,13 @@ public class CardService extends BaseTrelloService {
             CloseableHttpResponse response = httpClient.get(url);
             String entity = httpClient.extractEntity(response, true);
             return fromJson(entity, appKey, userToken);
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
         }
-        return null;
-    }
 
-    public Task save(Task task, String appKey, String userToken) throws IOException {
+    public Task save(Task task, String appKey, String userToken) throws IOException, ParseException, URISyntaxException {
         if (task.getTaskId() == null)
             return create(task, appKey, userToken);
 //        return update(task, appKey, userToken);
-        //TODO: updateCard
-        return null;
+        return update(task, appKey, userToken);
     }
 
     /**
@@ -89,23 +82,14 @@ public class CardService extends BaseTrelloService {
         return task;
     }
 
-    Task update(Task task, String appKey, String userToken) throws IOException, URISyntaxException, ParseException {
+    Task update(Task task, String appKey, String userToken) throws IOException, ParseException, URISyntaxException {
         task.setTaskId(updateWithoutComments(task, appKey, userToken)); //id doesn't change
-        List<Comment> newComments = new ArrayList<>();
-        //TODO: move functional to 'syncComments' in CommentService
-
-        newComments.addAll(task.getComments()); //make copy
-        List<Comment> currentComments = commentSrvc.getByCard(task.getTaskId(), appKey, userToken);
-        for (Comment newComment : newComments) {
-            if (newComment.getCommentId() == null) {
-                commentSrvc.create(task.getTaskId(), newComment, appKey, userToken);
-            } else {
-                Comment currentComment = commentSrvc.findById(newComment.getCommentId(), currentComments);
-
-            }
-        }
-        //under construction
-        return null;
+        List<Comment> newComments = task.getComments();
+        List<Comment> currentComments = commentSrvc.getByCard(task.getTaskId(),
+                task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        commentSrvc.sync(task.getTaskId(), newComments, currentComments,
+                task.getAuth().getApplicationKey(), task.getAuth().getUserToken());
+        return task;
     }
 
     String createWithoutComments(Task task, String appKey, String userToken) throws IOException {
@@ -131,27 +115,22 @@ public class CardService extends BaseTrelloService {
         return null;
     }
 
-    String updateWithoutComments(Task task, String appKey, String userToken) throws IOException {
+    String updateWithoutComments(Task task, String appKey, String userToken) throws IOException, URISyntaxException {
         String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, task.getTaskId());
         //TODO: can link to a risk be changed?
-        try {
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .addParameter("name", task.getName())
-                    .addParameter("desc", task.getDescription())
-                    .addParameter("idList",
-                            listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
-                    .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
-                    .build().toString();
-            log.info("updateWithoutComments, URL: {}", url);
-            CloseableHttpResponse createCommentResponse = httpClient.put(url, null);
-            String entity = httpClient.extractEntity(createCommentResponse, true);
-            return objectMapper.readTree(entity).get("id").asText(); //has 'id' => all is ok
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
-        }
-        return null;
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("token", userToken)
+                .addParameter("name", task.getName())
+                .addParameter("desc", task.getDescription())
+                .addParameter("idList",
+                        listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
+                .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                .build().toString();
+        log.info("updateWithoutComments, URL: {}", url);
+        CloseableHttpResponse createCommentResponse = httpClient.put(url, null);
+        String entity = httpClient.extractEntity(createCommentResponse, true);
+        return objectMapper.readTree(entity).get("id").asText(); //has 'id' => all is ok
     }
 
     Task fromJson(String cardJson, String appKey, String userToken) throws IOException, ParseException {

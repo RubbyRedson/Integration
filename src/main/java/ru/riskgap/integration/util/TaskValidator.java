@@ -21,6 +21,8 @@ public class TaskValidator {
         validateAuthData(task);
         if (task.getName() == null)
             throw new InvalidInputDataException("name", MISSED);
+        if (task.getDue() == null)
+            throw new InvalidInputDataException("due", MISSED);
         if (task.getStatus() == null)
             throw new InvalidInputDataException("status", MISSED);
         if (task.getStatus() == Task.Status.UNKNOWN)

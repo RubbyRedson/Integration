@@ -3,6 +3,7 @@ package ru.riskgap.integration.models;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -10,7 +11,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/** Date converter from JSON-string to {@link Date}
+import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.INCORRECT;
+
+/**
+ * Date converter from JSON-string to {@link Date}
+ *
  * @author andrey
  */
 public class CustomJsonDateDeserializer extends JsonDeserializer<Date> {
@@ -23,7 +28,8 @@ public class CustomJsonDateDeserializer extends JsonDeserializer<Date> {
         try {
             return DATE_FORMATTER.parse(date);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new InvalidInputDataException("due", INCORRECT);
         }
+
     }
 }

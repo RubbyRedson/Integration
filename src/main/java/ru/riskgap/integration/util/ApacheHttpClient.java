@@ -37,28 +37,35 @@ public class ApacheHttpClient implements HttpClient {
 
     public CloseableHttpResponse post(String url, String body, NameValuePair... headers) throws IOException {
         HttpPost post = new HttpPost(url);
-        setHeaders(post, headers);
-        post.setEntity(new StringEntity(body));
+        if (headers != null)
+            setHeaders(post, headers);
+        if (body != null)
+            post.setEntity(new StringEntity(body));
         return httpClient.execute(post);
     }
 
     public CloseableHttpResponse put(String url, String body, NameValuePair... headers) throws IOException {
         HttpPut put = new HttpPut(url);
-        setHeaders(put, headers);
-        put.setEntity(new StringEntity(body));
+        if (headers != null)
+            setHeaders(put, headers);
+        if (body != null)
+            put.setEntity(new StringEntity(body));
         return httpClient.execute(put);
     }
 
     public CloseableHttpResponse delete(String url, NameValuePair... headers) throws IOException {
         HttpDelete delete = new HttpDelete(url);
-        setHeaders(delete, headers);
+        if (headers != null)
+            setHeaders(delete, headers);
         return httpClient.execute(delete);
     }
 
     public CloseableHttpResponse patch(String url, String body, NameValuePair... headers) throws IOException {
         HttpPatch patch = new HttpPatch(url);
-        setHeaders(patch, headers);
-        patch.setEntity(new StringEntity(body));
+        if (headers != null)
+            setHeaders(patch, headers);
+        if (body != null)
+            patch.setEntity(new StringEntity(body));
         return httpClient.execute(patch);
     }
 

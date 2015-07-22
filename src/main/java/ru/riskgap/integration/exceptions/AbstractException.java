@@ -2,7 +2,7 @@ package ru.riskgap.integration.exceptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class AbstractException extends Exception {
+public abstract class AbstractException extends RuntimeException {
     private String error;
     private String detail;
     private Integer status;

@@ -9,6 +9,7 @@ import ru.riskgap.integration.models.*;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ public class CardServiceTest {
 
 
     @Test(expected = NullPointerException.class) //test for URL only, not for real content
-    public void getTaskByCardId_testRequestUrl() throws IOException, ParseException {
+    public void getTaskByCardId_testRequestUrl() throws IOException, ParseException, URISyntaxException {
         try {
             cardService.getById(CARD_ID, KEY, TOKEN);
         } finally {

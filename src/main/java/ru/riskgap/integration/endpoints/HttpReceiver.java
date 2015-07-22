@@ -75,9 +75,13 @@ public class HttpReceiver {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleOwnExceptions(Exception exception) {
-        if (!(exception instanceof AbstractException))
+    public ResponseEntity handleOwnExceptions(Throwable exception) {
+        exception.printStackTrace();
+        if (exception.getCause() instanceof AbstractException) {
+            exception = exception.getCause();
+        } else if (!(exception instanceof AbstractException)) {
             exception = new InternalServerException(exception.getMessage());
+        }
         return new ResponseEntity<>(exception.getMessage(),
                 HttpStatus.valueOf(((AbstractException) exception).getStatus()));
     }

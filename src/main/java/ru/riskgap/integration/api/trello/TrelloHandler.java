@@ -6,6 +6,7 @@ import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 @Component
@@ -15,7 +16,7 @@ public class TrelloHandler implements IntegrationHandler {
     private CardService cardService;
 
     @Override
-    public Task createOrUpdateTask(Task task) throws IOException {
+    public Task createOrUpdateTask(Task task) throws IOException, ParseException, URISyntaxException {
         return cardService.save(
                 task,
                 task.getAuth().getApplicationKey(),
@@ -23,12 +24,11 @@ public class TrelloHandler implements IntegrationHandler {
     }
 
     @Override
-    public Task getTaskInformation(Task task) throws IOException, ParseException {
+    public Task getTaskInformation(Task task) throws IOException, ParseException, URISyntaxException {
         return cardService.getById(
                 task.getTaskId(),
                 task.getAuth().getApplicationKey(),
                 task.getAuth().getUserToken());
-        //return null;
     }
 
     /**
