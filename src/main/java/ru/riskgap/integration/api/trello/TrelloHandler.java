@@ -24,7 +24,7 @@ public class TrelloHandler implements IntegrationHandler {
     }
 
     @Override
-    public Task getTaskInformation(Task task) throws IOException, ParseException, URISyntaxException {
+    public Task getTaskInformation(Task task) throws Exception {
         return cardService.getById(
                 task.getTaskId(),
                 task.getAuth().getApplicationKey(),

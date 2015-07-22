@@ -36,22 +36,20 @@ public class CardService extends BaseTrelloService {
      * @param appKey    application key
      * @param userToken token of the user, who has access to the board
      * @return instance of Task with information of card from Trello
-     * @throws IOException
-     * @throws ParseException
      */
-    public Task getById(String cardId, String appKey, String userToken) throws IOException, ParseException, URISyntaxException {
-            String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .addParameter("attachments", String.valueOf(true))
-                    .addParameter("actions", "createCard,commentCard")
-                    .build().toString();
-            log.info("getTaskByCardId, URL: {}", url);
-            CloseableHttpResponse response = httpClient.get(url);
-            String entity = httpClient.extractEntity(response, true);
-            return fromJson(entity, appKey, userToken);
-        }
+    public Task getById(String cardId, String appKey, String userToken) throws Exception {
+        String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("token", userToken)
+                .addParameter("attachments", String.valueOf(true))
+                .addParameter("actions", "createCard,commentCard")
+                .build().toString();
+        log.info("getTaskByCardId, URL: {}", url);
+        CloseableHttpResponse response = httpClient.get(url);
+        String entity = httpClient.extractEntity(response, true);
+        return fromJson(entity, appKey, userToken);
+    }
 
     public Task save(Task task, String appKey, String userToken) throws IOException, ParseException, URISyntaxException {
         if (task.getTaskId() == null)
@@ -69,7 +67,7 @@ public class CardService extends BaseTrelloService {
      * @return task object with filled task id and ids of comments
      * @throws IOException
      */
-    Task create(Task task, String appKey, String userToken) throws IOException {
+    Task create(Task task, String appKey, String userToken) throws IOException, URISyntaxException {
         task.setTaskId(createWithoutComments(task, appKey, userToken));
         List<Comment> comments = task.getComments();
         if (comments != null) {
@@ -92,27 +90,24 @@ public class CardService extends BaseTrelloService {
         return task;
     }
 
-    String createWithoutComments(Task task, String appKey, String userToken) throws IOException {
+    String createWithoutComments(Task task, String appKey, String userToken) throws IOException, URISyntaxException {
         String withoutParams = BASE_URL + POST_CARD;
-        try {
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .addParameter("name", task.getName())
-                    .addParameter("desc", task.getDescription())
-                    .addParameter("idList",
-                            listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
-                    .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
-                    .addParameter("urlSource", task.getRiskRef())
-                    .build().toString();
-            log.info("createWithoutComments, URL: {}", url);
-            CloseableHttpResponse createCardResponse = httpClient.post(url, null);
-            String entity = httpClient.extractEntity(createCardResponse, true);
-            return objectMapper.readTree(entity).get("id").asText();
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
-        }
-        return null;
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("token", userToken)
+                .addParameter("name", task.getName())
+                .addParameter("desc", task.getDescription())
+                .addParameter("idList",
+                        listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
+                .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                .addParameter("urlSource", task.getRiskRef())
+                .build().toString();
+        log.info("createWithoutComments, URL: {}", url);
+        CloseableHttpResponse createCardResponse = httpClient.post(url, null);
+        String entity = httpClient.extractEntity(createCardResponse, true);
+        return objectMapper.readTree(entity).get("id").asText();
+
+
     }
 
     String updateWithoutComments(Task task, String appKey, String userToken) throws IOException, URISyntaxException {
@@ -133,7 +128,7 @@ public class CardService extends BaseTrelloService {
         return objectMapper.readTree(entity).get("id").asText(); //has 'id' => all is ok
     }
 
-    Task fromJson(String cardJson, String appKey, String userToken) throws IOException, ParseException {
+    Task fromJson(String cardJson, String appKey, String userToken) throws Exception {
         JsonNode root = objectMapper.readTree(cardJson);
         Task task = new TaskBuilder()
                 .setTaskId(root.get("id").asText())

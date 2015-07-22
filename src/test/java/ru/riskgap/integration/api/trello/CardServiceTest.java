@@ -41,7 +41,7 @@ public class CardServiceTest {
 
 
     @Test(expected = NullPointerException.class) //test for URL only, not for real content
-    public void getTaskByCardId_testRequestUrl() throws IOException, ParseException, URISyntaxException {
+    public void getTaskByCardId_testRequestUrl() throws Exception {
         try {
             cardService.getById(CARD_ID, KEY, TOKEN);
         } finally {
@@ -52,7 +52,7 @@ public class CardServiceTest {
     }
 
     @Test
-    public void parseCardInTask_openStatus() throws IOException, ParseException {
+    public void parseCardInTask_openStatus() throws Exception {
         String jsonCard = "{\n" +
                 "    \"id\": \"559a048632b6165b1416dabd\",\n" +
                 "    \"badges\": {\n" +
@@ -219,7 +219,7 @@ public class CardServiceTest {
 
 
     @Test
-    public void create_noComments() throws ParseException, IOException {
+    public void create_noComments() throws ParseException, IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
                 "{\n" +
                         "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +
@@ -276,7 +276,7 @@ public class CardServiceTest {
 
     @Test
     //checks for filling ids
-    public void create_withComments() throws ParseException, IOException {
+    public void create_withComments() throws ParseException, IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.POST_CARD,
                 "{\n" +
                         "    \"id\": \"55a02f77277fb81cdaff3d33\",\n" +

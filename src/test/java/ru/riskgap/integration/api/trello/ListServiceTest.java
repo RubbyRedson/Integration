@@ -9,6 +9,7 @@ import ru.riskgap.integration.models.Task;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,14 +36,14 @@ public class ListServiceTest {
     }
 
     @Test
-    public void getByStatus_testRequestUrl() throws IOException {
+    public void getByStatus_testRequestUrl() throws IOException, URISyntaxException {
         listService.getByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
         assertEquals("https://api.trello.com/1/boards/" + BOARD_ID + "/lists?key=" + KEY + "&token=" + TOKEN,
                 fakeTrelloHttpClient.getLastUrl());
     }
 
     @Test
-    public void getByStatus_taskOpenStatus() throws IOException {
+    public void getByStatus_taskOpenStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
                 "[\n" +
                         "    {\n" +
@@ -75,7 +76,7 @@ public class ListServiceTest {
     }
 
     @Test
-    public void getByStatus_closedStatus() throws IOException {
+    public void getByStatus_closedStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
                 "[\n" +
                         "    {\n" +
@@ -108,7 +109,7 @@ public class ListServiceTest {
     }
 
     @Test
-    public void getStatusByList_openStatus() throws IOException {
+    public void getStatusByList_openStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
                         "    \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
@@ -122,7 +123,7 @@ public class ListServiceTest {
     }
 
     @Test
-    public void getStatusByList_closedStatus() throws IOException {
+    public void getStatusByList_closedStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
                         "    \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +

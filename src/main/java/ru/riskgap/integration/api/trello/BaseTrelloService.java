@@ -25,7 +25,10 @@ public abstract class BaseTrelloService {
     protected static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {
             put(Task.Status.OPEN, "To Do");
-            put(Task.Status.CLOSED, "Done");
+            put(Task.Status.IN_PROGRESS, "Doing");
+            put(Task.Status.RESOLVED, "Done");
+            put(Task.Status.CLOSED, "Closed");
+
         }
     };
 
