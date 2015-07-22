@@ -43,6 +43,7 @@ public class CommentService extends BaseTrelloService {
                 .addParameter("fields", "idBoard")
                 .build().toString();
         CloseableHttpResponse response = httpClient.get(url);
+        log.info("getByCard, URL: {}", url);
         String entity = httpClient.extractEntity(response, true);
         return getFromActions(objectMapper.readTree(entity).get("actions"));
     }
@@ -56,27 +57,24 @@ public class CommentService extends BaseTrelloService {
                         .setCommentId(action.get("id").asText())
                         .setDate(TRELLO_DATE_FORMAT.parse(action.get("date").asText()))
                         .setText(action.get("data").get("text").asText())
+                        .setUserId(action.get("memberCreator").get("id").asText())
                         .build());
         }
         return comments;
     }
 
 
-    Comment create(String cardId, Comment comment, String appKey, String userToken) throws IOException {
+    Comment create(String cardId, Comment comment, String appKey, String userToken) throws IOException, URISyntaxException {
         String withoutParams = MessageFormat.format(BASE_URL + POST_COMMENT, cardId);
-        try {
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .addParameter("text", comment.getText())
-                    .build().toString();
-            log.info("create, URL: {}", url);
-            CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
-            String entity = httpClient.extractEntity(createCommentResponse, true);
-            comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
-        }
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("token", userToken)
+                .addParameter("text", comment.getText())
+                .build().toString();
+        log.info("create, URL: {}", url);
+        CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
+        String entity = httpClient.extractEntity(createCommentResponse, true);
+        comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
         return comment;
     }
 

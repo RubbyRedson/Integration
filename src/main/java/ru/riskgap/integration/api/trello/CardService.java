@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -135,9 +136,9 @@ public class CardService extends BaseTrelloService {
                 .setContainerId(root.get("idBoard").asText())
                 .setName(root.get("name").asText())
                 .setDescription(root.get("desc").asText())
-                .setDue(TRELLO_DATE_FORMAT.parse(root.get("due").asText()))
+                .setDue(getDueDateFromNode(root.get("due")))
                 .setUserId(getIdCreatorFromActions(root.get("actions"))) //from action "createCard"
-                .setAssigneeId(root.get("idMembers").get(0).asText()) //only first member is assigned for the task
+                .setAssigneeId(getAssigneeFromNode(root.get("idMembers"))) //only first member is assigned for the task
                 .setRiskRef(getLinkFromAttachments(root.get("attachments")))
                 .setStatus(listSrvc.getStatusByList(root.get("idList").asText(), appKey, userToken))
                 .setComments(commentSrvc.getFromActions(root.get("actions"))).build();
@@ -159,6 +160,20 @@ public class CardService extends BaseTrelloService {
         for (JsonNode action : actionsArray) {
             if (action.get("type").asText().equals("createCard"))
                 return action.get("memberCreator").get("id").asText();
+        }
+        return null;
+    }
+
+    private Date getDueDateFromNode(JsonNode dueNode) throws ParseException {
+        if (dueNode != null) {
+            return TRELLO_DATE_FORMAT.parse(dueNode.asText());
+        }
+        return null;
+    }
+
+    private String getAssigneeFromNode(JsonNode assigneeNode) {
+        if (assigneeNode != null && assigneeNode.has(0)) {
+            return assigneeNode.get(0).asText();
         }
         return null;
     }
