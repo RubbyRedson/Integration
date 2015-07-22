@@ -21,7 +21,7 @@ public class RequestConverterTest {
     //unit test, no spring autowiring
     RequestConverter requestConverter = new RequestConverter();
 
-    private void testInputJson(String input, Task expected) throws IOException, ParseException {
+    private void testInputJson(String input, Task expected) throws Exception {
         Task actual = requestConverter.fromJSONtoTask(input);
         assertEquals("JSON parsing test", expected, actual);
     }
@@ -150,7 +150,7 @@ public class RequestConverterTest {
         try {
             testInputJson(json1, expected1);
             testInputJson(json2, expected2);
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ex = e;
         }
@@ -187,7 +187,7 @@ public class RequestConverterTest {
                 .build();
         try {
             testInputJson(json, expected);
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ex = e;
         }
@@ -216,7 +216,7 @@ public class RequestConverterTest {
                 .build();
         try {
             testInputJson(json, expected);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ex = e;
         }
@@ -240,7 +240,7 @@ public class RequestConverterTest {
                 .build();
         try {
             testInputJson(json, expected);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ex = e;
         }
@@ -258,7 +258,7 @@ public class RequestConverterTest {
 
         try {
             testInputJson(json, expected);
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ex = e;
         }
@@ -266,7 +266,7 @@ public class RequestConverterTest {
     }
 
     @Test
-    public void testInputMalformedJson() throws IOException {
+    public void testInputMalformedJson() {
         String json = "I don't look like a JSON\n" +
                 "Do I?" +
                 "See ya!";
@@ -278,7 +278,7 @@ public class RequestConverterTest {
 
         try {
             requestConverter.fromJSONtoTask(json);
-        } catch (IOException e) {
+        } catch (Exception e) {
             actual = e;
             assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
         }
@@ -286,7 +286,7 @@ public class RequestConverterTest {
     }
 
     @Test
-    public void testInputMalformedDate() throws IOException, ParseException {
+    public void testInputMalformedDate() {
         Exception actual = null;
         String json = "{\n" +
                 "  \"name\": \"Test Task One\",\n" +
@@ -303,7 +303,7 @@ public class RequestConverterTest {
 
         try {
             requestConverter.fromJSONtoTask(json);
-        } catch (IOException e) {
+        } catch (Exception e) {
             actual = e;
             StringWriter stringWriter = new StringWriter();
             e.printStackTrace(new PrintWriter(stringWriter));

@@ -17,9 +17,6 @@ import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.RequestConverter;
 import ru.riskgap.integration.util.TaskValidator;
 
-import java.io.IOException;
-import java.text.ParseException;
-
 
 @RestController
 public class HttpReceiver {
@@ -52,7 +49,7 @@ public class HttpReceiver {
         return new ResponseEntity<>(requestConverter.fromTaskToJSON(resultTask), HttpStatus.OK);
     }
 
-    private Task getTask(String body) throws IOException, ParseException {
+    private Task getTask(String body) throws Exception {
         Task task = requestConverter.fromJSONtoTask(body);
         return task;
     }

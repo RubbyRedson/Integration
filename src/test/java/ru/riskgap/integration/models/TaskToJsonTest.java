@@ -3,8 +3,6 @@ package ru.riskgap.integration.models;
 import org.junit.Test;
 import ru.riskgap.integration.util.RequestConverter;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +16,7 @@ public class TaskToJsonTest {
     private static RequestConverter converter = new RequestConverter();
 
     @Test
-    public void testTaskToJson_checkNoAuth() throws IOException {
+    public void testTaskToJson_checkNoAuth() throws Exception {
         Task task = new TaskBuilder()
                 .setName("Test Task One")
                 .setStatus(Task.Status.OPEN)
@@ -41,7 +39,7 @@ public class TaskToJsonTest {
     }
 
     @Test
-    public void testTaskToJsonFull() throws ParseException, IOException {
+    public void testTaskToJsonFull() throws Exception {
 
         Task task = new TaskBuilder()
                 .setContainerId("PROJECT")
@@ -68,7 +66,7 @@ public class TaskToJsonTest {
     }
 
     @Test
-    public void testTaskToJsonPartial() throws ParseException, IOException {
+    public void testTaskToJsonPartial() throws Exception {
         Task task = new TaskBuilder()
                 .setContainerId("PROJECT")
                 .setName("Test Task One")

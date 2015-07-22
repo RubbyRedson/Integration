@@ -99,20 +99,15 @@ public class CommentService extends BaseTrelloService {
         return comment;
     }
 
-    void delete(String cardId, Comment comment, String appKey, String userToken) throws IOException {
+    void delete(String cardId, Comment comment, String appKey, String userToken) throws IOException, URISyntaxException {
         String withoutParams = MessageFormat.format(BASE_URL + CHANGE_COMMENT, cardId, comment.getCommentId());
-        try {
-            String url = new URIBuilder(withoutParams)
-                    .addParameter("key", appKey)
-                    .addParameter("token", userToken)
-                    .build().toString();
-            log.info("delete, URL: {}", url);
-            CloseableHttpResponse updateCommentResponse = httpClient.delete(url);
-            String entity = httpClient.extractEntity(updateCommentResponse, true);
-            //TODO: entity validator
-        } catch (URISyntaxException e) {
-            log.error("Illegal Trello URL", e);
-        }
+        String url = new URIBuilder(withoutParams)
+                .addParameter("key", appKey)
+                .addParameter("token", userToken)
+                .build().toString();
+        log.info("delete, URL: {}", url);
+        CloseableHttpResponse updateCommentResponse = httpClient.delete(url);
+        String entity = httpClient.extractEntity(updateCommentResponse, true);
     }
 
     /**
@@ -127,7 +122,7 @@ public class CommentService extends BaseTrelloService {
      * @return list of new comments with filled IDs
      * @throws IOException
      */
-    List<Comment> sync(String cardId, List<Comment> newComments, List<Comment> currentComments, String appKey, String userToken) throws IOException {
+    List<Comment> sync(String cardId, List<Comment> newComments, List<Comment> currentComments, String appKey, String userToken) throws IOException, URISyntaxException {
         List<Comment> currCommentsCopy = new ArrayList<>(currentComments.size());
         currCommentsCopy.addAll(currentComments);
         if (newComments != null) {

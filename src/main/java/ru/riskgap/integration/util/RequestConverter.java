@@ -1,12 +1,16 @@
 package ru.riskgap.integration.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.models.Task;
 
 import java.io.IOException;
+
+import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.INCORRECT;
 
 /**
  * Receives the request body as json and parses it to create a Task object that holds all the received information
@@ -30,14 +34,19 @@ public class RequestConverter {
      * @return Task instance with all of the information from jsonBody
      * @throws IOException when input json is malformed
      */
-    public Task fromJSONtoTask(String jsonBody) throws IOException {
-        Task result = objectMapper.readValue(jsonBody, Task.class);
-        if (logger.isInfoEnabled())
-            logger.info("Received new " + result);
+    public Task fromJSONtoTask(String jsonBody) throws Exception {
+        Task result;
+        try {
+            result = objectMapper.readValue(jsonBody, Task.class);
+            if (logger.isInfoEnabled())
+                logger.info("Received new " + result);
+        } catch (JsonMappingException | JsonParseException ex) {
+            throw new InvalidInputDataException(INCORRECT);
+        }
         return result;
     }
 
-    public String fromTaskToJSON(Task task) throws JsonProcessingException {
+    public String fromTaskToJSON(Task task) throws Exception {
         String json = objectMapper.writeValueAsString(task);
         if (logger.isInfoEnabled())
             logger.info("Send new " + json);
