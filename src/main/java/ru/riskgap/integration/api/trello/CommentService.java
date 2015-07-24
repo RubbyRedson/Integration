@@ -34,6 +34,7 @@ public class CommentService extends BaseTrelloService {
     }
 
     public List<Comment> getByCard(String cardId, String appKey, String userToken) throws URISyntaxException, IOException, ParseException {
+        log.info("[Trello] get comments of card with id {}", cardId);
         String withoutParams = MessageFormat.format(BASE_URL + GET_OR_CHANGE_CARD_BY_ID, cardId);
         String url = new URIBuilder(withoutParams)
                 .addParameter("key", appKey)
@@ -43,7 +44,7 @@ public class CommentService extends BaseTrelloService {
                 .addParameter("fields", "idBoard")
                 .build().toString();
         CloseableHttpResponse response = httpClient.get(url);
-        log.info("getByCard, URL: {}", url);
+
         String entity = httpClient.extractEntity(response, true);
         return getFromActions(objectMapper.readTree(entity).get("actions"));
     }
@@ -71,7 +72,7 @@ public class CommentService extends BaseTrelloService {
                 .addParameter("token", userToken)
                 .addParameter("text", comment.getText())
                 .build().toString();
-        log.info("create, URL: {}", url);
+        log.info("[Trello] create comment: {}", comment);
         CloseableHttpResponse createCommentResponse = httpClient.post(url, null);
         String entity = httpClient.extractEntity(createCommentResponse, true);
         comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
@@ -86,7 +87,7 @@ public class CommentService extends BaseTrelloService {
                     .addParameter("token", userToken)
                     .addParameter("text", comment.getText())
                     .build().toString();
-            log.info("update, URL: {}", url);
+            log.info("[Trello] update comment: {}", comment);
             CloseableHttpResponse updateCommentResponse = httpClient.put(url, null);
             String entity = httpClient.extractEntity(updateCommentResponse, true);
             //TODO: entity validator
@@ -103,7 +104,7 @@ public class CommentService extends BaseTrelloService {
                 .addParameter("key", appKey)
                 .addParameter("token", userToken)
                 .build().toString();
-        log.info("delete, URL: {}", url);
+        log.info("[Trello] delete comment: {}", comment);
         CloseableHttpResponse updateCommentResponse = httpClient.delete(url);
         String entity = httpClient.extractEntity(updateCommentResponse, true);
     }
@@ -121,6 +122,7 @@ public class CommentService extends BaseTrelloService {
      * @throws IOException
      */
     List<Comment> sync(String cardId, List<Comment> newComments, List<Comment> currentComments, String appKey, String userToken) throws IOException, URISyntaxException {
+        log.info("[Trello] sync comments: START");
         List<Comment> currCommentsCopy = new ArrayList<>(currentComments.size());
         currCommentsCopy.addAll(currentComments);
         if (newComments != null) {
@@ -141,6 +143,7 @@ public class CommentService extends BaseTrelloService {
         for (Comment remaining : currCommentsCopy) {
             delete(cardId, remaining, appKey, userToken);
         }
+        log.info("[Trello] sync comments: END");
         return newComments;
     }
 }

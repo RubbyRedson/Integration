@@ -29,7 +29,7 @@ public class TokenStore {
         for (int i = 0; i < tokensList.getLength(); i++) {
             tokens.add(tokensList.item(i).getTextContent());
         }
-        logger.info("*****Tokens****: {}", tokens);
+        logger.info("[Security] Tokens found: {}",tokens.size());
     }
 
     public boolean isValidToken(String token) {

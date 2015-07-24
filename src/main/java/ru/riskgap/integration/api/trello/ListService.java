@@ -31,12 +31,12 @@ public class ListService extends BaseTrelloService {
      * @throws IOException
      */
     public String getByStatus(Task.Status status, String boardId, String appKey, String userToken) throws IOException, URISyntaxException {
+        log.info("[Trello] get list id by status {} in board with id {}", "'" + status + "'", boardId);
         String withoutParams = MessageFormat.format(BASE_URL + GET_LISTS_OF_BOARD, boardId);
         String url = new URIBuilder(withoutParams)
                 .addParameter("key", appKey)
                 .addParameter("token", userToken)
                 .build().toString();
-        log.info("getListIdByStatus, URL: {}", url);
         CloseableHttpResponse response = httpClient.get(url);
         String entity = httpClient.extractEntity(response, true);
         if (entity != null) { //TODO: Add entity validator
@@ -65,6 +65,7 @@ public class ListService extends BaseTrelloService {
      * @throws IOException
      */
     Task.Status getStatusByList(String listId, String appKey, String userToken) throws IOException, URISyntaxException {
+        log.info("[Trello] get status of task by list with id: {}", listId);
         String withoutParams = MessageFormat.format(BASE_URL + GET_LIST_BY_ID, listId);
         String url = new URIBuilder(withoutParams)
                 .addParameter("key", appKey)

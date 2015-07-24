@@ -4,18 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.models.RestToken;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.MessageFormat;
+
+import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.INCORRECT;
+import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.MISSED;
 
 public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -37,12 +39,22 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws
             AuthenticationException, IOException, ServletException {
         String token = req.getHeader(HEADER_TOKEN_PARAM);
-        if (logger.isInfoEnabled()) {
-            logger.info("token found: {}", token);
+        if (token == null) {
+            logger.info("[Security] no header {} found", "'"+HEADER_TOKEN_PARAM+"'");
+            InvalidInputDataException exception = new InvalidInputDataException("X-Api-Key", MISSED);
+            res.addHeader("Content-Type", "application/json");
+            res.setStatus(400);
+            res.setCharacterEncoding("UTF-8");
+            res.getWriter().write(exception.getMessage());
         }
         AbstractAuthenticationToken authToken = authByToken(token);
         if (authToken == null) {
-            throw new BadCredentialsException(MessageFormat.format("Error | {0}", "Bad Token"));
+            logger.info("[Security] Bad token: {}", token);
+            InvalidInputDataException exception = new InvalidInputDataException("X-Api-Key", INCORRECT);
+            res.addHeader("Content-Type", "application/json");
+            res.setStatus(400);
+            res.setCharacterEncoding("UTF-8");
+            res.getWriter().write(exception.getMessage());
         }
         return authToken;
     }

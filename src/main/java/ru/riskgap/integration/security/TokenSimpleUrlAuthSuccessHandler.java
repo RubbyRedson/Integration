@@ -19,11 +19,6 @@ public class TokenSimpleUrlAuthSuccessHandler extends SimpleUrlAuthenticationSuc
 
         String context = request.getContextPath();
         String fullURL = request.getRequestURI();
-        if (log.isInfoEnabled()) {
-            log.info("---- TokenSimpleUrlAuthSuccessHandler ----");
-            log.info("context path: {}", context);
-            log.info("full url: {}", fullURL);
-        }
         return fullURL.substring(fullURL.indexOf(context) + context.length());
     }
 
@@ -33,10 +28,7 @@ public class TokenSimpleUrlAuthSuccessHandler extends SimpleUrlAuthenticationSuc
             throws IOException, ServletException {
 
         String url = determineTargetUrl(request, response);
-        if (log.isInfoEnabled()) {
-            log.info("---- onAuthenticationSuccess ----");
-            log.info("url: {}", url);
-        }
+        log.info("[Security] Successful authorization");
         request.getRequestDispatcher(url).forward(request, response);
     }
 }

@@ -46,7 +46,7 @@ public class CardService extends BaseTrelloService {
                 .addParameter("attachments", String.valueOf(true))
                 .addParameter("actions", "createCard,commentCard")
                 .build().toString();
-        log.info("getTaskByCardId, URL: {}", url);
+        log.info("[Trello] get card with id: {}", cardId);
         CloseableHttpResponse response = httpClient.get(url);
         String entity = httpClient.extractEntity(response, true);
         return fromJson(entity, appKey, userToken);
@@ -103,7 +103,7 @@ public class CardService extends BaseTrelloService {
                 .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
                 .addParameter("urlSource", task.getRiskRef())
                 .build().toString();
-        log.info("createWithoutComments, URL: {}", url);
+        log.info("[Trello] create new card from task: {}", task);
         CloseableHttpResponse createCardResponse = httpClient.post(url, null);
         String entity = httpClient.extractEntity(createCardResponse, true);
         return objectMapper.readTree(entity).get("id").asText();
@@ -123,7 +123,7 @@ public class CardService extends BaseTrelloService {
                         listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
                 .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
                 .build().toString();
-        log.info("updateWithoutComments, URL: {}", url);
+        log.info("[Trello] update card from task: {}", task);
         CloseableHttpResponse createCommentResponse = httpClient.put(url, null);
         String entity = httpClient.extractEntity(createCommentResponse, true);
         return objectMapper.readTree(entity).get("id").asText(); //has 'id' => all is ok
@@ -146,7 +146,6 @@ public class CardService extends BaseTrelloService {
     }
 
     private String getLinkFromAttachments(JsonNode attachmentsArray) throws IOException {
-        log.info("attachments are array? {}", attachmentsArray.isArray());
         for (JsonNode attachment : attachmentsArray) {
             String name = attachment.get("name").asText();
             if (name.startsWith("http"))
@@ -156,7 +155,6 @@ public class CardService extends BaseTrelloService {
     }
 
     private String getIdCreatorFromActions(JsonNode actionsArray) {
-        log.info("actions are array? {}", actionsArray.isArray());
         for (JsonNode action : actionsArray) {
             if (action.get("type").asText().equals("createCard"))
                 return action.get("memberCreator").get("id").asText();

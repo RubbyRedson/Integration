@@ -10,6 +10,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,6 +22,7 @@ import java.util.Set;
  */
 public class ApacheHttpClient implements HttpClient {
     private CloseableHttpClient httpClient;
+    private final Logger log = LoggerFactory.getLogger(ApacheHttpClient.class);
 
     public ApacheHttpClient(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
@@ -32,6 +35,7 @@ public class ApacheHttpClient implements HttpClient {
     public CloseableHttpResponse get(String url, NameValuePair... headers) throws IOException {
         HttpGet get = new HttpGet(url);
         setHeaders(get, headers);
+        log.info("[URL] GET: {}", url);
         return httpClient.execute(get);
     }
 
@@ -41,6 +45,7 @@ public class ApacheHttpClient implements HttpClient {
             setHeaders(post, headers);
         if (body != null)
             post.setEntity(new StringEntity(body));
+        log.info("[URL] POST: {}", url);
         return httpClient.execute(post);
     }
 
@@ -50,6 +55,7 @@ public class ApacheHttpClient implements HttpClient {
             setHeaders(put, headers);
         if (body != null)
             put.setEntity(new StringEntity(body));
+        log.info("[URL] PUT: {}", url);
         return httpClient.execute(put);
     }
 
@@ -57,6 +63,7 @@ public class ApacheHttpClient implements HttpClient {
         HttpDelete delete = new HttpDelete(url);
         if (headers != null)
             setHeaders(delete, headers);
+        log.info("[URL] DELETE: {}", url);
         return httpClient.execute(delete);
     }
 
@@ -66,6 +73,7 @@ public class ApacheHttpClient implements HttpClient {
             setHeaders(patch, headers);
         if (body != null)
             patch.setEntity(new StringEntity(body));
+        log.info("[URL] PATCH: {}", url);
         return httpClient.execute(patch);
     }
 

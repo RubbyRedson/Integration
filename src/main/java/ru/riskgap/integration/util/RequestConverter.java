@@ -37,9 +37,8 @@ public class RequestConverter {
     public Task fromJSONtoTask(String jsonBody) throws Exception {
         Task result;
         try {
+            logger.info("[Converter] From JSON to Task");
             result = objectMapper.readValue(jsonBody, Task.class);
-            if (logger.isInfoEnabled())
-                logger.info("Received new " + result);
         } catch (JsonMappingException | JsonParseException ex) {
             throw new InvalidInputDataException(INCORRECT);
         }
@@ -47,9 +46,8 @@ public class RequestConverter {
     }
 
     public String fromTaskToJSON(Task task) throws Exception {
+        logger.info("[Converter] From Task to JSON");
         String json = objectMapper.writeValueAsString(task);
-        if (logger.isInfoEnabled())
-            logger.info("Send new " + json);
         return json;
     }
 }
