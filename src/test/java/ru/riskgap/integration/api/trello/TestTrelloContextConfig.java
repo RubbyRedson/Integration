@@ -12,7 +12,7 @@ public class TestTrelloContextConfig {
     private HttpClient httpClient;
     {
         httpClient = new FakeTrelloHttpClient();
-        
+
     }
 
     @Bean
@@ -28,5 +28,10 @@ public class TestTrelloContextConfig {
     @Bean
     public ListService listService() {
         return new ListService(httpClient);
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(httpClient);
     }
 }

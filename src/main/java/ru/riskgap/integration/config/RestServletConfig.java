@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.riskgap.integration.api.trello.CardService;
 import ru.riskgap.integration.api.trello.CommentService;
 import ru.riskgap.integration.api.trello.ListService;
+import ru.riskgap.integration.api.trello.UserService;
 import ru.riskgap.integration.util.ApacheHttpClient;
 import ru.riskgap.integration.util.HttpClient;
 
@@ -37,5 +38,10 @@ public class RestServletConfig {
     @Bean
     public ListService listService() {
         return new ListService(httpClient);
+    }
+
+    @Bean
+    public UserService userService() {
+        return new UserService(httpClient);
     }
 }

@@ -80,7 +80,7 @@ public class CommentService extends BaseTrelloService {
     }
 
     Comment update(String cardId, Comment comment, String appKey, String userToken) throws IOException {
-        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_COMMENT, cardId, comment.getCommentId());
+        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_OR_DELETE_COMMENT, cardId, comment.getCommentId());
         try {
             String url = new URIBuilder(withoutParams)
                     .addParameter("key", appKey)
@@ -99,7 +99,7 @@ public class CommentService extends BaseTrelloService {
     }
 
     void delete(String cardId, Comment comment, String appKey, String userToken) throws IOException, URISyntaxException {
-        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_COMMENT, cardId, comment.getCommentId());
+        String withoutParams = MessageFormat.format(BASE_URL + CHANGE_OR_DELETE_COMMENT, cardId, comment.getCommentId());
         String url = new URIBuilder(withoutParams)
                 .addParameter("key", appKey)
                 .addParameter("token", userToken)

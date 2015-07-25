@@ -30,10 +30,12 @@ public class FakeTrelloHttpClient implements HttpClient {
     public static CloseableHttpResponse POST_CARD = new FakeHttpResponse();
     public static CloseableHttpResponse POST_OR_DElETE_COMMENT = new FakeHttpResponse();
     public static CloseableHttpResponse PUT_COMMENT = new FakeHttpResponse();
+    public static CloseableHttpResponse FIND_USER_BY_ID = new FakeHttpResponse();
 
     public FakeTrelloHttpClient() {
         responseEntityMapper = new LinkedHashMap<>();
         uriResponseMapper = new LinkedHashMap<>();
+        uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/search/members\\?.*"), FIND_USER_BY_ID);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/.*/comments.*"),
                 PUT_COMMENT);
         uriResponseMapper.put(Pattern.compile("https://api\\.trello\\.com/1/cards/.*/actions/comments.*"), POST_OR_DElETE_COMMENT);
