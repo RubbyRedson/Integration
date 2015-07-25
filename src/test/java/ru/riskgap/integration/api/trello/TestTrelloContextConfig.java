@@ -12,6 +12,7 @@ public class TestTrelloContextConfig {
     private HttpClient httpClient;
     {
         httpClient = new FakeTrelloHttpClient();
+        
     }
 
     @Bean

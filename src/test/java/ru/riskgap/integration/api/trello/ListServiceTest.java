@@ -25,6 +25,41 @@ public class ListServiceTest {
     private static final String KEY = "myKeyId";
     private static final String TOKEN = "myUserToken";
 
+    private static final String ALL_LISTS = "[\n" +
+            "    {\n" +
+            "        \"id\": \"TODO\",\n" +
+            "        \"name\": \"To Do\",\n" +
+            "        \"closed\": false,\n" +
+            "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+            "        \"pos\": 16384,\n" +
+            "        \"subscribed\": false\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"DOING\",\n" +
+            "        \"name\": \"Doing\",\n" +
+            "        \"closed\": false,\n" +
+            "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+            "        \"pos\": 32768,\n" +
+            "        \"subscribed\": false\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"RESOLVED\",\n" +
+            "        \"name\": \"Done\",\n" +
+            "        \"closed\": false,\n" +
+            "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+            "        \"pos\": 49152,\n" +
+            "        \"subscribed\": false\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"CLOSED\",\n" +
+            "        \"name\": \"Closed\",\n" +
+            "        \"closed\": false,\n" +
+            "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
+            "        \"pos\": 49152,\n" +
+            "        \"subscribed\": false\n" +
+            "    }\n" +
+            "]";
+
     private FakeTrelloHttpClient fakeTrelloHttpClient;
 
     @Autowired
@@ -37,6 +72,7 @@ public class ListServiceTest {
 
     @Test
     public void getByStatus_testRequestUrl() throws IOException, URISyntaxException {
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD, ALL_LISTS);
         listService.getByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
         assertEquals("https://api.trello.com/1/boards/" + BOARD_ID + "/lists?key=" + KEY + "&token=" + TOKEN,
                 fakeTrelloHttpClient.getLastUrl());
@@ -44,81 +80,30 @@ public class ListServiceTest {
 
     @Test
     public void getByStatus_taskOpenStatus() throws IOException, URISyntaxException {
-        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
-                "[\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
-                        "        \"name\": \"To Do\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 16384,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbaf\",\n" +
-                        "        \"name\": \"Doing\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 32768,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "        \"name\": \"Done\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 49152,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    }\n" +
-                        "]");
+        fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD, ALL_LISTS);
         String toDoTask = listService.getByStatus(Task.Status.OPEN, BOARD_ID, KEY, TOKEN);
-        assertEquals("559381ce9af4e9c91ab2dbae", toDoTask);
+        assertEquals("TODO", toDoTask);
     }
 
     @Test
     public void getByStatus_closedStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_ALL_LISTS_OF_BOARD,
-                "[\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
-                        "        \"name\": \"To Do\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 16384,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbaf\",\n" +
-                        "        \"name\": \"Doing\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 32768,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "        \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "        \"name\": \"Done\",\n" +
-                        "        \"closed\": false,\n" +
-                        "        \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
-                        "        \"pos\": 49152,\n" +
-                        "        \"subscribed\": false\n" +
-                        "    }\n" +
-                        "]");
+                ALL_LISTS);
         String doneTask = listService.getByStatus(Task.Status.CLOSED, BOARD_ID, KEY, TOKEN);
-        assertEquals("559381cf9af4e9c91ab2dbb0", doneTask);
+        assertEquals("CLOSED", doneTask);
     }
 
     @Test
     public void getStatusByList_openStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
-                        "    \"id\": \"559381ce9af4e9c91ab2dbae\",\n" +
+                        "    \"id\": \"OPEN\",\n" +
                         "    \"name\": \"To Do\",\n" +
                         "    \"closed\": false,\n" +
                         "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
                         "    \"pos\": 16384\n" +
                         "}");
-        Task.Status status = listService.getStatusByList("559381ce9af4e9c91ab2dbae", KEY, TOKEN);
+        Task.Status status = listService.getStatusByList("OPEN", KEY, TOKEN);
         assertEquals(Task.Status.OPEN, status);
     }
 
@@ -126,13 +111,13 @@ public class ListServiceTest {
     public void getStatusByList_closedStatus() throws IOException, URISyntaxException {
         fakeTrelloHttpClient.setEntityForResponse(FakeTrelloHttpClient.GET_LIST_BY_ID,
                 "{\n" +
-                        "    \"id\": \"559381cf9af4e9c91ab2dbb0\",\n" +
-                        "    \"name\": \"Done\",\n" +
+                        "    \"id\": \"CLOSED\",\n" +
+                        "    \"name\": \"Closed\",\n" +
                         "    \"closed\": false,\n" +
                         "    \"idBoard\": \"559381ce9af4e9c91ab2dbad\",\n" +
                         "    \"pos\": 49152\n" +
                         "}");
-        Task.Status status = listService.getStatusByList("559381cf9af4e9c91ab2dbb0", KEY, TOKEN);
+        Task.Status status = listService.getStatusByList("CLOSED", KEY, TOKEN);
         assertEquals(Task.Status.CLOSED, status);
     }
 

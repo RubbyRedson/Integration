@@ -1,11 +1,10 @@
 package ru.riskgap.integration.util;
 
 import org.junit.Test;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.models.*;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -280,7 +279,7 @@ public class RequestConverterTest {
             requestConverter.fromJSONtoTask(json);
         } catch (Exception e) {
             actual = e;
-            assertEquals("Expected IOException with message, but received", expected.getMessage(), actual.getMessage());
+            assertTrue(e instanceof InvalidInputDataException);
         }
         assertNotNull("Expected IOException but none was thrown", actual);
     }
@@ -305,12 +304,9 @@ public class RequestConverterTest {
             requestConverter.fromJSONtoTask(json);
         } catch (Exception e) {
             actual = e;
-            StringWriter stringWriter = new StringWriter();
-            e.printStackTrace(new PrintWriter(stringWriter));
-            assertTrue("Expected to contain Unparseable date, but was: " + stringWriter.toString(),
-                    stringWriter.toString().contains("Unparseable date"));
+            assertTrue(e instanceof InvalidInputDataException);
         }
-        assertNotNull("Expected ParseException but none was thrown", actual);
+        assertNotNull("Expected InvalidInputDataException but none was thrown", actual);
     }
 
 }

@@ -8,16 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ru.riskgap.integration.exceptions.InvalidInputDataException;
+import ru.riskgap.integration.exceptions.AuthException;
 import ru.riskgap.integration.models.RestToken;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.INCORRECT;
-import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason.MISSED;
 
 public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -39,20 +36,12 @@ public class RestTokenAuthFilter extends AbstractAuthenticationProcessingFilter 
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws
             AuthenticationException, IOException, ServletException {
         String token = req.getHeader(HEADER_TOKEN_PARAM);
-        if (token == null) {
-            logger.info("[Security] no header {} found", "'"+HEADER_TOKEN_PARAM+"'");
-            InvalidInputDataException exception = new InvalidInputDataException("X-Api-Key", MISSED);
-            res.addHeader("Content-Type", "application/json");
-            res.setStatus(400);
-            res.setCharacterEncoding("UTF-8");
-            res.getWriter().write(exception.getMessage());
-        }
         AbstractAuthenticationToken authToken = authByToken(token);
         if (authToken == null) {
             logger.info("[Security] Bad token: {}", token);
-            InvalidInputDataException exception = new InvalidInputDataException("X-Api-Key", INCORRECT);
+            AuthException exception = new AuthException("X-Api-Key");
             res.addHeader("Content-Type", "application/json");
-            res.setStatus(400);
+            res.setStatus(401);
             res.setCharacterEncoding("UTF-8");
             res.getWriter().write(exception.getMessage());
         }
