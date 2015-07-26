@@ -1,5 +1,7 @@
 package ru.riskgap.integration.exceptions;
 
+import org.springframework.util.StringUtils;
+
 import java.text.MessageFormat;
 
 /**
@@ -21,5 +23,21 @@ public class InvalidInputDataException extends AbstractException {
         super("Invalid input data",
                 MessageFormat.format("One of parameters is {0}", reason.toString().toLowerCase()),
                 400);
+    }
+
+    public InvalidInputDataException(Reason reason, String... parameters) {
+        super("Invalid input data",
+                MessageFormat.format("Parameter {0} is {1}",
+                        StringUtils.arrayToDelimitedString(quoteParameters(parameters)," or "), reason.toString().toLowerCase()),
+                400);
+
+    }
+
+    private static String[] quoteParameters(String[] parameters) {
+        String[] quoted = new String[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            quoted[i] = "'"+parameters[i]+"'";
+        }
+        return quoted;
     }
 }

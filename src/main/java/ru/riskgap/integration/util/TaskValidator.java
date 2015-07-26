@@ -31,6 +31,9 @@ public class TaskValidator {
             throw new InvalidInputDataException("container-id", MISSED);
         if (task.getRiskRef()==null)
             throw new InvalidInputDataException("risk-reference", MISSED);
+        if (task.getAssigneeId() == null && task.getAssigneeEmail() == null) {
+            throw new InvalidInputDataException(MISSED, "assignee-id", "assignee-email");
+        }
     }
 
     private static void validateAuthData(Task task) throws InvalidInputDataException {

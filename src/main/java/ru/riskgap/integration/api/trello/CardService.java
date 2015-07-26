@@ -25,6 +25,8 @@ public class CardService extends BaseTrelloService {
     CommentService commentSrvc;
     @Autowired
     ListService listSrvc;
+    @Autowired
+    UserService userService;
 
     public CardService(HttpClient httpClient) {
         super(httpClient);
@@ -102,6 +104,10 @@ public class CardService extends BaseTrelloService {
                         listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
                 .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
                 .addParameter("urlSource", task.getRiskRef())
+                .addParameter("idMembers",
+                        task.getAssigneeId() != null ?
+                                task.getAssigneeId() :
+                                userService.findIdByEmail(task.getAssigneeEmail(), appKey, userToken))
                 .build().toString();
         log.info("[Trello] create new card from task: {}", task);
         CloseableHttpResponse createCardResponse = httpClient.post(url, null);
@@ -122,6 +128,10 @@ public class CardService extends BaseTrelloService {
                 .addParameter("idList",
                         listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
                 .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                .addParameter("idMembers",
+                        task.getAssigneeId() != null ?
+                                task.getAssigneeId() :
+                                userService.findIdByEmail(task.getAssigneeEmail(), appKey, userToken))
                 .build().toString();
         log.info("[Trello] update card from task: {}", task);
         CloseableHttpResponse createCommentResponse = httpClient.put(url, null);
