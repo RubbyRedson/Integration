@@ -51,6 +51,13 @@ public class CardServiceContextConfig {
     }
 
     @Bean
+    public UserService userService() throws IOException, URISyntaxException {
+        UserService userService = mock(UserService.class);
+        when(userService.findIdByEmail(anyString(),anyString(), anyString())).thenReturn("USER_ID");
+        return userService;
+    }
+
+    @Bean
     public ListService listService() throws IOException, URISyntaxException {
         ListService listService = mock(ListService.class);
         when(listService.getByStatus(

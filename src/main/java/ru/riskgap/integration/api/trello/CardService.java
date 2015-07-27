@@ -151,6 +151,7 @@ public class CardService extends BaseTrelloService {
                 .setAssigneeId(getAssigneeFromNode(root.get("idMembers"))) //only first member is assigned for the task
                 .setRiskRef(getLinkFromAttachments(root.get("attachments")))
                 .setStatus(listSrvc.getStatusByList(root.get("idList").asText(), appKey, userToken))
+                .setTargetUrl(root.get("shortUrl").asText())
                 .setComments(commentSrvc.getFromActions(root.get("actions"))).build();
         return task;
     }

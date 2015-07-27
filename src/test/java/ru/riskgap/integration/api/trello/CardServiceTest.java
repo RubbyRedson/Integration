@@ -169,6 +169,7 @@ public class CardServiceTest {
                 .setName("Simple task")
                 .setDescription("Test Description!")
                 .setStatus(Task.Status.OPEN)
+                .setTargetUrl("https://trello.com/c/2ToaglTp")
                 .setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"))
                 .setRiskRef("http://google.ru")
                 .setComments(new ArrayList<Comment>())
