@@ -90,7 +90,6 @@ public class CommentService extends BaseTrelloService {
             log.info("[Trello] update comment: {}", comment);
             CloseableHttpResponse updateCommentResponse = httpClient.put(url, null);
             String entity = httpClient.extractEntity(updateCommentResponse, true);
-            //TODO: entity validator
             comment.setCommentId(objectMapper.readTree(entity).get("id").asText());
         } catch (URISyntaxException e) {
             log.error("Illegal Trello URL", e);

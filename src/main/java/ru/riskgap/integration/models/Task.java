@@ -135,7 +135,7 @@ public class Task {
 
 
     public Task() {
-        //no op todo Builder pattern?
+        //no op
     }
 
     //Getters and setters

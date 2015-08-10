@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 
 /**
  * Base exception when input message has incorrect or missed parameter
+ *
  * @author andrey
  */
 public class InvalidInputDataException extends AbstractException {
@@ -13,9 +14,13 @@ public class InvalidInputDataException extends AbstractException {
         INCORRECT, MISSED
     }
 
+    public InvalidInputDataException(String customMessage) {
+        super("Invalid input data", customMessage, 400);
+    }
+
     public InvalidInputDataException(String parameter, Reason reason) {
         super("Invalid input data",
-                MessageFormat.format("Parameter {0} is {1}", "'"+parameter+"'", reason.toString().toLowerCase()),
+                MessageFormat.format("Parameter {0} is {1}", "'" + parameter + "'", reason.toString().toLowerCase()),
                 400);
     }
 
@@ -28,7 +33,7 @@ public class InvalidInputDataException extends AbstractException {
     public InvalidInputDataException(Reason reason, String... parameters) {
         super("Invalid input data",
                 MessageFormat.format("Parameter {0} is {1}",
-                        StringUtils.arrayToDelimitedString(quoteParameters(parameters)," or "), reason.toString().toLowerCase()),
+                        StringUtils.arrayToDelimitedString(quoteParameters(parameters), " or "), reason.toString().toLowerCase()),
                 400);
 
     }
@@ -36,7 +41,7 @@ public class InvalidInputDataException extends AbstractException {
     private static String[] quoteParameters(String[] parameters) {
         String[] quoted = new String[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
-            quoted[i] = "'"+parameters[i]+"'";
+            quoted[i] = "'" + parameters[i] + "'";
         }
         return quoted;
     }

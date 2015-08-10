@@ -8,8 +8,8 @@ import ru.riskgap.integration.api.trello.CardService;
 import ru.riskgap.integration.api.trello.CommentService;
 import ru.riskgap.integration.api.trello.ListService;
 import ru.riskgap.integration.api.trello.UserService;
-import ru.riskgap.integration.util.ApacheHttpClient;
 import ru.riskgap.integration.util.HttpClient;
+import ru.riskgap.integration.util.HttpClientWithTrelloValidator;
 
 /**
  * Created by andrey on 03.07.15.
@@ -19,29 +19,29 @@ import ru.riskgap.integration.util.HttpClient;
 @ComponentScan({"ru.riskgap.integration.endpoints", "ru.riskgap.integration.api.tfs",
         "ru.riskgap.integration.api.trello"})
 public class RestServletConfig {
-    private HttpClient httpClient;
+    private HttpClient trelloHttpClient;
 
     {
-        httpClient = new ApacheHttpClient();
+        trelloHttpClient = new HttpClientWithTrelloValidator();
     }
 
     @Bean
     public CardService cardService() {
-        return new CardService(httpClient);
+        return new CardService(trelloHttpClient);
     }
 
     @Bean
     public CommentService commentService() {
-        return new CommentService(httpClient);
+        return new CommentService(trelloHttpClient);
     }
 
     @Bean
     public ListService listService() {
-        return new ListService(httpClient);
+        return new ListService(trelloHttpClient);
     }
 
     @Bean
     public UserService userService() {
-        return new UserService(httpClient);
+        return new UserService(trelloHttpClient);
     }
 }

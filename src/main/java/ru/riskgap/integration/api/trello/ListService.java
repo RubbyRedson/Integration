@@ -39,7 +39,7 @@ public class ListService extends BaseTrelloService {
                 .build().toString();
         CloseableHttpResponse response = httpClient.get(url);
         String entity = httpClient.extractEntity(response, true);
-        if (entity != null) { //TODO: Add entity validator
+        if (entity != null) {
             JsonNode jsonNode = objectMapper.readTree(entity);
             if (jsonNode.isArray()) {
                 for (JsonNode node : jsonNode) {

@@ -33,7 +33,6 @@ public class HttpReceiver {
         IntegrationHandler targetSystemHandler = getHandler(task);
         Task resultTask = targetSystemHandler.getTaskInformation(task);
         return new ResponseEntity<>(requestConverter.fromTaskToJSON(resultTask), HttpStatus.OK);
-        //TODO implement sync request handling
     }
 
 
