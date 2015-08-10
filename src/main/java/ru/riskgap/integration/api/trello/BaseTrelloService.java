@@ -8,6 +8,7 @@ import ru.riskgap.integration.util.HttpClient;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /**
  * Created by andrey on 13.07.15.
@@ -23,6 +24,10 @@ public abstract class BaseTrelloService {
     protected static final String CHANGE_OR_DELETE_COMMENT = "cards/{0}/actions/{1}/comments";
     //protected static final String DELETE_COMMENT = "cards/{0}/actions/{1}/comments";
     protected static final String FIND_USER_BY_EMAIL = "search/members";
+
+    static {
+        TRELLO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC")); //trello gives and gets time in UTC
+    }
 
     protected static final HashMap<Task.Status, String> STATUS_LIST_MAP = new HashMap<Task.Status, String>() {
         {

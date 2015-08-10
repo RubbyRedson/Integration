@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static ru.riskgap.integration.api.trello.CardServiceContextConfig.OPEN_LIST;
@@ -33,8 +34,9 @@ public class CardServiceTest {
 
     @Autowired
     private CardService cardService;
+        private SimpleDateFormat utcDateFormat;
 
-    @PostConstruct
+        @PostConstruct
     public void init() {
         fakeTrelloHttpClient = (FakeTrelloHttpClient) cardService.getHttpClient();
     }
@@ -161,7 +163,9 @@ public class CardServiceTest {
                 "}";
         Task actual = cardService.fromJson(jsonCard, KEY, TOKEN);
 
-        Task expected = new TaskBuilder()
+            utcDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Task expected = new TaskBuilder()
                 .setUserId("5134d76e21518d64320053a7")
                 .setAssigneeId("5134d76e21518d64320053a7")
                 .setContainerId("559381ce9af4e9c91ab2dbad")
@@ -170,7 +174,7 @@ public class CardServiceTest {
                 .setDescription("Test Description!")
                 .setStatus(Task.Status.OPEN)
                 .setTargetUrl("https://trello.com/c/2ToaglTp")
-                .setDue(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse("2015-05-07T04:00:00.000Z"))
+                .setDue(utcDateFormat.parse("2015-05-07T04:00:00.000Z"))
                 .setRiskRef("http://google.ru")
                 .setComments(new ArrayList<Comment>())
                 .build();

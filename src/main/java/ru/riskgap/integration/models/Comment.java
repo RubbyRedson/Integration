@@ -1,5 +1,6 @@
 package ru.riskgap.integration.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -63,6 +64,7 @@ public class Comment {
      */
     public static final String API_KEY = "api-key";
     @JsonProperty("api-key")
+    @JsonIgnore
     private String key;
 
     public Comment() {

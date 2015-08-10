@@ -13,6 +13,6 @@ import java.util.Date;
 public class CustomJsonDateSerializer extends JsonSerializer<Date>{
     @Override
     public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        jsonGenerator.writeString(CustomJsonDateDeserializer.DATE_FORMATTER.format(date));
+        jsonGenerator.writeString(CustomJsonDateDeserializer.DATE_FORMATTER_WITH_TIME.format(date));
     }
 }

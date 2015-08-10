@@ -20,15 +20,21 @@ import static ru.riskgap.integration.exceptions.InvalidInputDataException.Reason
  */
 public class CustomJsonDateDeserializer extends JsonDeserializer<Date> {
     private final static String STRING_DATE_FORMAT = "dd.MM.yyyy";
+    private final static String STRING_DATE_FORMAT_WITH_TIME = "dd.MM.yyyy HH:mm";
     public final static DateFormat DATE_FORMATTER = new SimpleDateFormat(STRING_DATE_FORMAT);
+    public final static DateFormat DATE_FORMATTER_WITH_TIME = new SimpleDateFormat(STRING_DATE_FORMAT_WITH_TIME);
 
     @Override
     public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String date = jsonParser.getText();
         try {
-            return DATE_FORMATTER.parse(date);
+            return DATE_FORMATTER_WITH_TIME.parse(date);
         } catch (ParseException e) {
-            throw new InvalidInputDataException("due", INCORRECT);
+            try {
+                return DATE_FORMATTER.parse(date);
+            } catch (ParseException e1) {
+                throw new InvalidInputDataException("due", INCORRECT);
+            }
         }
 
     }
