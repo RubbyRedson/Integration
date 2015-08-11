@@ -53,10 +53,10 @@ public class TaskToJsonTest {
                 .setAssigneeUsername("Test assignee")
                 .setAssigneeEmail("testassignee@riskgap.ru")
                 .setRiskRef("http://google.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("29.12.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("29.12.2015"))
                 .setTaskId("TASK_ID")
                 .setComments(Collections.singletonList(new Comment(
-                        CustomJsonDateDeserializer.DATE_FORMATTER.parse("29.12.2015"),
+                        CustomJsonDateDeserializer.parseDate("29.12.2015"),
                         "Hello, Comment!"
                 )))
                 .build();
@@ -73,7 +73,7 @@ public class TaskToJsonTest {
                 .setStatus(Task.Status.OPEN)
                 .setDescription("Test Task Description")
                 .setRiskRef("http://google.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("29.12.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("29.12.2015"))
                 .setTaskId("TASK_ID")
                 .build();
         String entity = converter.fromTaskToJSON(task);

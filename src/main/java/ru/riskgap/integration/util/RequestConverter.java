@@ -40,6 +40,7 @@ public class RequestConverter {
             logger.info("[Converter] From JSON to Task");
             result = objectMapper.readValue(jsonBody, Task.class);
         } catch (JsonMappingException | JsonParseException ex) {
+            logger.error("[Converter]", ex);
             throw new InvalidInputDataException(INCORRECT);
         }
         return result;

@@ -52,7 +52,7 @@ public class TfsResponseParseTest {
         expected.setAssigneeUsername("rg");
         expected.setAssigneeEmail("RISKGAPWIN\\rg");
 //		try {
-//			expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+//			expected.setDue(Task.DATE_FORMATTER.get().parse("12.02.2015"));
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		}
@@ -96,7 +96,7 @@ public class TfsResponseParseTest {
         expected1.setAssigneeUsername("rg");
         expected1.setAssigneeEmail("RISKGAPWIN\\rg");
 //		try {
-//			expected1.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+//			expected1.setDue(Task.DATE_FORMATTER.get().parse("12.02.2015"));
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		}
@@ -130,7 +130,7 @@ public class TfsResponseParseTest {
         expected2.setAssigneeUsername("rg");
         expected2.setAssigneeEmail("RISKGAPWIN\\rg");
 //		try {
-//			expected2.setDue(Task.DATE_FORMATTER.parse("14.02.2015"));
+//			expected2.setDue(Task.DATE_FORMATTER.get().parse("14.02.2015"));
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		}
@@ -168,7 +168,7 @@ public class TfsResponseParseTest {
         expected.setStatus(Task.Status.OPEN);
         expected.setDescription("Test descr");
 //		try {
-//			expected.setDue(Task.DATE_FORMATTER.parse("12.02.2015"));
+//			expected.setDue(Task.DATE_FORMATTER.get().parse("12.02.2015"));
 //		} catch (ParseException e) {
 //			e.printStackTrace();
 //		}

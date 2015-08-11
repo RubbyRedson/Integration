@@ -102,7 +102,7 @@ public class CardService extends BaseTrelloService {
                 .addParameter("desc", task.getDescription())
                 .addParameter("idList",
                         listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
-                .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                .addParameter("due", formatDate(task.getDue()))
                 .addParameter("urlSource", task.getRiskRef())
                 .addParameter("idMembers",
                         task.getAssigneeId() != null ?
@@ -127,7 +127,7 @@ public class CardService extends BaseTrelloService {
                 .addParameter("desc", task.getDescription())
                 .addParameter("idList",
                         listSrvc.getByStatus(task.getStatus(), task.getContainerId(), appKey, userToken))
-                .addParameter("due", TRELLO_DATE_FORMAT.format(task.getDue()))
+                .addParameter("due", formatDate(task.getDue()))
                 .addParameter("idMembers",
                         task.getAssigneeId() != null ?
                                 task.getAssigneeId() :
@@ -175,7 +175,7 @@ public class CardService extends BaseTrelloService {
 
     private Date getDueDateFromNode(JsonNode dueNode) throws ParseException {
         if (dueNode != null) {
-            return TRELLO_DATE_FORMAT.parse(dueNode.asText());
+            return parseDate(dueNode.asText());
         }
         return null;
     }

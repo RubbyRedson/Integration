@@ -56,7 +56,7 @@ public class CommentService extends BaseTrelloService {
             if (action.get("type").asText().equals("commentCard"))
                 comments.add(new CommentBuilder()
                         .setCommentId(action.get("id").asText())
-                        .setDate(TRELLO_DATE_FORMAT.parse(action.get("date").asText()))
+                        .setDate(parseDate(action.get("date").asText()))
                         .setText(action.get("data").get("text").asText())
                         .setUserId(action.get("memberCreator").get("id").asText())
                         .build());

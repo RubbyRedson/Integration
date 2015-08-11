@@ -81,7 +81,7 @@ public class CommentServiceTest {
         Comment expected = new CommentBuilder()
                 .setCommentId("55a221dc086ba632709546eb")
                 .setUserId("5134d76e21518d64320053a7")
-                .setDate(BaseTrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T08:14:20.657Z"))
+                .setDate(commentService.parseDate("2015-07-12T08:14:20.657Z"))
                 .setText("Test!").build();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -160,12 +160,12 @@ public class CommentServiceTest {
                 new CommentBuilder()
                         .setCommentId("55a23241db84aedab5f34684")
                         .setUserId("5134d76e21518d64320053a7")
-                        .setDate(BaseTrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T09:24:17.017Z"))
+                        .setDate(commentService.parseDate("2015-07-12T09:24:17.017Z"))
                         .setText("Another Test!").build(),
                 new CommentBuilder()
                         .setCommentId("55a221dc086ba632709546eb")
                         .setUserId("5134d76e21518d64320053a7")
-                        .setDate(BaseTrelloService.TRELLO_DATE_FORMAT.parse("2015-07-12T08:14:20.657Z"))
+                        .setDate(commentService.parseDate("2015-07-12T08:14:20.657Z"))
                         .setText("Test!").build());
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode actionsNode = objectMapper.readTree(json);

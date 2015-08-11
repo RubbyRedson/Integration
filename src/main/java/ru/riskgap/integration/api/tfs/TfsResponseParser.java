@@ -84,7 +84,7 @@ public class TfsResponseParser {
 
 //        String date = jsonMap.get(Task.TASK_DUE);
 //        if (date != null) {
-//            result.setDue(Task.DATE_FORMATTER.parse(date));
+//            result.setDue(Task.DATE_FORMATTER.get().parse(date));
 //        }
 
 //        result.setRiskRef(jsonMap.get(Task.RISK_REF));

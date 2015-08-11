@@ -225,7 +225,7 @@ public class CardServiceTest {
                         "}");
         Task task = new TaskBuilder()
                 .setContainerId("559381ce9af4e9c91ab2dbae")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("05.07.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("05.07.2015"))
                 .setRiskRef("http://google.ru")
                 .setName("MyCard")
                 .setStatus(Task.Status.OPEN)

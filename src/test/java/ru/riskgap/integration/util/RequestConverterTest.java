@@ -59,7 +59,7 @@ public class RequestConverterTest {
                 .setAssigneeId("34")
                 .setAssigneeUsername("Test assignee")
                 .setAssigneeEmail("testassignee@riskgap.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("12.02.2015"))
                 .setRiskRef("test risk reference")
                 .setAuth(new AuthBuilder()
                         .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
@@ -105,7 +105,7 @@ public class RequestConverterTest {
                 .setAssigneeId("34")
                 .setAssigneeUsername("Test assignee")
                 .setAssigneeEmail("testassignee@riskgap.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("12.02.2015"))
                 .setRiskRef("test risk reference")
                 .setAuth(new AuthBuilder()
                         .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
@@ -139,7 +139,7 @@ public class RequestConverterTest {
                 .setAssigneeId("42")
                 .setAssigneeUsername("Test assignee 2")
                 .setAssigneeEmail("testassignee2@riskgap.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.02.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("14.02.2015"))
                 .setRiskRef("test risk reference 2")
                 .setAuth(new AuthBuilder()
                         .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
@@ -178,7 +178,7 @@ public class RequestConverterTest {
                 .setAssigneeId("34")
                 .setAssigneeUsername("Test assignee")
                 .setAssigneeEmail("testassignee@riskgap.ru")
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.02.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("12.02.2015"))
                 .setRiskRef("test risk reference")
                 .setAuth(new AuthBuilder()
                         .setTargetSystem(Auth.TargetSystem.MS_PROJECT)
@@ -208,10 +208,10 @@ public class RequestConverterTest {
         Task expected = new TaskBuilder()
                 .setName("andrey")
                 .setStatus(Task.Status.CLOSED)
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("12.08.2015"))
                 .setComments(Arrays.asList(
-                        new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("13.09.2015"), "First Comment!"),
-                        new Comment(CustomJsonDateDeserializer.DATE_FORMATTER.parse("14.09.2015"), "Second Comment!")))
+                        new Comment(CustomJsonDateDeserializer.parseDate("13.09.2015"), "First Comment!"),
+                        new Comment(CustomJsonDateDeserializer.parseDate("14.09.2015"), "Second Comment!")))
                 .build();
         try {
             testInputJson(json, expected);
@@ -234,7 +234,7 @@ public class RequestConverterTest {
         Task expected = new TaskBuilder()
                 .setName("andrey")
                 .setStatus(Task.Status.CLOSED)
-                .setDue(CustomJsonDateDeserializer.DATE_FORMATTER.parse("12.08.2015"))
+                .setDue(CustomJsonDateDeserializer.parseDate("12.08.2015"))
                 .setComments(new ArrayList<Comment>())
                 .build();
         try {
