@@ -258,7 +258,7 @@ public class TfsResponseParseTest {
         comment1.setUsername("rg");
         comment1.setEmail("RISKGAPWIN\\rg");
         comment1.setText("Adding the necessary spec");
-        comment1.setDate(TfsResponseParser.TFS_DATE_FORMATTER.parse("2015-07-07T09:08:49.31Z"));
+        comment1.setDate(TfsResponseParser.TFS_DATE_FORMATTER.get().parse("2015-07-07T09:08:49.31Z"));
 
         assertTrue("The length of resulting list should be 2", actual.size() == 2);
         assertEquals("Comment is not correct", comment1, actual.get(0));
