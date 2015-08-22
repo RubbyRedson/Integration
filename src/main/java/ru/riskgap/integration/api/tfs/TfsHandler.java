@@ -6,25 +6,27 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.riskgap.integration.IntegrationHandler;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.ApacheHttpClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TfsHandler implements IntegrationHandler {
+    private final static Logger logger = LoggerFactory.getLogger(TfsHandler.class);
 
-    @Autowired
-    TfsResponseParser responseParser;
+    //@Autowired
+    TfsResponseParser responseParser = new TfsResponseParser();
 
     @Override
     public Task createOrUpdateTask(Task task) {
-        //TODO implement method
-        if (true) { //update
+        if (task.getTaskId() != null) { //update
             try {
                 return updateTask(task);
             } catch (Exception e) {
@@ -55,7 +57,7 @@ public class TfsHandler implements IntegrationHandler {
                     httpClient.extractEntity(httpClient.get(getFieldsUrl), false));
             List<Comment> commentList = responseParser.parseTfsGetWorkItemHistoryResponseJson(
                     httpClient.extractEntity(httpClient.get(getCommentsUrl), true));
-            //todo set comments in task
+            result.setComments(commentList);
             return result;
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,13 +83,39 @@ public class TfsHandler implements IntegrationHandler {
         String updateRequestBody = TfsRequestBuilder.buildUpdateRequestBody(formFieldValuePairs(task, true));
 
         try {
-            httpClient.patch(updateTaskUrl, updateRequestBody);
+            String response = EntityUtils.toString(httpClient.patch(updateTaskUrl, updateRequestBody,
+                    new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity());
+            logger.info(response);
+            Task result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(response);
+            if (task.getComments().size() > 0) {
+                result.setTargetUrl(task.getTargetUrl());
+                result.setAuth(task.getAuth());
+                result = getTaskInformation(result);
+                List<Comment> sortedComments = task.getComments();
+
+                Collections.sort(sortedComments, new Comparator<Comment>() {
+                    @Override
+                    public int compare(Comment o1, Comment o2) {
+                        return o1.getDate().compareTo(o2.getDate());
+                    }
+                });
+
+                for (Comment comment : sortedComments) {
+                    if (!hasComment(comment, result.getComments())) {
+                        responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(
+                                EntityUtils.toString(httpClient.patch(updateTaskUrl,
+                                        TfsRequestBuilder.buildUpdateCommentBody(comment),
+                                        new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity()));
+                    }
+                }
+            }
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             httpClient.close();
         }
-        return getTaskInformation(task);
+        return null;
     }
 
     /**
@@ -104,14 +132,29 @@ public class TfsHandler implements IntegrationHandler {
         String createTaskUrl = TfsRequestBuilder.buildCreateUrl(url);
         String createRequestBody = TfsRequestBuilder.buildCreateRequestBody(formFieldValuePairs(task, false));
         try {
-            httpClient.patch(createTaskUrl, createRequestBody).getEntity();
+            String response = EntityUtils.toString(httpClient.patch(createTaskUrl, createRequestBody,
+                    new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity());
+            logger.info(response);
+            Task result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(response);
+
+            if (task.getComments().size() > 0) {
+                String updateTaskUrl = TfsRequestBuilder.buildUpdateUrl(url, result.getTaskId());
+                for (Comment comment : task.getComments()) {
+                    result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(
+                            EntityUtils.toString(httpClient.patch(updateTaskUrl,
+                                    TfsRequestBuilder.buildUpdateCommentBody(comment),
+                                    new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity()));
+                }
+            }
+
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
         }   finally {
             httpClient.close();
         }
 
-        return getTaskInformation(task);
+        return null;
     }
 
     private CloseableHttpClient createHttpClient(Task task) {
@@ -121,9 +164,9 @@ public class TfsHandler implements IntegrationHandler {
         String password = task.getAuth().getPassword();
         if (login != null && !login.isEmpty() && password != null) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-            //todo resolve workstation/domain
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new NTCredentials(task.getAuth().getLogin(), task.getAuth().getPassword(), "workstation", "domain"));
+                    new NTCredentials(task.getAuth().getLogin(), task.getAuth().getPassword(),
+                            task.getAuth().getWorkstation(), task.getAuth().getDomain()));
             builder.setDefaultCredentialsProvider(credentialsProvider);
         }
 
@@ -159,5 +202,13 @@ public class TfsHandler implements IntegrationHandler {
             pairs.add(new FieldValuePair(TfsRequestBuilder.TASK_ASSIGNEE,
                     assigneeName + " <" + assigneeEmail + ">", update));
         return pairs;
+    }
+
+    private boolean hasComment(Comment comment, Collection<Comment> comments) {
+        for (Comment comment1 : comments) {
+            if (comment.getText().equals(comment1.getText()) && comment.getUsername().equals(comment1.getUsername()))
+                return true;
+        }
+        return false;
     }
 }

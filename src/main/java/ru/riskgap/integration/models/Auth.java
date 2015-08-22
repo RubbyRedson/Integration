@@ -29,6 +29,12 @@ public class Auth {
     @JsonProperty("password")
     private String password;
 
+    @JsonProperty("domain")
+    private String domain;
+
+    @JsonProperty("workstation")
+    private String workstation;
+
     public TargetSystem getTargetSystem() {
         return targetSystem;
     }
@@ -69,6 +75,22 @@ public class Auth {
         this.password = password;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getWorkstation() {
+        return workstation;
+    }
+
+    public void setWorkstation(String workstation) {
+        this.workstation = workstation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,13 +98,16 @@ public class Auth {
 
         Auth auth = (Auth) o;
 
-        if (targetSystem != auth.targetSystem) return false;
         if (applicationKey != null ? !applicationKey.equals(auth.applicationKey) : auth.applicationKey != null)
             return false;
-        if (userToken != null ? !userToken.equals(auth.userToken) : auth.userToken != null) return false;
+        if (domain != null ? !domain.equals(auth.domain) : auth.domain != null) return false;
         if (login != null ? !login.equals(auth.login) : auth.login != null) return false;
-        return !(password != null ? !password.equals(auth.password) : auth.password != null);
+        if (password != null ? !password.equals(auth.password) : auth.password != null) return false;
+        if (targetSystem != auth.targetSystem) return false;
+        if (userToken != null ? !userToken.equals(auth.userToken) : auth.userToken != null) return false;
+        if (workstation != null ? !workstation.equals(auth.workstation) : auth.workstation != null) return false;
 
+        return true;
     }
 
     @Override
@@ -93,6 +118,8 @@ public class Auth {
                 ", userToken='" + userToken + '\'' +
                 ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
+                ", domain='" + domain + '\'' +
+                ", workstation='" + workstation + '\'' +
                 '}';
     }
 
@@ -103,6 +130,8 @@ public class Auth {
         result = 31 * result + (userToken != null ? userToken.hashCode() : 0);
         result = 31 * result + (login != null ? login.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (domain != null ? domain.hashCode() : 0);
+        result = 31 * result + (workstation != null ? workstation.hashCode() : 0);
         return result;
     }
 
