@@ -180,7 +180,7 @@ public class TfsRequestBuilder {
 		prepFields.append(OP_ADD);
 		prepFields.append(MessageFormat.format(PATH_TO_THE_FIELD, "/fields/" + COMMENT));
 		prepFields.append(MessageFormat.format(FIELD_VALUE, comment.getText() + "\n Written by "
-				+ comment.getUsername() + "\n Originally written on " + TFS_DATE_FORMATTER.get().format(comment.getDate())));
+				+ comment.getUsername() + " on " + TFS_DATE_FORMATTER.get().format(comment.getDate())));
 		prepFields.append(CLOSE_ELEMENT);
 		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
 		prepFields.append(END_BODY);
