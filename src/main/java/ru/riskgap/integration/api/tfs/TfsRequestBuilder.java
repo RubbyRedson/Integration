@@ -182,7 +182,7 @@ public class TfsRequestBuilder {
 		prepFields.append(MessageFormat.format(FIELD_VALUE, comment.getText() + "\n Written by "
 				+ comment.getUsername() + " on " + TFS_DATE_FORMATTER.get().format(comment.getDate())));
 		prepFields.append(CLOSE_ELEMENT);
-		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
+		prepFields.deleteCharAt(prepFields.length() - 2); // remove , after last field
 		prepFields.append(END_BODY);
 		return prepFields.toString();
 	}

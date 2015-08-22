@@ -3,6 +3,7 @@ package ru.riskgap.integration.api.tfs;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -11,6 +12,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.riskgap.integration.IntegrationHandler;
+import ru.riskgap.integration.exceptions.AuthException;
+import ru.riskgap.integration.exceptions.InternalServerException;
+import ru.riskgap.integration.exceptions.InvalidInputDataException;
 import ru.riskgap.integration.models.Comment;
 import ru.riskgap.integration.models.Task;
 import ru.riskgap.integration.util.ApacheHttpClient;
@@ -53,10 +57,37 @@ public class TfsHandler implements IntegrationHandler {
         String getCommentsUrl = TfsRequestBuilder.buildGetUrlForWorkItemHistory(url, taskId);
 
         try {
+            CloseableHttpResponse httpResponse = httpClient.get(getFieldsUrl);
+
+            if (httpResponse.getStatusLine().getStatusCode() == 401)
+                throw new AuthException("An error occured during Task information retrieval. The credentials provided were not" +
+                        "authorized to modify the task.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 404)
+                throw new InvalidInputDataException("An error occured during Task information retrieval. The project target url was" +
+                        "incorrect.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 400)
+                throw new InternalServerException("An error occured during Task information retrieval.");
+
             Task result = responseParser.parseTfsGetWorkItemFieldsResponseJson(
-                    httpClient.extractEntity(httpClient.get(getFieldsUrl), false));
+                    httpClient.extractEntity(httpResponse, false));
+
+            CloseableHttpResponse httpCommentsResponse = httpClient.get(getCommentsUrl);
+
+            if (httpCommentsResponse.getStatusLine().getStatusCode() == 401)
+                throw new AuthException("An error occured during Task information retrieval. The credentials provided were not" +
+                        "authorized to modify the task.");
+
+            if (httpCommentsResponse.getStatusLine().getStatusCode() == 404)
+                throw new InvalidInputDataException("An error occured during Task information retrieval. The project target url was" +
+                        "incorrect.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 400)
+                throw new InternalServerException("An error occured during Task information retrieval.");
             List<Comment> commentList = responseParser.parseTfsGetWorkItemHistoryResponseJson(
-                    httpClient.extractEntity(httpClient.get(getCommentsUrl), true));
+                    httpClient.extractEntity(httpCommentsResponse, true));
+
             result.setComments(commentList);
             return result;
         } catch (IOException e) {
@@ -83,11 +114,22 @@ public class TfsHandler implements IntegrationHandler {
         String updateRequestBody = TfsRequestBuilder.buildUpdateRequestBody(formFieldValuePairs(task, true));
 
         try {
-            String response = EntityUtils.toString(httpClient.patch(updateTaskUrl, updateRequestBody,
-                    new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity());
+            CloseableHttpResponse httpResponse = httpClient.patch(updateTaskUrl, updateRequestBody,
+                    new BasicNameValuePair("Content-Type", "application/json-patch+json"));
+            if (httpResponse.getStatusLine().getStatusCode() == 401)
+                throw new AuthException("An error occured during Task update. The credentials provided were not" +
+                        "authorized to modify the task.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 404)
+                throw new InvalidInputDataException("An error occured during Task update. The project target url was" +
+                        "incorrect.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 400)
+                throw new InternalServerException("An error occured during Task update.");
+            String response = EntityUtils.toString(httpResponse.getEntity());
             logger.info(response);
             Task result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(response);
-            if (task.getComments().size() > 0) {
+            if (task.getComments() != null && task.getComments().size() > 0) {
                 result.setTargetUrl(task.getTargetUrl());
                 result.setAuth(task.getAuth());
                 result = getTaskInformation(result);
@@ -132,12 +174,23 @@ public class TfsHandler implements IntegrationHandler {
         String createTaskUrl = TfsRequestBuilder.buildCreateUrl(url);
         String createRequestBody = TfsRequestBuilder.buildCreateRequestBody(formFieldValuePairs(task, false));
         try {
-            String response = EntityUtils.toString(httpClient.patch(createTaskUrl, createRequestBody,
-                    new BasicNameValuePair("Content-Type", "application/json-patch+json")).getEntity());
+            CloseableHttpResponse httpResponse = httpClient.patch(createTaskUrl, createRequestBody,
+                    new BasicNameValuePair("Content-Type", "application/json-patch+json"));
+            if (httpResponse.getStatusLine().getStatusCode() == 401)
+                throw new AuthException("An error occured during Task creation. The credentials provided were not" +
+                        "authorized to modify the task.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 404)
+                throw new InvalidInputDataException("An error occured during Task creation. The project target url was" +
+                        "incorrect.");
+
+            if (httpResponse.getStatusLine().getStatusCode() == 400)
+                throw new InternalServerException("An error occured during Task creation.");
+            String response = EntityUtils.toString(httpResponse.getEntity());
             logger.info(response);
             Task result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(response);
 
-            if (task.getComments().size() > 0) {
+            if (task.getComments() != null && task.getComments().size() > 0) {
                 String updateTaskUrl = TfsRequestBuilder.buildUpdateUrl(url, result.getTaskId());
                 for (Comment comment : task.getComments()) {
                     result = responseParser.parseTfsCreateUpdateWorkItemFieldsResponseJson(
