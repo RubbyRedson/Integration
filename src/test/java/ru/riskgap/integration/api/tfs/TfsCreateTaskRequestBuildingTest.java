@@ -67,7 +67,7 @@ public class TfsCreateTaskRequestBuildingTest {
 				"\t\t\"op\" : \"add\",\n" +
 				"		\"path\" : \"/fields/System.Title\",\n" +
 				"		\"value\" : \"Test Task name\"\n" +
-				"\t}\n" +
+				"\t},\n" +
 				"\t{\n" +
 				"		\"op\" : \"replace\",\n" +
 				"		\"path\" : \"/fields/System.Description\",\n" +
@@ -95,7 +95,7 @@ public class TfsCreateTaskRequestBuildingTest {
 				"\t\t\"op\" : \"add\",\n" +
 				"		\"path\" : \"/fields/System.Title\",\n" +
 				"		\"value\" : \"Test Task name\"\n" +
-				"\t}\n" +
+				"\t},\n" +
 				"\t{\n" +
 				"		\"op\" : \"add\",\n" +
 				"		\"path\" : \"/fields/System.Description\",\n" +

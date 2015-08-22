@@ -143,7 +143,8 @@ public class TfsRequestBuilder {
 			prepFields.append(MessageFormat.format(FIELD_VALUE, field.getValue()));
 			prepFields.append(CLOSE_ELEMENT);
 		}
-		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
+		if (fields.size() > 1)
+			prepFields.deleteCharAt(prepFields.length() - 2); // remove , after last field
 		prepFields.append(END_BODY);
 		return prepFields.toString();
 	}
@@ -162,7 +163,8 @@ public class TfsRequestBuilder {
 			prepFields.append(MessageFormat.format(FIELD_VALUE, field.getValue()));
 			prepFields.append(CLOSE_ELEMENT);
 		}
-		prepFields.deleteCharAt(prepFields.length() - 1); // remove , after last field
+		if (fields.size() > 1)
+			prepFields.deleteCharAt(prepFields.length() - 2); // remove , after last field
 		prepFields.append(END_BODY);
 		return prepFields.toString();
 	}

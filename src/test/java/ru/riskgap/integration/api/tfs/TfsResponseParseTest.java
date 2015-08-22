@@ -45,6 +45,7 @@ public class TfsResponseParseTest {
 
         Task expected = new Task();
         expected.setName("Test Task");
+        expected.setTaskId("2");
         expected.setStatus(Task.Status.OPEN);
         expected.setDescription("Test descr");
         expected.setUsername("rg");
@@ -89,6 +90,7 @@ public class TfsResponseParseTest {
 
         Task expected1 = new Task();
         expected1.setName("Test Task");
+        expected1.setTaskId("2");
         expected1.setStatus(Task.Status.OPEN);
         expected1.setDescription("Test descr");
         expected1.setUsername("rg");
@@ -123,6 +125,7 @@ public class TfsResponseParseTest {
 
         Task expected2 = new Task();
         expected2.setName("Test Task 2");
+        expected2.setTaskId("3");
         expected2.setStatus(Task.Status.OPEN);
         expected2.setDescription("Test descr 2");
         expected2.setUsername("rg");
@@ -165,6 +168,7 @@ public class TfsResponseParseTest {
 
         Task expected = new Task();
         expected.setName("Test Task");
+        expected.setTaskId("2");
         expected.setStatus(Task.Status.OPEN);
         expected.setDescription("Test descr");
 //		try {
