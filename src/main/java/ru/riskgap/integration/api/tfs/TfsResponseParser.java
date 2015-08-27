@@ -104,7 +104,7 @@ public class TfsResponseParser {
 			return result;
 
 		result.setName(jsonMap.get(TfsRequestBuilder.TASK_NAME));
-		result.setStatus(Task.Status.fromString(jsonMap.get(TfsRequestBuilder.TASK_STATE).toLowerCase()));
+		result.setStatus(parseTfsTaskState(jsonMap.get(TfsRequestBuilder.TASK_STATE)));
 		result.setDescription(jsonMap.get(TfsRequestBuilder.TASK_DESCR));
 		String user = jsonMap.get(TfsRequestBuilder.CHANGED_BY);
 
@@ -195,5 +195,19 @@ public class TfsResponseParser {
 			return mail.substring(2, mail.length() - 1); //remove < and >;
 		}
 		return null;
+	}
+
+	public Task.Status parseTfsTaskState(String status) {
+		switch (status.toLowerCase()) {
+			case "to do":
+				return Task.Status.OPEN;
+			case "in progress":
+				return Task.Status.IN_PROGRESS;
+			case "done":
+			case "removed":
+				return Task.Status.RESOLVED;
+			default:
+				return null;
+		}
 	}
 }

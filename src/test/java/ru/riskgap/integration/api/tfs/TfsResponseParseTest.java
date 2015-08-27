@@ -33,7 +33,7 @@ public class TfsResponseParseTest {
                 "      \"id\": 2,\n" +
                 "      \"rev\": 2,\n" +
                 "      \"fields\":       {\n" +
-                "         \"System.State\": \"open\",\n" +
+                "         \"System.State\": \"To Do\",\n" +
                 "         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.Title\": \"Test Task\",\n" +
@@ -78,7 +78,7 @@ public class TfsResponseParseTest {
                 "      \"id\": 2,\n" +
                 "      \"rev\": 2,\n" +
                 "      \"fields\":       {\n" +
-                "         \"System.State\": \"open\",\n" +
+                "         \"System.State\": \"To Do\",\n" +
                 "         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.Title\": \"Test Task\",\n" +
@@ -113,7 +113,7 @@ public class TfsResponseParseTest {
                 "      \"id\": 3,\n" +
                 "      \"rev\": 4,\n" +
                 "      \"fields\":       {\n" +
-                "         \"System.State\": \"open\",\n" +
+                "         \"System.State\": \"In Progress\",\n" +
                 "         \"System.AssignedTo\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.ChangedBy\": \"rg <RISKGAPWIN\\\\rg>\",\n" +
                 "         \"System.Title\": \"Test Task 2\",\n" +
@@ -126,7 +126,7 @@ public class TfsResponseParseTest {
         Task expected2 = new Task();
         expected2.setName("Test Task 2");
         expected2.setTaskId("3");
-        expected2.setStatus(Task.Status.OPEN);
+        expected2.setStatus(Task.Status.IN_PROGRESS);
         expected2.setDescription("Test descr 2");
         expected2.setUsername("rg");
         expected2.setUserEmail("RISKGAPWIN\\rg");
@@ -158,7 +158,7 @@ public class TfsResponseParseTest {
                 "      \"id\": 2,\n" +
                 "      \"rev\": 2,\n" +
                 "      \"fields\":       {\n" +
-                "         \"System.State\": \"open\",\n" +
+                "         \"System.State\": \"To Do\",\n" +
                 "         \"System.Title\": \"Test Task\",\n" +
                 "         \"System.Description\": \"Test descr\"\n" +
                 "      },\n" +

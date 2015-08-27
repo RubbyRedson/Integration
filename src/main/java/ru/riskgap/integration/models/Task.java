@@ -348,9 +348,7 @@ public class Task {
      */
     public enum Status {
         OPEN("open"),
-        NEW("new"),
         IN_PROGRESS("in progress"),
-        TO_DO("to do"),
         RESOLVED("resolved"),
         CLOSED("closed"),
         UNKNOWN(null);

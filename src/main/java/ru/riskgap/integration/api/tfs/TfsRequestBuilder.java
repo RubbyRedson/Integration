@@ -3,6 +3,7 @@ package ru.riskgap.integration.api.tfs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.riskgap.integration.models.Comment;
+import ru.riskgap.integration.models.Task;
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
@@ -186,4 +187,19 @@ public class TfsRequestBuilder {
 		prepFields.append(END_BODY);
 		return prepFields.toString();
 	}
+
+	public static String getTfsTaskState(Task.Status status) {
+		switch (status) {
+			case OPEN:
+				return "To Do";
+			case IN_PROGRESS:
+				return "In Progress";
+			case CLOSED:
+			case RESOLVED:
+				return "Done";
+			default:
+				return null;
+		}
+	}
+
 }

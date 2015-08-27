@@ -234,7 +234,7 @@ public class TfsHandler implements IntegrationHandler {
         }
 
         Task.Status state = task.getStatus();
-        pairs.add(new FieldValuePair(TfsRequestBuilder.TASK_STATE, state.getStatus(), update));
+        pairs.add(new FieldValuePair(TfsRequestBuilder.TASK_STATE, TfsRequestBuilder.getTfsTaskState(state), update));
 
         String description = task.getDescription();
         if (description != null && !description.isEmpty()) {
